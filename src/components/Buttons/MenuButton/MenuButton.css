@@ -1,0 +1,13 @@
+@import '../../../css/constants.css';
+
+.menubutton {
+  background-color: transparent;
+  color: var(--color-text);
+  font-weight: bold;
+
+  &:hover {
+    background-color: var(--color-text);
+    border-radius: 100px;
+    color: white;
+  }
+}

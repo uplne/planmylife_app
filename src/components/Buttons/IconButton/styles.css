@@ -1,0 +1,42 @@
+@import '../../../css/constants.css';
+
+.icon-button {
+  width: 16px;
+  height: 16px;
+  border: 0;
+  background: none;
+  padding: 0;
+  margin: var(--spacing-xsmall);
+  cursor: pointer;
+  outline:none;
+
+  .icon {
+    width: 16px;
+    height: 16px;
+    display: block;
+  }
+
+  &:hover {
+    svg {
+      fill: var(--color-link-hover);
+    }
+  }
+
+  &--withcta {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    white-space: nowrap;
+    width: auto;
+
+    .icon {
+      min-width: 16px;
+      margin-right: var(--spacing-xsmall);
+    }
+
+    &:hover {
+      color: var(--color-link-hover);
+    }
+  }
+}

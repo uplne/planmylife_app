@@ -1,0 +1,16 @@
+@import '../../css/constants.css';
+
+.input {
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  margin: 0;
+  outline: 0;
+  padding: var(--spacing-small) var(--spacing-normal);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+
+  &:hover,
+  &:focus {
+    border-color: var(--color-primary);
+  }
+}

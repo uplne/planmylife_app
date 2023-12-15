@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "firebase": "10.5.2",
+    "js-sha256": "^0.10.1",
     "lucide-react": "^0.293.0",
     "moment": "^2.29.4",
     "react": "^18.2.0",
@@ -11,6 +12,7 @@
     "react-router-dom": "6.18.0",
     "semantic-ui-css": "^2.5.0",
     "semantic-ui-react": "^2.1.4",
+    "uuid": "^9.0.1",
     "zustand": "^4.4.6"
   },
   "scripts": {
@@ -47,8 +49,9 @@
     "html-webpack-plugin": "^5.5.0",
     "i": "^0.3.7",
     "npm": "^9.6.5",
-    "postcss-loader": "^7.0.2",
+    "postcss-loader": "^7.3.3",
     "postcss-nested": "^6.0.0",
+    "postcss-nesting": "^12.0.1",
     "postcss-preset-env": "^8.0.1",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.4.2",

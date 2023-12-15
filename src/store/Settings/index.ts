@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { idType } from '../../types/idtype';
 import { settings } from './api';
 
-type SettingsType = {
+type SettingsTypes = {
   WeeklyEmailReminder: settings['schemas']['WeeklyEmailReminder'],
   updateWeeklyEmailReminder: (value: boolean) => void,
   isFirstLogin: settings['schemas']['isFirstLogin'],
@@ -12,59 +12,41 @@ type SettingsType = {
 
 const SettingsDefault = {
   WeeklyEmailReminder: true,
-  isFirstLogin: true,
+  isFirstLogin: false,
 };
 
 export const getAppData = async () => {
   try {
-    const jsonValue = await AsyncStorage.getItem('@gratitude_journal_appstate');
-    const parsedJSONValue  = jsonValue != null ? JSON.parse(jsonValue) : {};
-
-    return {
-      ...appStateDefaultValues,
-      ...parsedJSONValue,
-    };
+    // load settings from firebase
   } catch(e) {
     console.log('Reading error: ', e);
   }
 };
 
-const saveAppState = async (values: Partial<AppStateTypes>) => {
+const saveAppState = async (values: Partial<SettingsTypes>) => {
   try {
-    const jsonValue = JSON.stringify(values);
-
-    await AsyncStorage.setItem('@gratitude_journal_appstate', jsonValue);
+    // save settings to firebase
   } catch (e) {
     console.log('Saving error: ', e);
   }
 };
 
-const updateAppState = async (values:Partial<AppStateTypes>, state: AppStateTypes) => {
+const updateAppState = async (values:Partial<SettingsTypes>, state: SettingsTypes) => {
   await saveAppState({
     ...state,
     ...values,
   });
 };
 
-export const useAppStateStore = create<AppStateType>((set, get) => ({
-  appState: appStateDefaultValues,
-  shouldLock: true,
-  updateShouldLock: async (value: boolean) => {
-    set({ shouldLock: value });
-    // setTimeout(() => {
-    //   const currentShouldLock = get().shouldLock;
-
-    //   if (currentShouldLock) {
-    //     set({ shouldLock: true });
-    //   }
-    // }, 5000);
+export const useSettingsStateStore = create<SettingsTypes>((set, get) => ({
+  WeeklyEmailReminder: SettingsDefault.WeeklyEmailReminder,
+  updateWeeklyEmailReminder: async (value) => {
+    await saveAppState({ WeeklyEmailReminder: value });
+    set({ WeeklyEmailReminder: value });
   },
-  updateAppState: async (values:Partial<AppStateTypes>) => {
-    const appStateValues: AppStateTypes = get().appState;
-    await updateAppState(values, appStateValues);
-    set({ appState: {
-      ...appStateValues,
-      ...values,
-    }});
-  }
+  isFirstLogin: SettingsDefault.isFirstLogin,
+  updateIsFirstLogin: async (value) => {
+    await saveAppState({ isFirstLogin: value });
+    set({ isFirstLogin: value });
+  },
 }));

@@ -11,7 +11,7 @@ body {
 
 .app {
   text-align: center;
-  font-family: 'Rubik', sans-serif;
+  font-family: 'Gabarito', sans-serif;
   box-sizing: border-box;
 
   &__container {
@@ -27,7 +27,7 @@ h2 {
 
 * {
   Box-sizing: Border-box;
-  font-family: 'Rubik', sans-serif;
+  font-family: 'Gabarito', sans-serif;
 }
 
 a {

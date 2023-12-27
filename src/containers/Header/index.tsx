@@ -1,17 +1,18 @@
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 import { HeaderButton } from './HeaderButton';
-import LogOutButton from './LogOutButton';
+import { MenuButton } from "../../components/Buttons/MenuButton";
+import { logOut } from '../../containers/Login/controller';
 
 import './Header.css';
 
 export const Header = () => {
-  // const isLoggedIn = useAppSelector(state => state.auth.isLoggedIn);
-  // const isFirstLogin = useAppSelector(state => state.settings.isFirstLogin);
+  const navigate = useNavigate();
 
-  // if (!isLoggedIn || isFirstLogin) {
-  //   return null;
-  // }
+  const onClick = async () => {
+    await logOut(navigate);
+  };
 
   return (
     <div className="app-header">
@@ -22,7 +23,7 @@ export const Header = () => {
         </div>
         <div className="app-header__menu">
           <HeaderButton label="Settings" to="/settings" />
-          <LogOutButton />
+          <a onClick={onClick}><MenuButton label="Log Out" /></a>
         </div>
       </div>
     </div>

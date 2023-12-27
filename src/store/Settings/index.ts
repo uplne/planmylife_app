@@ -1,26 +1,31 @@
 import { create } from 'zustand';
 
-import { idType } from '../../types/idtype';
-import { settings } from './api';
+import { settings, TIER, DOW } from './api';
+
+export enum LOADING {
+  'NODATA' = 'NODATA',
+  'FETCHING' = 'FETCHING',
+  'ERROR' = 'ERROR',
+  'LOADED' = 'LOADED',
+};
 
 type SettingsTypes = {
   WeeklyEmailReminder: settings['schemas']['WeeklyEmailReminder'],
   updateWeeklyEmailReminder: (value: boolean) => void,
   isFirstLogin: settings['schemas']['isFirstLogin'],
   updateIsFirstLogin: (value: boolean) => void,
+  tier: settings['schemas']['tier'],
+  dow: settings['schemas']['dayOfWeek'],
+  isLoading: LOADING,
+  updateIsLoading: (value: LOADING) => void,
 };
 
 const SettingsDefault = {
   WeeklyEmailReminder: true,
   isFirstLogin: false,
-};
-
-export const getAppData = async () => {
-  try {
-    // load settings from firebase
-  } catch(e) {
-    console.log('Reading error: ', e);
-  }
+  tier: TIER.FREE,
+  dow: DOW.MONDAY,
+  isLoading: LOADING.NODATA,
 };
 
 const saveAppState = async (values: Partial<SettingsTypes>) => {
@@ -48,5 +53,11 @@ export const useSettingsStateStore = create<SettingsTypes>((set, get) => ({
   updateIsFirstLogin: async (value) => {
     await saveAppState({ isFirstLogin: value });
     set({ isFirstLogin: value });
+  },
+  tier: SettingsDefault.tier,
+  dow: SettingsDefault.dow,
+  isLoading: SettingsDefault.isLoading,
+  updateIsLoading: async (value) => {
+    set({ isLoading: value });
   },
 }));

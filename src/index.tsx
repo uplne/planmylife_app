@@ -18,6 +18,7 @@ const router = createBrowserRouter(Router);
 
 const root = ReactDOM.createRoot(document.getElementById('app'));
 root.render(
+  // use Fragment for disabling double render in dev
   <React.StrictMode>
     <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
   </React.StrictMode>

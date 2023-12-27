@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Header } from '../Header';
 
@@ -14,8 +14,7 @@ export const PrivateRoute = () => {
 
   return (
     <>
-      <Header />
-      <Outlet />
+    My Week
     </>
   );
 };

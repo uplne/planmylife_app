@@ -5,30 +5,52 @@ import { CenteredBox } from '../../components/CenteredBox';
 import { Box } from '../../components/Box';
 import { IconButton } from '../../components/Buttons/IconButton';
 import { GoogleIcon } from '../../components/Icons/GoogleIcon';
+import { InitialLoader } from '../../components/InitialLoader';
 import { HorizontalText } from '../../components/HorizontalText';
 import { LoginWithGoogle, ProcessGoogleRedirect, initializeApp } from './controller';
 import { auth, getRedirectResult } from '../../services/firebase';
 import { useAuthStore } from '../../store/Auth';
+import { useAppStore } from '../../store/App';
 
 import './styles.css';
 
 export const Login = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true);
-  const { isLoggedIn } = useAuthStore();
+  const { isLoggedIn, setIsLoggedIn } = useAuthStore();
+  const { isLoading, setIsLoading } = useAppStore();
   const navigate = useNavigate();
 
   const onClickGoogle = async () => {
-    await setIsLoading(true);
     await LoginWithGoogle();
   };
 
   useEffect(() => {
     (async () => {
+      await setIsLoading(true);
+
+      await auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          await setIsLoggedIn(true);
+          await setIsLoading(false);
+          navigate('/myweek');
+        } else {
+          await setIsLoggedIn(false);
+          await setIsLoading(false);
+          navigate('/login');
+        }
+      });
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      await setIsLoading(true);
+
       const result = await getRedirectResult(auth);
 
       if (result) {
         await ProcessGoogleRedirect(result);
+      } else {
+        await setIsLoading(false);
       }
     })();
   }, []);
@@ -37,7 +59,11 @@ export const Login = () => {
     if (isLoggedIn) {
       initializeApp(navigate);
     }
-  }, [isLoggedIn])
+  }, [isLoggedIn]);
+  console.log('isLoading: ', isLoading, 'isLoggedIn: ', isLoggedIn);
+  if (isLoading && !isLoggedIn) {
+    return <InitialLoader />;
+  }
 
   return (
     <CenteredBox>

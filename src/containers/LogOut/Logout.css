@@ -1,0 +1,33 @@
+@import '../../css/constants.css';
+
+.logout__box{
+  width: 650px;
+  padding: var(--spacing-xlarge);
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.logout__quote {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-bottom: var(--spacing-xlarge);
+}
+  
+.logout__title {
+  font-size: 23px;
+  line-height: 28px;
+  text-align: center;
+  margin: 0 0 var(--spacing-xsmall);
+  color: var(--color-header-text);
+  font-style: italic;
+}
+  
+.logout__author {
+  font-size: 14px;
+  margin: 0 100px 0 0;
+  color: var(--color-header-text);
+}

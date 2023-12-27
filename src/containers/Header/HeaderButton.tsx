@@ -1,8 +1,6 @@
 import {
   Link,
-  useMatch,
 } from "react-router-dom";
-import classnames from 'classnames';
 
 import { MenuButton } from "../../components/Buttons/MenuButton";
 

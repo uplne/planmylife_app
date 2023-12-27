@@ -1,6 +1,5 @@
 import { User as FirebaseUser, UserCredential } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { redirect } from "react-router-dom";
 import moment from 'moment';
 import { sha256 } from 'js-sha256';
 
@@ -14,6 +13,7 @@ export const getUserId = (uid: string) => {
 };
 
 export const LoginWithGoogle = async () => {
+  await useAppStore.getState().setIsLoading(true);
   GoogleAuth.addScope('https://www.googleapis.com/auth/userinfo.email');
   GoogleAuth.addScope('https://www.googleapis.com/auth/userinfo.profile');
   auth.useDeviceLanguage();
@@ -120,10 +120,18 @@ export const initializeApp = async (redirect: any) => {
   if (isFirstLogin) {
     // Start setup
     // yield put(push({ pathname: '/setup' }));
+    redirect('/myweek');
   } else {
     //checkURLWeek();
     redirect('/myweek');
   }
 
-  await useAppStore.getState().setIsLoading(false);
-}
+  // await useAppStore.getState().setIsLoading(false);
+};
+
+export const logOut = async (redirect: any) => {
+  await auth.signOut();
+  await useAuthStore.getState().setIsLoggedIn(false);
+
+  redirect('/logout');
+};

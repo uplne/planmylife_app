@@ -1,3 +1,12 @@
+export const enum TIER {
+  'FREE' = 'FREE',
+  'SUBSCRIPTION' = 'SUBSCRIPTION'
+};
+
+export const enum DOW {
+  'MONDAY' = 1,
+  'SUNDAY' = 0,
+};
 export interface settings {
   schemas: {
     WeeklyEmailReminder: boolean,
@@ -6,14 +15,8 @@ export interface settings {
       HalfYear: boolean,
       quarter: boolean,
     },
-    HelpNotifications: {
-      Goals: boolean,
-      Overview: {
-        Diary: boolean,
-        Goals: boolean,
-        Tasks: boolean,
-      },
-    },
     isFirstLogin: boolean,
+    tier: TIER,
+    dayOfWeek: number,
   },
 };

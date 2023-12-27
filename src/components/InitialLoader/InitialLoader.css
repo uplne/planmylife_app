@@ -1,17 +1,15 @@
 @import '../../css/constants.css';
 
-.initial-loader {
-  &__box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    transform: translateY(-100%);
-    max-width: 50%;
+.initial-loader__box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-100%);
+  max-width: 50%;
 
-    p {
-      font-size: 23px;
-      margin: 0;
-    }
+  p {
+    font-size: 23px;
+    margin: 0;
   }
 }

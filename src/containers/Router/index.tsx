@@ -4,6 +4,10 @@ import {
 
 import { PrivateRoute } from '../PrivateRoute';
 import { Login } from '../Login';
+import { LogOut } from "../LogOut";
+import { Layout } from '../Layout';
+import { Header } from '../Header';
+import { useAuthStore } from '../../store/Auth';
 
 // export default ({...props}) =>
 //   <Switch>
@@ -23,17 +27,28 @@ import { Login } from '../Login';
 
 export const Router = [
   {
-    path: "/login",
-    element: <Login />
-  },
-  {
-    path: "/myweek",
-    element: <PrivateRoute />,
-  },
-  {
     path: "/",
     async loader() {
-      return redirect("/login");
+      if (!useAuthStore.getState().isLoggedIn) {
+        return redirect("/login");
+      }
+
+      return null;
     },
+    Component: Layout,
+    children: [
+      {
+        path: 'myweek',
+        Component: PrivateRoute,
+      },
+    ],
+  },
+  {
+    path: 'logout',
+    Component: LogOut,
+  },
+  {
+    path: "login",
+    Component: Login,
   },
 ]

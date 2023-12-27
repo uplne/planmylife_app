@@ -6,7 +6,7 @@ type AppTypes = {
 };
 
 const AppDefault: AppTypes = {
-  isLoading: true,
+  isLoading: false,
   setIsLoading: () => null,
 };
 

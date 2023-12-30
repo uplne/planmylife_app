@@ -10,17 +10,24 @@ export const createSettings = async () => {
 
   try {
     const docRef = doc(db, 'settings', userId);
-    await setDoc(docRef, { ...settings }, { merge: true });
+    await setDoc(docRef, {
+      WeeklyEmailReminder: settings.WeeklyEmailReminder,
+      isFirstLogin: settings.isFirstLogin,
+      tier: settings.tier,
+      dow: settings.dow,
+    }, { merge: true });
   } catch(e) {
     console.log('Failed fetching settings: ', e);
   }
 };
 
 export const fetchSettings = async () => {
+  console.log('fetchSettings');
   const userId = await useAuthStore.getState().currentUser.id;
   const {
     updateIsLoading,
     updateWeeklyEmailReminder,
+    updateLocale,
   } = await useSettingsStateStore.getState();
 
   await updateIsLoading(LOADING.FETCHING);
@@ -32,15 +39,16 @@ export const fetchSettings = async () => {
 
     if (docSnap.exists()) {
       const settingsData = docSnap.data();
+      
+      console.log('settingsData: ', settingsData);
 
       if (settingsData) {
         if ('emailWeeklyReminderOptOut' in settingsData) {
           await updateWeeklyEmailReminder(settingsData.WeeklyEmailReminder);
         }
 
-        // moment.updateLocale('en', {
-        //   week: { dow: 0 },
-        // });
+        console.log('settingsData.dow: ', settingsData.dow);
+        await updateLocale(settingsData.dow);
 
         await updateIsLoading(LOADING.LOADED);
       }

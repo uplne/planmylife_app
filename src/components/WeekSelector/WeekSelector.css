@@ -1,0 +1,55 @@
+@import '../../css/constants.css';
+
+.weekselector {
+  display: flex;
+  margin: 40px 0 30px;
+}
+
+.weekselector__wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.weekselector__title {
+  font-size: 42px;
+  color: var(--color-header-text-important);
+  font-weight: 800;
+  position: relative;
+  margin: 5px 0;
+}
+
+.weekselector__subtitle {
+  font-size: 16px;
+  font-weight: normal;
+  padding-left: var(--spacing-small);
+}
+
+.weekselector__actions {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--spacing-xsmall);
+  margin-right: var(--spacing-normal);
+}
+
+.weekselector__to {
+  color: grey;
+}
+
+.weekselector__button {
+  width: 30px;
+  height: 30px;
+
+  .weekselector__arrow-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+  }
+}
+
+.weekselector__links {
+  display: flex;
+  flex-direction: row;
+  margin-top: 5px;
+}

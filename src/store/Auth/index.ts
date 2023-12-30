@@ -76,7 +76,6 @@ export const useAuthStore = create<AuthTypes>((set, get) => ({
   currentUser: AuthDefault.currentUser,
   updateCurrentUser: async (values: user["schemas"]) => {
     // await saveAppState({ WeeklyEmailReminder: value });
-    console.log('set current user: ', values);
     set({ currentUser: values });
   },
   saveCurrentUser: async () => {

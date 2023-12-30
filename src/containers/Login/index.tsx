@@ -7,7 +7,7 @@ import { IconButton } from '../../components/Buttons/IconButton';
 import { GoogleIcon } from '../../components/Icons/GoogleIcon';
 import { InitialLoader } from '../../components/InitialLoader';
 import { HorizontalText } from '../../components/HorizontalText';
-import { LoginWithGoogle, ProcessGoogleRedirect, initializeApp } from './controller';
+import { LoginWithGoogle, ProcessGoogleRedirect, initializeApp, storeUserData } from './controller';
 import { auth, getRedirectResult } from '../../services/firebase';
 import { useAuthStore } from '../../store/Auth';
 import { useAppStore } from '../../store/App';
@@ -29,6 +29,9 @@ export const Login = () => {
 
       await auth.onAuthStateChanged(async (user) => {
         if (user) {
+          await storeUserData({
+            user,
+          });
           await setIsLoggedIn(true);
           await setIsLoading(false);
           navigate('/myweek');
@@ -60,7 +63,7 @@ export const Login = () => {
       initializeApp(navigate);
     }
   }, [isLoggedIn]);
-  console.log('isLoading: ', isLoading, 'isLoggedIn: ', isLoggedIn);
+
   if (isLoading && !isLoggedIn) {
     return <InitialLoader />;
   }

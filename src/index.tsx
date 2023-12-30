@@ -4,6 +4,11 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query';
+
 import "regenerator-runtime/runtime.js";
 
 // import * as serviceWorker from './serviceWorker';
@@ -14,12 +19,16 @@ import { Router } from './containers/Router';
 
 // checkAwake();
 
+const queryClient = new QueryClient();
+
 const router = createBrowserRouter(Router);
 
 const root = ReactDOM.createRoot(document.getElementById('app'));
 root.render(
   // use Fragment for disabling double render in dev
   <React.StrictMode>
-    <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
+    </QueryClientProvider>
   </React.StrictMode>
 );

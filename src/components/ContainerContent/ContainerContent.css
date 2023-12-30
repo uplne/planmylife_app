@@ -1,0 +1,22 @@
+@import '../../css/constants.css';
+
+.container-content {
+  display: flex;
+  flex-direction: column;
+  margin: var(--spacing-normal) 0;
+}
+
+.container-content__split {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.container-content__split--top {
+  align-items: center;
+}
+
+.container-content--half {
+  width: 49.5%;
+}

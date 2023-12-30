@@ -1,0 +1,70 @@
+@import '../../../css/constants.css';
+
+.gotoweek {
+  font-size: 14px;
+  font-weight: normal;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-right: var(--spacing-normal);
+  position: relative;
+  cursor: pointer;
+}
+
+.gotoweek__wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+}
+
+.gotoweek .arrow-circle-right-icon {
+  fill: var(--color-primary);
+  width: 16px;
+  height: 16px;
+  margin-right: var(--spacing-xsmall);
+  margin-top: 0;
+}
+
+.gotoweek__link {
+  cursor: pointer;
+  color: var(--color-primary);
+}
+
+.gotoweek__calendar {
+  position: absolute;
+  bottom: 0;
+  z-index: 100;
+}
+
+.gotoweek .ant-picker {
+  padding: 0;
+  margin-top: 2px;
+}
+
+.gotoweek .ant-picker-input {
+  input {
+    cursor: pointer;
+  }
+
+  input::placeholder {
+    cursor: pointer;
+    color: var(--color-primary) !important;
+  }
+}
+
+.gotoweek .ant-picker-input > input:placeholder-shown {
+  color: var(--color-primary) !important;
+}
+
+.gotoweek .ant-picker-suffix {
+  display: none;
+}
+
+.gotoweek__placeholder {
+  color: var(--color-primary);
+  position: absolute;
+  top: 5px;
+  left: 22px;
+  z-index: 1000;
+}

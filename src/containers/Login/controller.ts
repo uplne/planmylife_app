@@ -5,6 +5,7 @@ import { sha256 } from 'js-sha256';
 
 import { GoogleAuth, auth, signInWithRedirect, db, GoogleAuthProvider } from '../../services/firebase';
 import { useSettingsStateStore } from "../../store/Settings";
+import { fetchSettings, createSettings } from '../Settings/controller';
 import { useAuthStore } from '../../store/Auth';
 import { useAppStore } from '../../store/App';
 
@@ -33,7 +34,6 @@ export const ProcessGoogleRedirect = async (result: UserCredential) => {
   const token = credential.accessToken;
   await storeUserData({
     user: result.user,
-    token
   });
 };
 
@@ -58,17 +58,15 @@ export const loadUserFromDB = async (userId: string) => {
 
 type PropsStoreUserDataTypes = {
   user: FirebaseUser,
-  token: string,
 };
 
-export const storeUserData = async ({ user, token }: PropsStoreUserDataTypes) => {
+export const storeUserData = async ({ user }: PropsStoreUserDataTypes) => {
   let userData = null;
   const userId = await getUserId(user.uid);
 
   try {
     // Check if we have user already in DB
     userData = await loadUserFromDB(userId);
-    console.log('LOAD USER DATA: ', userData, userId);
   } catch (e) {
     // Request to retrieve user data failed. We have to assume that user might already exist so we need to throw some error and stop here.
     throw Error('Request failed');
@@ -97,7 +95,7 @@ export const storeUserData = async ({ user, token }: PropsStoreUserDataTypes) =>
     await useAuthStore.getState().saveCurrentUser();
 
     // // Create settings
-    // yield put({ type: 'settings/createSettings' });
+    await createSettings();
   // Or just push data into store
   } else {
     const lastLogin = moment().toISOString();
@@ -116,6 +114,8 @@ export const storeUserData = async ({ user, token }: PropsStoreUserDataTypes) =>
 
 export const initializeApp = async (redirect: any) => {
   const isFirstLogin = await useSettingsStateStore.getState().isFirstLogin;
+  
+  await fetchSettings();
 
   if (isFirstLogin) {
     // Start setup

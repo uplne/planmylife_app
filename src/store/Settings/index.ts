@@ -2,8 +2,11 @@ import { create } from 'zustand';
 import moment from 'moment';
 import dayjs from 'dayjs';
 import updateLocale from 'dayjs/plugin/updateLocale';
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from '../../services/firebase';
 
 import { useWeekStore } from '../Week';
+import { useAuthStore } from '../Auth';
 import { settings, TIER, DOW } from './api';
 
 export enum LOADING {
@@ -27,36 +30,32 @@ type SettingsTypes = {
 
 const SettingsDefault = {
   WeeklyEmailReminder: true,
-  isFirstLogin: false,
+  isFirstLogin: true,
   tier: TIER.FREE,
   dow: DOW.MONDAY,
   isLoading: LOADING.NODATA,
 };
 
-const saveAppState = async (values: Partial<SettingsTypes>) => {
+const saveAppState = async (values: Partial<SettingsTypes>, userId: string) => {
   try {
-    // save settings to firebase
+    const docRef = doc(db, 'settings', userId);
+    await updateDoc(docRef, { ...values });
   } catch (e) {
-    console.log('Saving error: ', e);
+    console.log('Saving settings error: ', e);
   }
-};
-
-const updateAppState = async (values:Partial<SettingsTypes>, state: SettingsTypes) => {
-  await saveAppState({
-    ...state,
-    ...values,
-  });
 };
 
 export const useSettingsStateStore = create<SettingsTypes>((set, get) => ({
   WeeklyEmailReminder: SettingsDefault.WeeklyEmailReminder,
   updateWeeklyEmailReminder: async (value) => {
-    await saveAppState({ WeeklyEmailReminder: value });
+    const userId = useAuthStore.getState().currentUser.id;
+    await saveAppState({ WeeklyEmailReminder: value }, userId);
     set({ WeeklyEmailReminder: value });
   },
   isFirstLogin: SettingsDefault.isFirstLogin,
   updateIsFirstLogin: async (value) => {
-    await saveAppState({ isFirstLogin: value });
+    const userId = useAuthStore.getState().currentUser.id;
+    await saveAppState({ isFirstLogin: value }, userId);
     set({ isFirstLogin: value });
   },
   tier: SettingsDefault.tier,
@@ -66,7 +65,6 @@ export const useSettingsStateStore = create<SettingsTypes>((set, get) => ({
     set({ isLoading: value });
   },
   updateLocale: async (value: DOW) => {
-    console.log('updateLocale: ', value);
     await set({ dow: value });
     moment.updateLocale('en', {
       week: {

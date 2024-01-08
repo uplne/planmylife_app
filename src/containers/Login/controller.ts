@@ -113,13 +113,14 @@ export const storeUserData = async ({ user }: PropsStoreUserDataTypes) => {
 };
 
 export const initializeApp = async (redirect: any) => {
-  const isFirstLogin = await useSettingsStateStore.getState().isFirstLogin;
-  
   await fetchSettings();
+
+  const isFirstLogin = await useSettingsStateStore.getState().isFirstLogin;
 
   if (isFirstLogin) {
     // Start setup
     // yield put(push({ pathname: '/setup' }));
+    await useSettingsStateStore.getState().updateIsFirstLogin(false);
     redirect('/myweek');
   } else {
     //checkURLWeek();

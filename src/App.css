@@ -1,4 +1,4 @@
-@import '../../css/constants.css';
+@import './css/constants.css';
 
 html,
 body {
@@ -7,11 +7,12 @@ body {
   line-height: 1;
   color: var(--color-header-text);
   background-color: var(--color-main-background);
+  font-family: 'Rubik', sans-serif;
 }
 
 .app {
   text-align: center;
-  font-family: 'Gabarito', sans-serif;
+  font-family: 'Rubik', sans-serif;
   box-sizing: border-box;
 
   &__container {
@@ -27,7 +28,7 @@ h2 {
 
 * {
   Box-sizing: Border-box;
-  font-family: 'Gabarito', sans-serif;
+  font-family: 'Rubik', sans-serif;
 }
 
 a {

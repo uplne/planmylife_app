@@ -1,2 +1,5 @@
 @import '../../css/constants.css';
 
+.tasksbox {
+  width: 100%;
+}

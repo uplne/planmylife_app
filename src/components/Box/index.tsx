@@ -4,7 +4,7 @@ import './styles.css';
 
 type PropTypes = {
   children: React.ReactNode,
-  className: string | undefined,
+  className?: string | undefined,
 };
 
 export const Box = ({ children, className }: PropTypes) => {

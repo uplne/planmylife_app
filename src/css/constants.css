@@ -41,4 +41,7 @@
   
   --border-radius: 6px;
   --border-radius-small: 4px;
+
+  /* MQ */
+  --mq-mobile: 900px;
 }

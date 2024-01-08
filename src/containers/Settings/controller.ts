@@ -22,12 +22,12 @@ export const createSettings = async () => {
 };
 
 export const fetchSettings = async () => {
-  console.log('fetchSettings');
   const userId = await useAuthStore.getState().currentUser.id;
   const {
     updateIsLoading,
     updateWeeklyEmailReminder,
     updateLocale,
+    updateIsFirstLogin,
   } = await useSettingsStateStore.getState();
 
   await updateIsLoading(LOADING.FETCHING);
@@ -47,7 +47,7 @@ export const fetchSettings = async () => {
           await updateWeeklyEmailReminder(settingsData.WeeklyEmailReminder);
         }
 
-        console.log('settingsData.dow: ', settingsData.dow);
+        await updateIsFirstLogin(settingsData.isFirstLogin);
         await updateLocale(settingsData.dow);
 
         await updateIsLoading(LOADING.LOADED);

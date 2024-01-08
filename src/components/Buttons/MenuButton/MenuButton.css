@@ -4,10 +4,10 @@
   background-color: transparent;
   color: var(--color-text);
   font-weight: bold;
+}
 
-  &:hover {
-    background-color: var(--color-text);
-    border-radius: 100px;
-    color: white;
-  }
+.menubutton:hover,
+.menubutton.is-active {
+  background-color: #f9f7f3;
+  border-radius: 100px;
 }

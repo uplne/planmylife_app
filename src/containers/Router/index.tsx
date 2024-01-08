@@ -2,7 +2,7 @@ import {
   redirect,
 } from "react-router-dom";
 
-import { PrivateRoute } from '../PrivateRoute';
+import { Overview } from '../Overview';
 import { Login } from '../Login';
 import { LogOut } from "../LogOut";
 import { Layout } from '../Layout';
@@ -39,7 +39,7 @@ export const Router = [
     children: [
       {
         path: 'myweek',
-        Component: PrivateRoute,
+        Component: Overview,
       },
     ],
   },

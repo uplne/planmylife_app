@@ -11,6 +11,8 @@ import {
 
 import "regenerator-runtime/runtime.js";
 
+import './App.css';
+
 // import * as serviceWorker from './serviceWorker';
 import { Router } from './containers/Router';
 // import checkAwake from './utils/awake';

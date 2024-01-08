@@ -11,6 +11,10 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
+
+  @media only screen and (max-width: 900px) {
+    flex-direction: column;
+  }
 }
 
 .container-content__split--top {

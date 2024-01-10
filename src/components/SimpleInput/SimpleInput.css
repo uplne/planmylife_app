@@ -1,0 +1,26 @@
+@import '../../css/constants.css';
+
+.simpleinput {
+  align-items: center;
+  border: 1px solid #666;
+  border-radius: var(--border-radius);
+  display: flex;
+  flex-grow: 2;
+  font-size: var(--font-size-normal);
+  height: 38px;
+  min-width: 100%;
+  outline-width: 0;
+  overflow-x: hidden;
+  padding: 2px var(--spacing-small) 0 var(--spacing-small);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.simpleinput:hover {
+  background: var(--color-input-bg-inactive);
+  border-color: var(--color-primary);
+}
+
+.simpleinput::placeholder {
+  color: rgba(0,0,0,.2);
+}

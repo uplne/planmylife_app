@@ -6,7 +6,7 @@ import {
   signInWithRedirect,
   getRedirectResult,
 } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, Timestamp } from "firebase/firestore";
 import { getFunctions } from 'firebase/functions';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -37,8 +37,10 @@ export const db = getFirestore(app);
 export const functions = getFunctions(app);
 
 export const GoogleAuth = new GoogleAuthProvider();
+
 export {
   GoogleAuthProvider,
   signInWithRedirect,
   getRedirectResult,
+  Timestamp,
 };

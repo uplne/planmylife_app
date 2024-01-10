@@ -1,0 +1,34 @@
+@import '../../css/constants.css';
+
+.taskscheduler {
+  .ant-space-item {
+    &:first-letter {
+      text-transform: uppercase;
+    }
+  }
+}
+
+.taskscheduler__container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.simpleinput.taskscheduler__input {
+  height: 32px;
+  min-width: auto;
+  width: 55px;
+  text-align: right;
+  margin: 0 var(--spacing-small);
+  border-color: #d9d9d9;
+}
+
+.taskscheduler:hover {
+  border-color: var(--color-primary);
+}
+
+.ant-dropdown-menu-title-content {
+  &:first-letter {
+    text-transform: uppercase;
+  }
+}

@@ -13,14 +13,21 @@ export type TaskType = TasksAPITypes["schemas"][TasksTypes.DEFAULT];
 
 export type TasksStoreTypes = {
   tasks: TaskType[],
+  newTask: string,
   fillTasks: (tasks: TaskType[]) => Promise<void>,
   isLoading: LOADING,
   updateIsLoading: (value: LOADING) => void,
+  updateNewTask: (value: string) => void,
+  schedule: string | undefined,
+  setSchedule: (value: string) => void,
+  addNewTask: (value: TaskType) => void,
 };
 
 const TasksStoreDefault: Partial<TasksStoreTypes> = {
   isLoading: LOADING.NODATA,
   tasks: [],
+  newTask: '',
+  schedule: undefined,
 };
 
 const saveAppState = async (values: Partial<TasksStoreTypes>, userId: string) => {
@@ -44,5 +51,24 @@ export const useTasksStore = create<TasksStoreTypes>((set, get) => ({
     await set({
       tasks: newTasks,
     });
-  }
+  },
+
+  // New task
+  newTask: TasksStoreDefault.newTask,
+  updateNewTask: async (value: string) => {
+    await set({ newTask: value });
+  },
+  addNewTask: async (value: TaskType) => {
+    const storedTasks = await get().tasks;
+    await set({ tasks: storedTasks.concat([{
+        ...value
+      }])
+    });
+  },
+
+  // Scheduling
+  schedule: TasksStoreDefault.schedule,
+  setSchedule: async (value: string) => {
+    await set({ schedule: value });
+  },
 }));

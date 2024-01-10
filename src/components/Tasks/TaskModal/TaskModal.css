@@ -1,0 +1,69 @@
+@import '../../../css/constants.css';
+
+.taskmodal {
+  width: 100%;
+  text-align: left;
+  position: relative;
+
+  h3 {
+    color: var(--color-header-text);
+    margin-bottom: 0;
+
+    strong {
+      color: var(--color-primary);
+    }
+  }
+}
+
+.taskmodal__container {
+  height: 450px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.taskmodal__crossicon {
+  &.icon {
+    width: 10px;
+    margin-left: var(--spacing-xsmall);
+  }
+}
+
+.taskmodal__title {
+  max-width: 85%;
+}
+
+.taskmodal__addtime {
+  margin-right: var(--spacing-small);
+}
+
+.taskmodal__options-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-xlarge);
+}
+
+.taskmodal__calendar {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.taskmodal__input:hover {
+  .row__label {
+    border-color: var(--color-primary);
+  }
+
+  &:not(.row__new) .row__label {
+    margin: 0;
+  }
+}
+
+.taskmodal .row__label {
+  border: 1px solid var(--color-border);
+}
+
+.taskmodal .row__button-save {
+  display: none;
+}

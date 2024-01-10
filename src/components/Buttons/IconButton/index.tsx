@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import './styles.css';
 
 type PropTypes = {
-  onClick: () => void,
+  onClick: (e: React.MouseEvent<HTMLElement>) => void,
   className?: string | undefined,
   children: React.ReactNode,
   withCTA?: boolean,

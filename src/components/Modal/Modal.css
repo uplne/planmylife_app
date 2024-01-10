@@ -1,0 +1,63 @@
+@import '../../css/constants.css';
+
+.modal {
+  position: fixed;
+  width: 100%;
+  min-height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal__wrapper {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  background: #fcfcfc;
+  box-shadow: rgb(0 0 0 / 8%) 0px 4px 3px;
+  border-right: 1px solid #dcdcdc;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border-radius: var(--border-radius);
+}
+
+.modal__header {
+  width: 100%;
+  padding: var(--spacing-large);
+  margin: 0;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border-tertiary);
+  color: var(--color-primary-hover);
+}
+
+.modal__content {
+  flex-grow: 1;
+  width: 100%;
+  padding: var(--spacing-large);
+}
+
+.modal__actions {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-top: var(--spacing-normal);
+  padding: var(--spacing-large);
+  border-top: 1px solid var(--color-border-tertiary);
+  background: rgba(0,0,0,.01);
+}
+
+.modal__button {
+  margin-left: var(--spacing-small);
+}
+
+.modal__addbox {
+  margin-bottom: var(--spacing-xlarge);
+}

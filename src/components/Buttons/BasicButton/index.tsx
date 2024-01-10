@@ -6,7 +6,7 @@ import { Preloader } from '../../Preloader';
 import './BasicButton.css';
 
 type ButtonTypes = {
-  onClick?: () => void,
+  onClick?: (e: React.MouseEvent<HTMLElement>) => void,
   className?: string,
   children: React.ReactNode,
   secondary?: boolean,

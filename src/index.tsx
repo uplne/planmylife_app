@@ -1,5 +1,5 @@
 import React from 'react';
-import * as ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom/client';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -9,28 +9,29 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query';
 
-import "regenerator-runtime/runtime.js";
+import './index.css';
 
-import './App.css';
-
-// import * as serviceWorker from './serviceWorker';
 import { Router } from './containers/Router';
-// import checkAwake from './utils/awake';
 
-// import './index.css';
+import reportWebVitals from './reportWebVitals';
 
-// checkAwake();
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
 
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter(Router);
 
-const root = ReactDOM.createRoot(document.getElementById('app'));
 root.render(
-  // use Fragment for disabling double render in dev
-  <React.Fragment>
+  <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} fallbackElement={<p>Initial Load...</p>} />
     </QueryClientProvider>
-  </React.Fragment>
+  </React.StrictMode>
 );
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();

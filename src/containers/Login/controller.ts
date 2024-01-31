@@ -1,6 +1,6 @@
 import { User as FirebaseUser, UserCredential } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { sha256 } from 'js-sha256';
 
 import { GoogleAuth, auth, signInWithRedirect, db, GoogleAuthProvider } from '../../services/firebase';
@@ -30,8 +30,6 @@ export const LoginWithGoogle = async () => {
 };
 
 export const ProcessGoogleRedirect = async (result: UserCredential) => {
-  const credential = GoogleAuthProvider.credentialFromResult(result);
-  const token = credential.accessToken;
   await storeUserData({
     user: result.user,
   });
@@ -78,11 +76,11 @@ export const storeUserData = async ({ user }: PropsStoreUserDataTypes) => {
     await useSettingsStateStore.getState().updateIsFirstLogin(true);
 
     // Save user locally
-    const created = moment().toISOString();
+    const created = dayjs().format();
     await useAuthStore.getState().updateCurrentUser({
-      displayName: user.displayName,
-      firstName:  user.displayName.split(' ')[0],
-      email: user.email,
+      displayName: user?.displayName || '',
+      firstName:  user.displayName?.split(' ')[0] || '',
+      email: user?.email || '',
       id: userId,
       created,
       lastLogin: created,
@@ -98,12 +96,13 @@ export const storeUserData = async ({ user }: PropsStoreUserDataTypes) => {
     await createSettings();
   // Or just push data into store
   } else {
-    const lastLogin = moment().toISOString();
+    const lastLogin = dayjs().format();
     await useAuthStore.getState().updateCurrentUser({
-      displayName: user.displayName,
-      firstName:  user.displayName.split(' ')[0],
-      email: user.email,
+      displayName: userData.displayName,
+      firstName:  userData.displayName.split(' ')[0],
+      email: userData.email,
       id: userId,
+      created: userData.created,
       lastLogin,
     });
     await useAuthStore.getState().saveLastLogin(lastLogin);

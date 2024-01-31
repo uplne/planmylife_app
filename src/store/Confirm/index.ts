@@ -21,10 +21,10 @@ interface ConfirmStoreTypes extends ConfirmStore {
   startLoading: (value: boolean) => void,
 };
 
-const ConfirmStoreDefault: Partial<ConfirmStoreTypes> = {
+const ConfirmStoreDefault: ConfirmStore = {
   isOpen: false,
   title: '',
-  subtitle: null,
+  subtitle: undefined,
   modalType: CONFIRM_MODAL_TYPE.DEFAULT,
   isLoading: false,
   confirmLabel: 'Confirm',

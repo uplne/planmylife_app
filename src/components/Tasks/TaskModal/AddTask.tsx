@@ -25,7 +25,7 @@ export const AddTask = ({
   editMode = false,
 }: ComponentTypes) => {
   const LABEL = 'Add task';
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const {
     newTask,
     updateNewTask,
@@ -37,7 +37,7 @@ export const AddTask = ({
 
   useEffect(() => {
     inputRef.current?.focus();
-    updateNewTask(editMode ? task.title : '');
+    updateNewTask(editMode && task ? task.title : '');
 
     return () => {
       updateNewTask('');
@@ -67,7 +67,7 @@ export const AddTask = ({
     }
   };
 
-  const calendarOnClick = (date:Dayjs) => {
+  const calendarOnClick = (date:Dayjs | null) => {
     // if (date) {
     //   dispatch(setSchedule(date.format()));
     // } else {
@@ -124,7 +124,7 @@ export const AddTask = ({
       </div>
       <div className="taskmodal__options-wrapper">
         <h4>Schedule Task</h4>
-        {(editMode && task?.date) && <p>Changing schedule will create a new task</p>}
+        {(editMode && task?.schedule) && <p>Changing schedule will create a new task</p>}
         <DatePicker
           format={customFormat}
           showTime={{format: customTimeFormat}}

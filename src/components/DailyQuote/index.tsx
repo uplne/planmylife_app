@@ -5,8 +5,6 @@ import {
 import { fetchQuotes } from './controller';
 import { Quote } from '../Quote';
 
-import './DailyQuote.css';
-
 export const DailyQuote = () => {
   const { data: quote, error, isLoading } = useQuery({ queryKey: ['quote'], queryFn: fetchQuotes });
 
@@ -16,7 +14,7 @@ export const DailyQuote = () => {
 
   return (
     <Quote
-      className="dailyquote"
+      className="basis-2/3 flex flex-col justify-end items-end"
       quote={quote.content}
       author={quote.author}
     />

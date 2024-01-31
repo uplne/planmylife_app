@@ -70,8 +70,8 @@ export const Login = () => {
 
   return (
     <CenteredBox>
-      <Box className="login">
-        <h1 className="login__title">Hi. Where are you headed?</h1>
+      <Box className="w-full md:w-1/2">
+        <h1 className="text-3xl font-bold text-center mb-20">Hi. Where are you headed?</h1>
 
         <div className="login__wrapper">
           <IconButton

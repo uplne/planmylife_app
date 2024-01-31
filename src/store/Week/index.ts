@@ -1,12 +1,15 @@
 import { create } from 'zustand';
-import moment from 'moment';
+import dayjs from 'dayjs';
+import weekOfYear from 'dayjs/plugin/weekOfYear';
+dayjs.extend(weekOfYear);
 
 export const WEEK_ID_FORMAT = 'YYYY-MM-DD';
 
 type WeekTypes = {
   selectedWeek: string,
+  selectedWeekId: string,
   setSelectedWeek: (value: string) => void,
-  today: moment.Moment,
+  today: dayjs.Dayjs,
   udpateToday: () => void,
   currentWeekId: string,
   selectedWeekNumber: number,
@@ -20,25 +23,27 @@ type WeekTypes = {
   reset: () => void,
 };
 
-const WeekDefault: WeekTypes = {
-  selectedWeek: moment().toString(),
-  today: moment(),
+export const WeekDefault: WeekTypes = {
+  selectedWeek: dayjs().format(),
+  selectedWeekId:  dayjs().format(WEEK_ID_FORMAT),
+  today: dayjs(),
   setSelectedWeek: () => null,
   udpateToday: () => null,
-  currentWeekId: moment().format(WEEK_ID_FORMAT),
-  selectedWeekNumber: moment().week(),
-  selectedWeekStartPretty: moment().clone().startOf('week').format('MMM D, YYYY'),
-  selectedWeekEndPretty: moment().clone().endOf('week').format('MMM D, YYYY'),
-  showCurrentWeekLink: !moment(moment().format(WEEK_ID_FORMAT)).isSame(moment(moment().toString()), 'week'),
+  currentWeekId: dayjs().format(WEEK_ID_FORMAT),
+  selectedWeekNumber: dayjs().week(),
+  selectedWeekStartPretty: dayjs().clone().startOf('week').format('MMM D, YYYY'),
+  selectedWeekEndPretty: dayjs().clone().endOf('week').format('MMM D, YYYY'),
+  showCurrentWeekLink: !dayjs(dayjs().format(WEEK_ID_FORMAT)).isSame(dayjs(dayjs().toString()), 'week'),
   increaseWeek: () => null,
   decreaseWeek: () => null,
-  nextWeekId: moment().clone().add(1, 'week').format(WEEK_ID_FORMAT),
-  previousWeekId:  moment().clone().subtract(1, 'week').format(WEEK_ID_FORMAT),
+  nextWeekId: dayjs().clone().add(1, 'week').format(WEEK_ID_FORMAT),
+  previousWeekId:  dayjs().clone().subtract(1, 'week').format(WEEK_ID_FORMAT),
   reset: () => null,
 };
 
 export const useWeekStore = create<WeekTypes>((set, get) => ({
   selectedWeek: WeekDefault.selectedWeek,
+  selectedWeekId: WeekDefault.selectedWeekId,
   selectedWeekNumber: WeekDefault.selectedWeekNumber,
   selectedWeekStartPretty: WeekDefault.selectedWeekStartPretty,
   selectedWeekEndPretty: WeekDefault.selectedWeekEndPretty,
@@ -47,19 +52,19 @@ export const useWeekStore = create<WeekTypes>((set, get) => ({
 
     await set({
       selectedWeek: value,
-      selectedWeekNumber: moment(value).week(),
-      selectedWeekStartPretty: moment(value).clone().startOf('week').format('MMM D, YYYY'),
-      selectedWeekEndPretty: moment(value).clone().endOf('week').format('MMM D, YYYY'),
-      showCurrentWeekLink: !moment(currentWeekId).isSame(moment(value), 'week'),
-      nextWeekId: moment(value).clone().add(1, 'week').format(WEEK_ID_FORMAT),
-      previousWeekId: moment(value).clone().subtract(1, 'week').format(WEEK_ID_FORMAT),
+      selectedWeekNumber: dayjs(value).week(),
+      selectedWeekStartPretty: dayjs(value).clone().startOf('week').format('MMM D, YYYY'),
+      selectedWeekEndPretty: dayjs(value).clone().endOf('week').format('MMM D, YYYY'),
+      showCurrentWeekLink: !dayjs(currentWeekId).isSame(dayjs(value), 'week'),
+      nextWeekId: dayjs(value).clone().add(1, 'week').format(WEEK_ID_FORMAT),
+      previousWeekId: dayjs(value).clone().subtract(1, 'week').format(WEEK_ID_FORMAT),
     });
   },
   today: WeekDefault.today,
   udpateToday: async () => {
     await set({ 
-      today: moment(),
-      currentWeekId: moment().format(WEEK_ID_FORMAT),
+      today: dayjs(),
+      currentWeekId: dayjs().format(WEEK_ID_FORMAT),
     });
   },
   currentWeekId: WeekDefault.currentWeekId,
@@ -89,15 +94,16 @@ export const useWeekStore = create<WeekTypes>((set, get) => ({
   },
   reset: async () => {
     await set({
-      selectedWeek: moment().toString(),
-      today: moment(),
-      currentWeekId: moment().format(WEEK_ID_FORMAT),
-      selectedWeekNumber: moment().week(),
-      selectedWeekStartPretty: moment().clone().startOf('week').format('MMM D, YYYY'),
-      selectedWeekEndPretty: moment().clone().endOf('week').format('MMM D, YYYY'),
-      showCurrentWeekLink: !moment(moment().format(WEEK_ID_FORMAT)).isSame(moment(moment().toString()), 'week'),
-      nextWeekId: moment().clone().add(1, 'week').format(WEEK_ID_FORMAT),
-      previousWeekId:  moment().clone().subtract(1, 'week').format(WEEK_ID_FORMAT),
+      selectedWeek: dayjs().toString(),
+      selectedWeekId: dayjs().format(WEEK_ID_FORMAT),
+      today: dayjs(),
+      currentWeekId: dayjs().format(WEEK_ID_FORMAT),
+      selectedWeekNumber: dayjs().week(),
+      selectedWeekStartPretty: dayjs().clone().startOf('week').format('MMM D, YYYY'),
+      selectedWeekEndPretty: dayjs().clone().endOf('week').format('MMM D, YYYY'),
+      showCurrentWeekLink: !dayjs(dayjs().format(WEEK_ID_FORMAT)).isSame(dayjs(dayjs().toString()), 'week'),
+      nextWeekId: dayjs().clone().add(1, 'week').format(WEEK_ID_FORMAT),
+      previousWeekId:  dayjs().clone().subtract(1, 'week').format(WEEK_ID_FORMAT),
     });
   },
 }));

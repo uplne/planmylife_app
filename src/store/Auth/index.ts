@@ -1,24 +1,23 @@
 import { create } from 'zustand';
 import { doc, setDoc } from "firebase/firestore";
 
-import { idType } from '../../types/idtype';
 import { user } from './api';
 import { db } from '../../services/firebase';
 
 type AuthTypes = {
   currentUser: user["schemas"] | null,
-  updateCurrentUser: (values: Partial<user["schemas"]>) => void,
+  updateCurrentUser: (values: user["schemas"]) => void,
   saveCurrentUser: () => void,
   isLoggedIn: boolean,
   setIsLoggedIn: (value: boolean) => void,
   isCheckingAuthState: boolean,
   idToken: string | null,
-  uid: string,
+  uid: string | null,
   updateUID: (uid: string) => void,
   saveLastLogin: (uid: string) => void,
 };
 
-const AuthDefault: AuthTypes = {
+export const AuthDefault: AuthTypes = {
   currentUser: null,
   updateCurrentUser: () => null,
   saveCurrentUser: () => null,
@@ -74,13 +73,15 @@ const saveLastLogin = async (date: string, userId: string) => {
 
 export const useAuthStore = create<AuthTypes>((set, get) => ({
   currentUser: AuthDefault.currentUser,
-  updateCurrentUser: async (values: user["schemas"]) => {
-    // await saveAppState({ WeeklyEmailReminder: value });
+  updateCurrentUser: (values: user["schemas"]) => {
     set({ currentUser: values });
   },
   saveCurrentUser: async () => {
     const currentUser = get().currentUser;
-    await saveCurrentUser(currentUser);
+
+    if (currentUser) {
+      await saveCurrentUser(currentUser);
+    }
   },
   isLoggedIn: AuthDefault.isLoggedIn,
   setIsLoggedIn: async (value: boolean) => {
@@ -94,6 +95,9 @@ export const useAuthStore = create<AuthTypes>((set, get) => ({
   },
   saveLastLogin: async (date) => {
     const currentUser = get().currentUser;
-    await saveLastLogin(date, currentUser.id);
+
+    if (currentUser) {
+      await saveLastLogin(date, currentUser.id);
+    }
   }
 }));

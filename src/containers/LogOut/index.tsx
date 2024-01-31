@@ -10,7 +10,7 @@ import { resetAllStores } from '../../store/ResetStore';
 import './Logout.css';
 
 export const LogOut = () => {
-  const quote = sample(logoutQuotes);
+  const quote = sample(logoutQuotes) || logoutQuotes[0];
 
   useEffect(() => {
     resetAllStores();

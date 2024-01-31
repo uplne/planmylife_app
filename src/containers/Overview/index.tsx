@@ -7,8 +7,7 @@ import { WeekSelector } from "../../components/WeekSelector";
 import { DailyQuote } from "../../components/DailyQuote";
 import { Tasks } from '../../components/Tasks';
 import { WeeklyGoals } from "../../components/WeeklyGoals";
-
-import './Overview.css';
+import { Split } from './Split';
 
 export const Overview = () => {
   const navigate = useNavigate();
@@ -26,14 +25,14 @@ export const Overview = () => {
           <DailyQuote />
         </div>
 
-        <div className="container-content__split">
-          <div className="overview__split">
+        <div className="flex flex-col md:flex-row justify-between items-start">
+          <Split>
             <Tasks />
-          </div>
+          </Split>
 
-          <div className="overview__split">
+          <Split>
             <WeeklyGoals />
-          </div>
+          </Split>
         </div>
       </ContainerContent>
     </Container>

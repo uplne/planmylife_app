@@ -48,15 +48,21 @@ const saveAppState = async (values: Partial<SettingsTypes>, userId: string) => {
 export const useSettingsStateStore = create<SettingsTypes>((set, get) => ({
   WeeklyEmailReminder: SettingsDefault.WeeklyEmailReminder,
   updateWeeklyEmailReminder: async (value) => {
-    const userId = useAuthStore.getState().currentUser.id;
-    await saveAppState({ WeeklyEmailReminder: value }, userId);
-    set({ WeeklyEmailReminder: value });
+    const userId = useAuthStore.getState().currentUser?.id;
+
+    if (userId) {
+      await saveAppState({ WeeklyEmailReminder: value }, userId);
+      set({ WeeklyEmailReminder: value });
+    }
   },
   isFirstLogin: SettingsDefault.isFirstLogin,
   updateIsFirstLogin: async (value) => {
-    const userId = useAuthStore.getState().currentUser.id;
-    await saveAppState({ isFirstLogin: value }, userId);
-    set({ isFirstLogin: value });
+    const userId = useAuthStore.getState().currentUser?.id;
+    
+    if (userId) {
+      await saveAppState({ isFirstLogin: value }, userId);
+      set({ isFirstLogin: value });
+    }
   },
   tier: SettingsDefault.tier,
   dow: SettingsDefault.dow,

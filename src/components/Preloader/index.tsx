@@ -14,7 +14,7 @@ export const Preloader = ({ className = '', small = false, title = null}: PropsT
   });
 
   return (
-    <div className="preloader">
+    <div className="preloader"  data-testid="preloader">
       {title && <p>{title}</p>}
       <div className={classes}><div></div><div></div><div></div><div></div></div>
     </div>

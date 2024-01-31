@@ -15,30 +15,30 @@
     height: 16px;
     display: block;
   }
+}
 
-  &:hover {
-    svg {
-      fill: var(--color-link-hover);
-    }
+.icon-button :hover {
+  svg {
+    fill: var(--color-link-hover);
   }
+}
 
-  &--withcta {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    white-space: nowrap;
-    width: auto;
+.icon-button--withcta {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  white-space: nowrap;
+  width: auto;
 
-    .icon {
-      min-width: 16px;
-      margin-right: var(--spacing-xsmall);
-    }
-
-    &:hover {
-      color: var(--color-link-hover);
-    }
+  .icon {
+    min-width: 16px;
+    margin-right: var(--spacing-xsmall);
   }
+}
+
+.icon-button--withcta :hover {
+  color: var(--color-link-hover);
 }
 
 .icon-button--login {

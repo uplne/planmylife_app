@@ -12,7 +12,7 @@ export enum TasksTypes {
   'SCHEDULE' = 'SCHEDULE',
 };
 
-export enum LOADING {
+export enum DATA_FETCHING_STATUS {
   'NODATA' = 'NODATA',
   'FETCHING' = 'FETCHING',
   'ERROR' = 'ERROR',

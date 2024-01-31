@@ -73,7 +73,13 @@ export let SCHEDULER_PERIOD = {
   }
 };
 
-export type TaskSchedulerStoreTypes = {
+export interface TaskSchedulerStoreDefaultTypes {
+  repeatType: SchedulerTypes['1']['key'],
+  repeatPeriod: SchedulerPeriodTypes['1']['key'],
+  repeatTimes: number,
+};
+
+export interface TaskSchedulerStoreTypes extends TaskSchedulerStoreDefaultTypes {
   repeatType: SchedulerTypes['1']['key'],
   repeatPeriod: SchedulerPeriodTypes['1']['key'],
   repeatTimes: number,
@@ -83,7 +89,7 @@ export type TaskSchedulerStoreTypes = {
   resetScheduler: () => void,
 };
 
-const TaskSchedulerStoreDefault: Partial<TaskSchedulerStoreTypes> = {
+export const TaskSchedulerStoreDefault: TaskSchedulerStoreDefaultTypes = {
   repeatType: SCHEDULER_TYPE['1'].key,
   repeatPeriod: SCHEDULER_PERIOD['1'].key,
   repeatTimes: 1,

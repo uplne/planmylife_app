@@ -7,7 +7,7 @@ import { useModalStore } from '../../store/Modal';
 import './Modal.css';
 
 export const Modal = () => {
-  const modalRef = useRef(null);
+  const modalRef = useRef<HTMLInputElement | null>(null);
   const {
     isOpen,
     content,
@@ -33,12 +33,16 @@ export const Modal = () => {
   }
 
   const onClose= (e:any) => {
-    if (!modalRef.current.contains(e.target) && !disableAutoClose) {
+    if (modalRef && modalRef.current && !modalRef.current.contains(e.target) && !disableAutoClose) {
       closeModal();
     }
   };
 
   const saveModal = async () => {
+    if (!onSave) {
+      return;
+    }
+    
     await setIsLoading(true);
     await onSave();
     await setIsLoading(false);

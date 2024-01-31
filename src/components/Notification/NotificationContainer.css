@@ -1,0 +1,19 @@
+@import '../../css/constants.css';
+
+:root {
+  --notification-center-width: 300px;
+  --notification-center-bottom: 30px;
+  --notification-center-left: 5%;
+  --notification-center-max-height: 500px;
+}
+
+.notification-container {
+  position: fixed;
+  bottom: var(--notification-center-bottom);
+  left: var(--notification-center-left);
+  width: var(--notification-center-width);
+  max-height: var(--notification-center-max-height);
+  overflow-x: hidden;
+  overflow-y: auto;
+  z-index: 10000;
+}

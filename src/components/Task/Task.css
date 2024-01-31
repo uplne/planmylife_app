@@ -1,0 +1,22 @@
+@import '../../css/constants.css';
+
+.task {
+  padding: var(--spacing-small);
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task__new {
+  border-bottom: 0;
+}
+
+.task--isInactive {
+  pointer-events: none;
+  cursor: pointer;
+
+  .editbale-input__title {
+    opacity: 0.5;
+  }
+}

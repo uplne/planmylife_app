@@ -1,0 +1,162 @@
+@import '../../css/constants.css';
+
+.editable-input {
+  font-size: var(--font-size-normal);
+  width: 100%;
+  color: var(--color-header-text);
+  text-align: left;
+  cursor: pointer;
+  position: relative;
+  border-bottom: 1px solid transparent;
+}
+
+.editable-input:last-of-type {
+  border: 0;
+}
+
+.editable-input:hover:not(.row__new) .row__label {
+    position: absolute;
+    height: auto;
+    max-width: 75%;
+    min-height: 43px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    overflow: visible;
+    text-overflow: ellipsis;
+    min-width: 75%;
+  }
+
+.editable-input .row__actions .icon-button {
+    opacity: 1;
+  }
+
+ .editable-input__wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 43px;
+}
+
+ .editable-input--isCompleted {
+  cursor: default;
+
+  .button__done {
+    visibility: hidden;
+  }
+
+  .editable-input__label {
+    background: transparent;
+  }
+
+  .editable-input__title {
+    color: var(--color-text);
+  }
+}
+
+.editable-input--isCompleted.editable-input:hover,
+.editable-input--isCompleted.editable-input:focus {
+  background: transparent;
+  border-color: transparent;
+}
+
+.editable-input__input,
+.editable-input__label {
+  border: 0;
+  padding: 2px var(--spacing-small) 0 var(--spacing-small);
+  font-size: var(--font-size-normal);
+  outline-width: 0;
+  border-radius: 3px;
+  flex-grow: 2;
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  min-width: 100%;
+}
+
+.editable-input:hover,
+.editable-input:focus {
+  background: var(--color-input-bg-inactive);
+  border-bottom: 1px dashed var(--color-border-secondary);
+  border-radius: 6px;
+}
+
+.editable-input__label {
+  color: rgba(0,0,0,0.3);
+  border: 1px solid transparent;
+}
+
+.editable-input__input {
+  background: #ffffff;
+  border: 1px solid #666666;
+  width: 100%;
+}
+
+.editable-input__input:hover,
+.editable-input__input:focus {
+  border: 1px solid #666666;
+}
+
+.editable-input--hasTask {
+  .row__label {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    padding-right: var(--spacing-normal);
+  }
+}
+
+.editable-input__title {
+  color: var(--color-header-text-important);
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.editable-input--isCompleted .editable-input__title {
+  text-decoration: line-through;
+}
+
+.editable-input__container {
+  position: relative;
+  width: 100%;
+}
+
+.editable-input__button-save {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: var(--spacing-xsmall);
+  background-color: var(--color-ternary);
+  padding: 0 var(--spacing-xsmall);
+  font-size: 11px;
+  height: 20px;
+}
+
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+  color: var(--color-placeholder);
+}
+
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+ color: var(--color-placeholder);
+ opacity:  1;
+}
+
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+ color: var(--color-placeholder);
+ opacity:  1;
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+ color: var(--color-placeholder);
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+ color: var(--color-placeholder);
+}
+
+::placeholder { /* Most modern browsers support this now. */
+ color: var(--color-placeholder);
+}

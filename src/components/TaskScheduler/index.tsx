@@ -33,12 +33,12 @@ export const Scheduler = ({
     setRepeatTimes,
   } = useTaskSchedulerStore();
 
-  const handleMenuClick = async (e:Parameters<MenuProps['onClick']>[0]) => {
+  const handleMenuClick = async (e:any) => {
     const { key } = e;
     await setRepeatType(Number(key));
   };
 
-  const handleMenuPeriodClick = async (e:Parameters<MenuProps['onClick']>[0]) => {
+  const handleMenuPeriodClick = async (e:any) => {
     const { key } = e;
     await setRepeatPeriod(Number(key));
   };

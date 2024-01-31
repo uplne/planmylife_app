@@ -2,8 +2,6 @@ import classnames from 'classnames';
 
 import { quote } from '../../store/Quote/api';
 
-import './Quote.css';
-
 type ComponentTypes = {
   quote: quote['schemas']['content'],
   author: quote['schemas']['author'],
@@ -11,12 +9,12 @@ type ComponentTypes = {
 };
 
 export const Quote = ({ quote, author, className = ''}: ComponentTypes) => {
-  const classes = classnames('quote', className);
+  const classes = classnames('mb-20', className);
 
   return (
     <div className={classes}>
-      <p className="quote__quote">„{quote}”</p>
-      <p className="quote__author">- {author}</p>
+      <p className="text-2xl text-center mb-5 color-header-text italic font-quote font-bold">„{quote}”</p>
+      <p className="text-sm ml-150 color-header-text font-quote">- {author}</p>
     </div>
   );
 };

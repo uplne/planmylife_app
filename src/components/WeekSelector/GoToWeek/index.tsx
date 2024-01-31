@@ -9,7 +9,7 @@ import { ArrowCircleRight } from '../../Icons/ArrowCircleRight';
 import '../GoToCurrentWeek/GoToCurrentWeek.css';
 
 export const GoToWeek = () => {
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
 
   const onClick = () => {
@@ -18,7 +18,10 @@ export const GoToWeek = () => {
 
   const calendarOnClick = async (date: any) => {
     await gotoSelectedWeek(date.toISOString());
-    inputRef.current.blur();
+
+    if (inputRef && inputRef.current) {
+      inputRef.current.blur();
+    }
   };
 
   return (
@@ -29,10 +32,8 @@ export const GoToWeek = () => {
           picker="week" 
           onChange={calendarOnClick}
           locale={locale}
-          bordered={false}
           placeholder="Go to Week"
           value={null}
-          ref={inputRef}
         />
       </div>
     </div>

@@ -80,6 +80,7 @@ const mockTasksStore = {
   addNewTask: jest.fn(),
   updateTask: jest.fn(),
   revertCompleted: jest.fn(),
+  removeTask: jest.fn(),
 
   defaultTasksSelector: jest.fn(),
   defaultCompletedTasks: jest.fn(),

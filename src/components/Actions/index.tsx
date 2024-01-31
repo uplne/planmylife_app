@@ -2,7 +2,8 @@ import { Menu, Dropdown } from 'antd';
 
 import { TasksTypes, StatusTypes } from '../../types/status';
 import { TaskType, useTasksStore } from '../../store/Tasks/index';
-import { revertCompletedTask } from '../Tasks/controller';
+import { revertCompletedTask, saveTask } from '../Tasks/controller';
+import { useModalStore } from '../../store/Modal';
 import { IconButton } from '../../components/Buttons/IconButton';
 import {
   CheckIcon,
@@ -14,6 +15,7 @@ import {
   StopIcon,
   FolderDownloadIcon,
 } from '../../components/Icons';
+import { AddTask } from '../Tasks/TaskModal/AddTask';
 import { completeTask as completeTaskAction } from '../Tasks/controller';
 
 import { useWeekStore } from '../../store/Week';
@@ -28,19 +30,19 @@ export const Actions = ({
   task,
 }: ComponentTypes) => {
   const selectedWeekId = useWeekStore().selectedWeekId;
+  const {
+    toggleModal,
+  } = useModalStore();
 
   const completeTask = () => {
     completeTaskAction(task.id);
   };
 
-  const removeTask = () => {
-    // dispatch({
-    //   type: 'tasks/saveTasks',
-    //   payload: {
-    //     id,
-    //     title: '',
-    //   },
-    // });
+  const removeTask = async () => {
+    await saveTask({
+      ...task,
+      title: '',
+    });
   };
 
   const moveToNextWeek = () => {
@@ -56,7 +58,15 @@ export const Actions = ({
     await revertCompletedTask(task.id, false);
   };
 
-  const editTaskHandle = (e: any) => {
+  const editTaskHandler = async (e: React.MouseEvent<HTMLElement>) => {
+    await toggleModal({
+      isOpen: true,
+      content: <AddTask task={task} editMode />,
+      title: 'Edit Task',
+      onSave: () => {},
+      disableAutoClose: true,
+    });
+
     // dispatch({
     //   type: 'modal/toggleModal',
     //   payload: {
@@ -163,7 +173,7 @@ export const Actions = ({
         label: (
           <IconButton
             className="task__button"
-            onClick={editTaskHandle}
+            onClick={editTaskHandler}
             withCTA
           >
             <PencilIcon /> Edit task

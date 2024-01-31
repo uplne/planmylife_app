@@ -3,6 +3,7 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from '../../services/firebase';
 import dayjs from 'dayjs';
 import { flow, sortBy, filter, uniqBy } from 'lodash/fp';
+import remove from 'lodash/remove';
 
 import { useWeekStore } from '../Week';
 import { useAuthStore } from '../Auth';
@@ -32,6 +33,7 @@ export interface TasksStoreTypes extends TasksStoreDefaultTypes {
   addNewTask: (value: TaskType) => void,
   updateTask: (value: TaskType) => void,
   revertCompleted: (id: idType, recurringRevert?:boolean) => void,
+  removeTask: (id: idType) => void,
 
   defaultTasksSelector: () => TaskType[],
   defaultCompletedTasks: () => TaskType[],
@@ -120,9 +122,15 @@ export const useTasksStore = create<TasksStoreTypes>((set, get) => ({
     await set({ tasks: storedTasks });
   },
 
+  removeTask: async (id: idType) => {
+    const storedTasks = [...get().tasks];
+    remove(storedTasks, (task) => task.id === id);
+    await set({ tasks: storedTasks });
+  },
+
   // Selectors - DEFAULT
   defaultTasksSelector: () => {
-    const storedTasks = get().tasks;
+    const storedTasks = [...get().tasks];
     const selectedWeekId = useWeekStore.getState().selectedWeekId;
 
     const result = (flow(

@@ -13,7 +13,7 @@ import { useTaskSchedulerStore } from '../../store/TaskScheduler';
 import { StatusTypes, TasksTypes } from '../../types/status';
 import { db, Timestamp } from '../../services/firebase';
 import { idType } from "../../types/idtype";
-import { updateTaskAPI } from './api';
+import { updateTaskAPI, removeTaskAPI } from './api';
 import { showSuccessNotification } from '../Notification/controller';
 
 export const fetchDefaultData = async () => {
@@ -122,15 +122,28 @@ export const saveTask = async (task: TaskType) => {
   } else if (title === '' && id !== StatusTypes.NEW) {
     await openConfirm({
       title: 'Are you sure you want to delete task?',
-      // onConfirm: () => removeTask(id),
+      onConfirm: async () => {
+        await removeTask(id);
+        await resetConfirm();
+      }
     });
   } else {
   // If task is not empty update the title and save it
     await updateTask(task);
   }
 
-  await resetConfirm();
   await resetModal();
+};
+
+export const removeTask = async (id: idType) => {
+  const removeTask = await useTasksStore.getState().removeTask;
+
+  await removeTaskAPI(id);
+  await removeTask(id);
+  await showSuccessNotification({
+    message: 'Task removed',
+    type: NOTIFICATION_TYPE.SUCCESS
+  });
 };
 
 export const updateTask = async (task: TaskType, fromSync = false) => {
@@ -212,7 +225,6 @@ export const completeTask = async (id:idType, recurringCompleted = false) => {
   const selectedWeek = await useWeekStore.getState().selectedWeek;
   const today = await useWeekStore.getState().today;
   const updateTask = await useTasksStore.getState().updateTask;
-  const addNotification = await useNotificationStore.getState().addNotification;
 
   const task = await findTaskById(id);
 
@@ -250,7 +262,6 @@ export const completeTask = async (id:idType, recurringCompleted = false) => {
 
 export const revertCompletedTask = async (id: idType, recurringRevert: boolean) => {
   const revertCompleted = useTasksStore.getState().revertCompleted;
-  const addNotification = await useNotificationStore.getState().addNotification;
   const task = await findTaskById(id);
 
   await revertCompleted(id, recurringRevert);

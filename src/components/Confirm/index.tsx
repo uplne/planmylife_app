@@ -15,14 +15,21 @@ export const Confirm = () => {
     isLoading,
     confirmLabel,
     cancelLabel,
+    onConfirm,
+    onCancel,
+    resetConfirm,
   } = useConfirmStore();
 
-  const confirm = () => {
-    // dispatch({ type: 'confirm/confirm'});
+  const confirm = async () => {
+    await onConfirm();
   };
 
-  const cancel = () => {
-    // dispatch({ type: 'confirm/cancel'});
+  const cancel = async () => {
+    if (onCancel) {
+      await onCancel();
+    }
+
+    await resetConfirm();
   };
 
   if (!isOpen) {

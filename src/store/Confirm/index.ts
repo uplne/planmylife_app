@@ -13,6 +13,8 @@ export type ConfirmStore = {
   isLoading: boolean,
   confirmLabel: string | 'Confirm',
   cancelLabel: string | 'Cancel',
+  onConfirm: () => void,
+  onCancel?: (() => void) | null,
 };
 
 interface ConfirmStoreTypes extends ConfirmStore {
@@ -29,6 +31,8 @@ const ConfirmStoreDefault: ConfirmStore = {
   isLoading: false,
   confirmLabel: 'Confirm',
   cancelLabel: 'Cancel',
+  onConfirm: () => null,
+  onCancel: null,
 };
 
 export const useConfirmStore = create<ConfirmStoreTypes>((set, get) => ({
@@ -39,6 +43,8 @@ export const useConfirmStore = create<ConfirmStoreTypes>((set, get) => ({
   isLoading: ConfirmStoreDefault.isLoading,
   confirmLabel: ConfirmStoreDefault.confirmLabel,
   cancelLabel: ConfirmStoreDefault.cancelLabel,
+  onConfirm: ConfirmStoreDefault.onConfirm,
+  onCancel: ConfirmStoreDefault.onCancel,
 
   openConfirm: async (values: Partial<ConfirmStore>) => {
     await set({
@@ -48,6 +54,7 @@ export const useConfirmStore = create<ConfirmStoreTypes>((set, get) => ({
       subtitle: values.subtitle || ConfirmStoreDefault.subtitle,
       confirmLabel: values.confirmLabel || ConfirmStoreDefault.confirmLabel,
       cancelLabel: values.cancelLabel || ConfirmStoreDefault.cancelLabel,
+      onConfirm: values.onConfirm,
     });
   },
   resetConfirm: async () => {

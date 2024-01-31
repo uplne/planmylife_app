@@ -20,6 +20,7 @@ export const Modal = () => {
     disableAutoClose,
     isLoading,
     setIsLoading,
+    resetModal,
   } = useModalStore();
 
   useEffect(() => {
@@ -27,9 +28,7 @@ export const Modal = () => {
   }, []);
 
   const closeModal = () => {
-    // dispatch(toggleModal({
-    //   isOpen: false,
-    // }));
+    resetModal();
   }
 
   const onClose= (e:any) => {
@@ -55,7 +54,7 @@ export const Modal = () => {
   return (
     <div className="modal" onClick={onClose}>
       <div ref={modalRef} className="modal__wrapper">
-        <h2 className="modal__header">{title}</h2>
+        <h2 className="modal__header font-bold">{title}</h2>
         <div className="modal__content">
           {content}
         </div>

@@ -55,7 +55,7 @@ export type SchedulerPeriodTypes = {
   }
 };
 
-export let SCHEDULER_PERIOD = {
+export let SCHEDULER_PERIOD:SchedulerPeriodTypes = {
   1: {
     label: SchedulerPeriod.WEEK,
     labelPlural: SchedulerPeriod.WEEKS,

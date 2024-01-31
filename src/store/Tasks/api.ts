@@ -2,6 +2,7 @@ import { Timestamp } from '../../services/firebase';
 
 import { idType } from "../../types/idtype";
 import { StatusTypes, TasksTypes } from '../../types/status';
+import { SchedulerTypes, SchedulerPeriodTypes } from '../TaskScheduler';
 
 export interface TasksAPITypes {
   id: idType,
@@ -16,5 +17,8 @@ export interface TasksAPITypes {
   completed: string | null,
   moved: string[],
   schedule: string,
+  repeatType?: SchedulerTypes['1']['key'] | null,
+  repeatPeriod?: SchedulerPeriodTypes['1']['key'] | null,
+  repeatTimes?: number | null,
   repeatCompletedForWeeks: string[],
 };

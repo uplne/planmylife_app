@@ -9,7 +9,7 @@ import { useWeekStore } from '../../store/Week';
 import { useNotificationStore, NOTIFICATION_TYPE } from "../../store/Notification";
 import { useConfirmStore } from '../../store/Confirm';
 import { useModalStore } from '../../store/Modal';
-import { useTaskSchedulerStore } from '../../store/TaskScheduler';
+import { useTaskSchedulerStore, SCHEDULER_TYPE } from '../../store/TaskScheduler';
 import { StatusTypes, TasksTypes } from '../../types/status';
 import { db, Timestamp } from '../../services/firebase';
 import { idType } from "../../types/idtype";
@@ -155,11 +155,15 @@ export const updateTask = async (task: TaskType, fromSync = false) => {
     newTask.id = uuidv4();
     await createNewTask(newTask);
   } else {
-    // yield put(updateTask(newTask));
-    // yield call(saveTaskToDB, newTask.id);
+    const updateTask = await useTasksStore.getState().updateTask;
+    await updateTask(newTask);
+    await saveTaskToDB(task.id);
   }
 
-  // yield call(successNotification, NOTIFICATION_MSG.UPDATED, NOTIFICATION_TYPE.SUCCESS);
+  await showSuccessNotification({
+    message: 'Task saved',
+    type: NOTIFICATION_TYPE.SUCCESS
+  });
 };
 
 export const createNewTask = async (task: TaskType) => {
@@ -273,4 +277,75 @@ export const revertCompletedTask = async (id: idType, recurringRevert: boolean) 
   });
 
   return task;
+};
+
+export const saveEditedTask = async (id:idType) => {
+  const updateNewTask = useTasksStore.getState().updateNewTask;
+  const resetModal = useModalStore.getState().resetModal;
+  const storedTask:TaskType = await findTaskById(id);
+  const {
+    newTask:newTaskTitle,
+    schedule,
+  } = await useTasksStore.getState();
+  const { 
+    repeatType,
+    repeatTimes,
+    repeatPeriod,
+  } = useTaskSchedulerStore.getState();
+
+  let newTask = null;
+
+  // If task is a recurring task we need to create a new one and close/stop the edited one
+  // But only if we change recurring or schedule
+  if (storedTask.type === TasksTypes.RECURRING && (
+    Boolean(schedule) !== Boolean(storedTask.schedule) ||
+    repeatType !== storedTask.repeatType ||
+    repeatTimes !== storedTask.repeatTimes ||
+    repeatPeriod !== storedTask.repeatPeriod)) {
+    newTask = {
+      ...storedTask,
+      id: StatusTypes.NEW,
+      type: TasksTypes.DEFAULT,
+      title: newTaskTitle,
+    };
+
+    if (schedule) {
+      newTask.schedule = schedule;
+      newTask.type = TasksTypes.SCHEDULE;
+    }
+
+    if (repeatType !== SCHEDULER_TYPE['1'].key) {
+      newTask = Object.assign({}, newTask, {
+        repeatType,
+        repeatTimes,
+        repeatPeriod,
+        type: TasksTypes.RECURRING,
+      });
+    }
+
+    // yield call(completeRecurring, { payload: id });
+  } else {
+    newTask = Object.assign({}, storedTask, {
+      title: newTaskTitle,
+    });
+
+    if (schedule) {
+      newTask.schedule = schedule;
+      newTask.type = TasksTypes.SCHEDULE;
+    }
+
+    // It's recurring task
+    if (repeatType !== SCHEDULER_TYPE['1'].key) {
+      newTask = Object.assign({}, newTask, {
+        repeatType,
+        repeatTimes,
+        repeatPeriod,
+        type: TasksTypes.RECURRING,
+      });
+    }
+  }
+
+  await saveTask(newTask);
+  await resetModal();
+  await updateNewTask('');
 };

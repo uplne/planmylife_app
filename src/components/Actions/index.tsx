@@ -2,7 +2,7 @@ import { Menu, Dropdown } from 'antd';
 
 import { TasksTypes, StatusTypes } from '../../types/status';
 import { TaskType, useTasksStore } from '../../store/Tasks/index';
-import { revertCompletedTask, saveTask } from '../Tasks/controller';
+import { revertCompletedTask, saveTask, saveEditedTask } from '../Tasks/controller';
 import { useModalStore } from '../../store/Modal';
 import { IconButton } from '../../components/Buttons/IconButton';
 import {
@@ -63,23 +63,9 @@ export const Actions = ({
       isOpen: true,
       content: <AddTask task={task} editMode />,
       title: 'Edit Task',
-      onSave: () => {},
+      onSave: () => saveEditedTask(task.id),
       disableAutoClose: true,
     });
-
-    // dispatch({
-    //   type: 'modal/toggleModal',
-    //   payload: {
-    //     isOpen: true,
-    //     content: <AddTask task={raw} editMode />,
-    //     title: 'Edit Task',
-    //     disableAutoClose: true,
-    //     onSave: () => dispatch({
-    //       type: 'tasks/saveEditedTask',
-    //       payload: raw,
-    //     }),
-    //   },
-    // });
   };
 
   const removeRecurringFromThisWeek = () => {};//dispatch({ type: 'tasks/removeRecurringFromWeek', payload: id });

@@ -90,13 +90,15 @@ export const useTasksStore = create<TasksStoreTypes>((set, get) => ({
   },
 
   updateTask: async (newTaskData: TaskType) => {
-    const storedTasks = await get().tasks;
+    const storedTasks = [...await get().tasks];
     const index = storedTasks.findIndex((task) => task.id === newTaskData.id);
 
     storedTasks[index] = {
       ...storedTasks[index],
       ...newTaskData,
     };
+
+    console.log('storedTasks: ', storedTasks);
 
     await set({ tasks: storedTasks });
   },

@@ -16,7 +16,7 @@ export interface TasksAPITypes {
   assignedTimestamp: Timestamp | null,
   completed: string | null,
   moved: string[],
-  schedule: string,
+  schedule?: string | null,
   repeatType?: SchedulerTypes['1']['key'] | null,
   repeatPeriod?: SchedulerPeriodTypes['1']['key'] | null,
   repeatTimes?: number | null,

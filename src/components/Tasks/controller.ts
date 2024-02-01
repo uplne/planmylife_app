@@ -83,7 +83,7 @@ export const saveNewTask = async () => {
     assignedTimestamp: null,
     completed: null,
     moved: [],
-    schedule: '',
+    schedule: null,
     repeatCompletedForWeeks: [],
   };
 
@@ -106,7 +106,6 @@ export const saveNewTask = async () => {
   //   };
   // }
 
-  console.log(saveTask);
   await saveTask(newTaskData);
 };
 

@@ -11,7 +11,7 @@ import { useConfirmStore } from '../../store/Confirm';
 import { useModalStore } from '../../store/Modal';
 import { useTaskSchedulerStore, SCHEDULER_TYPE } from '../../store/TaskScheduler';
 import { StatusTypes, TasksTypes } from '../../types/status';
-import { db, Timestamp } from '../../services/firebase';
+import { db, Timestamp, CollectionType } from '../../services/firebase';
 import { idType } from "../../types/idtype";
 import { updateTaskAPI, removeTaskAPI } from './api';
 import { showSuccessNotification } from '../Notification/controller';
@@ -198,13 +198,13 @@ export const saveTaskToDB = async (id: idType) => {
   }
 
   try {
-    let collection = 'default';
+    let collection:CollectionType = 'default';
 
-    // // It's recurring task
-    // if ('type' in taskData && (taskData.type === TASK_TYPE.RECURRING
-    //   || taskData.type === TASK_TYPE.SCHEDULED_RECURRING)) {
-    //   collection = 'recurring';
-    // }
+    // It's recurring task
+    if (taskData && 'type' in taskData && (taskData.type === TasksTypes.RECURRING
+      || taskData.type === TasksTypes.SCHEDULED_RECURRING)) {
+      collection = 'recurring';
+    }
 
     try {
       const docRef = doc(db, `tasks/${userId}/${collection}/${id}`);
@@ -348,4 +348,43 @@ export const saveEditedTask = async (id:idType) => {
   await saveTask(newTask);
   await resetModal();
   await updateNewTask('');
+};
+
+export const moveToNextWeek = async (id:idType) => {
+  const storedTask:TaskType = await findTaskById(id);
+
+  let movedArray:string[] = [];
+
+  if ('moved' in storedTask) {
+    movedArray = [...storedTask.moved];
+  }
+
+  if (movedArray.length >= 3) {
+    const { openConfirm, resetConfirm } = useConfirmStore.getState();
+    
+    // Task has been moved 3 times, time to delete it
+    await openConfirm({
+      title: 'You moved this task three times already! Would you like to remove it from weekly planning?',
+      subtitle: "It's a good practise to split tasks that you are struggling to complete or remove them from your goals altogether.",
+      confirmLabel: 'Yes, remove',
+      cancelLabel: 'No, keep',
+      onConfirm: async () => {
+        await removeTask(id);
+        await resetConfirm();
+        return;
+      }
+    });
+  }
+
+  if (storedTask?.assigned) {
+    movedArray.push(storedTask.assigned);
+    const newTask = {
+      ...storedTask,
+      moved: movedArray,
+    };
+
+    newTask.assigned = dayjs(storedTask.assigned).add(7, 'days').format();
+
+    await updateTask(newTask);
+  }
 };

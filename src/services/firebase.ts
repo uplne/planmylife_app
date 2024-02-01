@@ -38,6 +38,8 @@ export const functions = getFunctions(app);
 
 export const GoogleAuth = new GoogleAuthProvider();
 
+export type CollectionType = 'default' | 'recurring';
+
 export {
   GoogleAuthProvider,
   signInWithRedirect,

@@ -1,7 +1,7 @@
 import { doc, setDoc, deleteDoc } from "firebase/firestore";
 
 import { TasksTypes } from '../../types/status';
-import { db } from '../../services/firebase';
+import { db, CollectionType } from '../../services/firebase';
 
 import { TaskType } from '../../store/Tasks';
 import { useAuthStore } from '../../store/Auth';
@@ -17,7 +17,7 @@ export const updateTaskAPI = async (newTaskData: TaskType) => {
   }
 
   try {
-    let collection = 'default';
+    let collection:CollectionType = 'default';
 
     // It's recurring task
     if ('type' in newTaskData && (newTaskData.type === TasksTypes.RECURRING
@@ -44,7 +44,7 @@ export const removeTaskAPI = async (id: idType) => {
     const storedTasks = await useTasksStore.getState().tasks;
     const taskData = storedTasks.find((task) => task.id === id);
 
-    let collection = 'default';
+    let collection:CollectionType = 'default';
 
     // It's recurring task
     if (taskData && 'type' in taskData &&

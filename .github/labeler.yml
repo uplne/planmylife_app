@@ -1,0 +1,14 @@
+store:
+  - 'src/store/**'
+
+tasks:
+  - 'src/components/Tasks/**'
+  - 'src/components/Task/**'
+  - 'src/store/Tasks/**'
+
+containers:
+  - 'src/containers/**'
+
+test:
+  - src/**/*.test.ts
+  - src/**/*.test.tsx

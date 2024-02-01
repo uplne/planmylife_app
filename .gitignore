@@ -17,6 +17,7 @@ yarn-error.*
 
 # testing
 /coverage
+/actions-runner
 
 # production
 /build

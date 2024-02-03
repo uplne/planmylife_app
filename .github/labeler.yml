@@ -9,6 +9,12 @@ tasks:
 containers:
   - 'src/containers/**'
 
-test:
+components:
+  - 'src/components/**'
+
+tests:
   - src/**/*.test.ts
   - src/**/*.test.tsx
+
+Workflows:
+  - .github/**

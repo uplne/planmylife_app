@@ -1,5 +1,5 @@
-name: learn-github-actions
-run-name: ${{ github.actor }} is learning GitHub Actions
+name: On Push Tests
+run-name: ${{ github.actor }} is running on-push-tests
 on: [push]
 jobs:
   check-bats-version:

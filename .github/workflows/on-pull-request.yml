@@ -1,4 +1,4 @@
-name: on-pull-request
+name: On Pull Request
 run-name: ${{ github.actor }} running on-pull-request
 on: [opened, edited, reopened]
 jobs:

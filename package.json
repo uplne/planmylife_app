@@ -34,12 +34,23 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prepare": "husky"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "prettier"
+    ]
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --quiet --fix",
+      "prettier --write --ignore-unknown"
+    ],
+    "*.{json,html}": [
+      "prettier --write --ignore-unknown"
     ]
   },
   "browserslist": {
@@ -57,7 +68,12 @@
   "devDependencies": {
     "@types/lodash": "^4.14.202",
     "autoprefixer": "^10.4.17",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-github": "^4.10.1",
+    "husky": "^9.0.10",
+    "lint-staged": "^15.2.1",
     "postcss": "^8.4.33",
+    "prettier": "^3.2.4",
     "tailwindcss": "^3.4.1"
   }
 }

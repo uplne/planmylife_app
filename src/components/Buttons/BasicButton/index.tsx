@@ -45,6 +45,7 @@ export const BasicButton = ({
       className={classes}
       onClick={onClick}
       disabled={disabled}
+      role="button"
       {...otherProps}
     >
       {loading && <Preloader className="button__loader" />}

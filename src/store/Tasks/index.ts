@@ -1,12 +1,9 @@
 import { create } from 'zustand';
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from '../../services/firebase';
 import dayjs from 'dayjs';
 import { flow, sortBy, filter, uniqBy } from 'lodash/fp';
 import remove from 'lodash/remove';
 
 import { useWeekStore } from '../Week';
-import { useAuthStore } from '../Auth';
 import { TasksAPITypes } from './api';
 import { DATA_FETCHING_STATUS, TasksTypes, StatusTypes } from '../../types/status';
 import { idType } from '../../types/idtype';
@@ -45,15 +42,6 @@ export const TasksStoreDefault: TasksStoreDefaultTypes = {
   tasks: [],
   newTask: '',
   schedule: undefined,
-};
-
-const saveAppState = async (values: Partial<TasksStoreTypes>, userId: string) => {
-  try {
-    const docRef = doc(db, 'settings', userId);
-    await updateDoc(docRef, { ...values });
-  } catch (e) {
-    console.log('Saving settings error: ', e);
-  }
 };
 
 export const useTasksStore = create<TasksStoreTypes>((set, get) => ({
@@ -97,8 +85,6 @@ export const useTasksStore = create<TasksStoreTypes>((set, get) => ({
       ...storedTasks[index],
       ...newTaskData,
     };
-
-    console.log('storedTasks: ', storedTasks);
 
     await set({ tasks: storedTasks });
   },

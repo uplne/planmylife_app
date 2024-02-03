@@ -26,18 +26,14 @@ type useFetchHookTypes = {
 
 export const useFetchData = ({
   selectedWeek,
-}: useFetchHookTypes) => {
-  return useQuery({
-    queryKey: ['tasks', selectedWeek],
-    queryFn: fetchDefaultData,
-  });
-}
+}: useFetchHookTypes) => useQuery({
+  queryKey: ['tasks', selectedWeek],
+  queryFn: fetchDefaultData,
+});
 
 export const Tasks = () => {
   const {
-    tasks,
     isLoading,
-    updateIsLoading,
   } = useTasksStore();
   const defaultActiveTasks:TaskType[] = useTasksStore((state) => state.defaultTasksSelector());
   const allCompletedTasks:TaskType[] = useTasksStore((state) => state.allCompletedTasks());
@@ -48,14 +44,8 @@ export const Tasks = () => {
   const {
     toggleModal,
   } = useModalStore();
-  const { data } = useFetchData({ selectedWeek });
+  useFetchData({ selectedWeek });
   const loading = isLoading !== DATA_FETCHING_STATUS.LOADED;
-
-  // useEffect(() => {
-  //   if (data === 'success') {
-  //     updateIsLoading(DATA_FETCHING_STATUS.LOADED);
-  //   }
-  // }, [data]);
 
   const addTaskSave = async () => {
     await saveNewTask();
@@ -77,7 +67,7 @@ export const Tasks = () => {
   return (
     <TasksBox>
       <Box>
-        <SubHeading title="Tasks" />
+        <SubHeading>Tasks</SubHeading>
         {loading && <Preloader small />}
         {!loading &&
           <>

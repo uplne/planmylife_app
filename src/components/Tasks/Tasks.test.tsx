@@ -1,14 +1,18 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '@testing-library/jest-dom';
 import dayjs from 'dayjs';
 
 import { Tasks } from './';
-import { useTasksStore, TasksStoreDefault, TaskType } from '../../store/Tasks';
-import { StatusTypes, TasksTypes } from '../../types/status';
+import { useTasksStore, TasksStoreDefault } from '../../store/Tasks';
+import {
+  mockedTaskDataDefault,
+  mockedTaskDataDefaultCompleted,
+} from '../../store/Tasks/TasksStore.mock';
+import { DATA_FETCHING_STATUS } from '../../types/status';
 import { useWeekStore, WeekDefault } from '../../store/Week';
 import { useModalStore, ModalStoreDefault } from '../../store/Modal';
-import { fetchDefaultData } from './controller';
+import { useFetchData } from './index';
 
 const queryClient = new QueryClient();
 
@@ -17,24 +21,6 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
     {children}
   </QueryClientProvider>
 );
-
-const mockedTaskData:TaskType[] = [
-  {
-    id: 'id1',
-    type: TasksTypes.DEFAULT,
-    status: StatusTypes.ACTIVE,
-    title: 'Test task 1',
-    created: null,
-    createdTimestamp: null,
-    updated: null,
-    assigned: null,
-    assignedTimestamp: null,
-    completed: null,
-    moved: [],
-    schedule: dayjs().format(),
-    repeatCompletedForWeeks: [] ,
-  }
-];
 
 jest.mock('firebase/firestore', () => {
   const actualTracker = jest.requireActual('firebase/firestore');
@@ -54,11 +40,12 @@ jest.mock('../../services/firebase', () => {
     db: 'firestore',
   };
 });
+
 jest.mock('./controller', () => {
   const actualTracker = jest.requireActual('./controller');
   return {
     ...actualTracker,
-    fetchDefaultData: jest.fn(),
+    fetchDefaultData: () => Promise.resolve(mockedTaskDataDefault),
   };
 });
 
@@ -73,26 +60,74 @@ describe("Tasks", () => {
     useModalStore.setState({
       ...ModalStoreDefault,
     });
-
-    // jest.mock('@tanstack/react-query', () => ({
-    //   useQuery: jest.fn().mockReturnValue(({ data: mockedTaskData, status: 'success', error:{} }))
-    //  }));
   });
 
-  test('Render loader', async () => {
-    render(<Tasks />, { wrapper });
-    await waitFor(() => expect(screen.getByTestId('preloader')).toBeInTheDocument());
+  test('Fetch data', async () => {
+    const { result } = renderHook(() => useFetchData({ selectedWeek: dayjs().format()}), { wrapper })
+
+    await waitFor(() => expect(result.current.data).toStrictEqual(mockedTaskDataDefault));
   });
 
-  xtest('Fetch task data', async () => {
-    render(<Tasks />, { wrapper });
-    await waitFor(() => expect(screen.getByTestId('preloader')).toBeInTheDocument());
+  describe('Initial loading', () => {
+    test('Render subheader with Tasks', async () => {
+      render(<Tasks />, { wrapper });
+      
+      expect(await screen.findByText('Tasks')).toBeInTheDocument();
+    });
+
+    test('Add task button is not loaded by default', async () => {
+      render(<Tasks />, { wrapper });
+      
+      expect(await screen.queryByText('Add task')).not.toBeInTheDocument();
+    });
+
+    test('Render loader', async () => {
+      render(<Tasks />, { wrapper });
+      await waitFor(() => expect(screen.getByTestId('preloader')).toBeInTheDocument());
+    });
   });
 
-  xtest('renders tasks', () => {
-    render(<Tasks />, { wrapper });
-    const tasksTitle = screen.getByText(/Tasks/i);
+  describe('After task loaded', () => {
+    beforeEach(() => {
+      useTasksStore.setState({
+        ...TasksStoreDefault,
+        tasks: [
+          ...mockedTaskDataDefault,
+          ...mockedTaskDataDefaultCompleted,
+        ],
+        isLoading: DATA_FETCHING_STATUS.LOADED,
+      });
+    });
+
+    test('Render subheader with Tasks', async () => {
+      render(<Tasks />, { wrapper });
+      
+      expect(await screen.findByText('Tasks')).toBeInTheDocument();
+    });
+
+    test('Add task button is loaded', async () => {
+      render(<Tasks />, { wrapper });
+      
+      await waitFor(() => expect(screen.queryByText('Add task')).toBeInTheDocument());
+    });
+
+    test('Show - This week', async () => {
+      render(<Tasks />, { wrapper });
+      
+      await waitFor(() => expect(screen.queryByText('This week')).toBeInTheDocument());
+    });
+
+    test('Show - Completed', async () => {
+      render(<Tasks />, { wrapper });
+      
+      await waitFor(() => expect(screen.queryByText('Completed')).toBeInTheDocument());
+    });
+  });
+
+  // xtest('renders tasks', () => {
+  //   render(<Tasks />, { wrapper });
+  //   const tasksTitle = screen.getByText(/Tasks/i);
   
-    expect(tasksTitle).toBeInTheDocument();
-  });
+  //   expect(tasksTitle).toBeInTheDocument();
+  // });
 })

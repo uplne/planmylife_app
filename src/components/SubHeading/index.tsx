@@ -1,6 +1,6 @@
 type ComponentTypes =  {
-  title: string,
+  children: React.ReactNode,
 };
 
-export const SubHeading = ({ title }: ComponentTypes) =>
-  <div className="text-2xl font-bold w-full text-left my-0 mx-auto py-15 px-0">{title}</div>;
+export const SubHeading = ({ children }: ComponentTypes) =>
+  <div className="text-2xl font-bold w-full text-left my-0 mx-auto py-15 px-0">{children}</div>;

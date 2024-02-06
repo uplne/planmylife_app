@@ -2,7 +2,7 @@ name: On Push Tests
 run-name: ${{ github.actor }} is running on-push-tests
 on: [push]
 jobs:
-  check-bats-version:
+  run-tests:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4

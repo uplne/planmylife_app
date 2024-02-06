@@ -4,7 +4,7 @@ import flow from "lodash/fp/flow";
 import sortBy from "lodash/fp/sortBy";
 import filter from "lodash/fp/filter";
 import uniqBy from "lodash/fp/uniqBy";
-import remove from "lodash-es/remove";
+import remove from "lodash/remove";
 
 import { useWeekStore } from "../Week";
 import { TasksAPITypes } from "./api";

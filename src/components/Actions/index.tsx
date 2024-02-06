@@ -58,7 +58,7 @@ export const Actions = ({ task }: ComponentTypes) => {
     await revertCompletedTask(task.id, false);
   };
 
-  const editTaskHandler = async (e: React.MouseEvent<HTMLElement>) => {
+  const editTaskHandler = async () => {
     await toggleModal({
       isOpen: true,
       content: <AddTask task={task} editMode />,

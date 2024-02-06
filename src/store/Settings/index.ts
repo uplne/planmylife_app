@@ -1,31 +1,30 @@
-import { create } from 'zustand';
-import moment from 'moment';
-import dayjs from 'dayjs';
-import updateLocale from 'dayjs/plugin/updateLocale';
+import { create } from "zustand";
+import dayjs from "dayjs";
+import updateLocale from "dayjs/plugin/updateLocale";
 import { doc, updateDoc } from "firebase/firestore";
-import { db } from '../../services/firebase';
+import { db } from "../../services/firebase";
 
-import { useWeekStore } from '../Week';
-import { useAuthStore } from '../Auth';
-import { settings, TIER, DOW } from './api';
+import { useWeekStore } from "../Week";
+import { useAuthStore } from "../Auth";
+import { settings, TIER, DOW } from "./api";
 
 export enum LOADING {
-  'NODATA' = 'NODATA',
-  'FETCHING' = 'FETCHING',
-  'ERROR' = 'ERROR',
-  'LOADED' = 'LOADED',
-};
+  "NODATA" = "NODATA",
+  "FETCHING" = "FETCHING",
+  "ERROR" = "ERROR",
+  "LOADED" = "LOADED",
+}
 
 type SettingsTypes = {
-  WeeklyEmailReminder: settings['schemas']['WeeklyEmailReminder'],
-  updateWeeklyEmailReminder: (value: boolean) => void,
-  isFirstLogin: settings['schemas']['isFirstLogin'],
-  updateIsFirstLogin: (value: boolean) => void,
-  tier: settings['schemas']['tier'],
-  dow: settings['schemas']['dayOfWeek'],
-  isLoading: LOADING,
-  updateIsLoading: (value: LOADING) => void,
-  updateLocale: (value: DOW) => void,
+  WeeklyEmailReminder: settings["schemas"]["WeeklyEmailReminder"];
+  updateWeeklyEmailReminder: (value: boolean) => void;
+  isFirstLogin: settings["schemas"]["isFirstLogin"];
+  updateIsFirstLogin: (value: boolean) => void;
+  tier: settings["schemas"]["tier"];
+  dow: settings["schemas"]["dayOfWeek"];
+  isLoading: LOADING;
+  updateIsLoading: (value: LOADING) => void;
+  updateLocale: (value: DOW) => void;
 };
 
 const SettingsDefault = {
@@ -38,10 +37,10 @@ const SettingsDefault = {
 
 const saveAppState = async (values: Partial<SettingsTypes>, userId: string) => {
   try {
-    const docRef = doc(db, 'settings', userId);
+    const docRef = doc(db, "settings", userId);
     await updateDoc(docRef, { ...values });
   } catch (e) {
-    console.log('Saving settings error: ', e);
+    console.log("Saving settings error: ", e);
   }
 };
 
@@ -58,7 +57,7 @@ export const useSettingsStateStore = create<SettingsTypes>((set, get) => ({
   isFirstLogin: SettingsDefault.isFirstLogin,
   updateIsFirstLogin: async (value) => {
     const userId = useAuthStore.getState().currentUser?.id;
-    
+
     if (userId) {
       await saveAppState({ isFirstLogin: value }, userId);
       set({ isFirstLogin: value });
@@ -72,13 +71,8 @@ export const useSettingsStateStore = create<SettingsTypes>((set, get) => ({
   },
   updateLocale: async (value: DOW) => {
     await set({ dow: value });
-    moment.updateLocale('en', {
-      week: {
-        dow: value,
-      },
-    });
     dayjs.extend(updateLocale);
-    dayjs.updateLocale('en', {
+    dayjs.updateLocale("en", {
       weekStart: value,
     });
     await useWeekStore.getState().reset();

@@ -1,39 +1,39 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 export type ModalStore = {
-  isOpen: boolean,
-  content?: React.ReactNode | null,
-  onSave?: (() => void) | null,
-  title: string,
-  saveDisabled?: boolean,
-  noOnSave?: boolean,
-  cancelLabel?: string,
-  saveLabel?: string,
-  disableAutoClose?: boolean,
-  isLoading?: boolean,
+  isOpen: boolean;
+  content?: React.ReactNode | null;
+  onSave?: (() => void) | null;
+  title: string;
+  saveDisabled?: boolean;
+  noOnSave?: boolean;
+  cancelLabel?: string;
+  saveLabel?: string;
+  disableAutoClose?: boolean;
+  isLoading?: boolean;
 };
 
 interface ModalStoreTypes extends ModalStore {
-  toggleModal: (values: ModalStore) => void, 
-  resetModal: () => void,
-  setIsLoading: (value: boolean) => void,
-  toggleSaveDisable: (value: boolean) => void,
-};
+  toggleModal: (values: ModalStore) => void;
+  resetModal: () => void;
+  setIsLoading: (value: boolean) => void;
+  toggleSaveDisable: (value: boolean) => void;
+}
 
 export const ModalStoreDefault: ModalStore = {
   isOpen: false,
   content: null,
   onSave: null,
-  title: '',
+  title: "",
   saveDisabled: true,
   noOnSave: false,
-  cancelLabel: 'Cancel',
-  saveLabel: 'Save',
+  cancelLabel: "Cancel",
+  saveLabel: "Save",
   disableAutoClose: false,
   isLoading: false,
 };
 
-export const useModalStore = create<ModalStoreTypes>((set, get) => ({
+export const useModalStore = create<ModalStoreTypes>((set) => ({
   isOpen: ModalStoreDefault.isOpen,
   content: ModalStoreDefault.content,
   onSave: ModalStoreDefault.onSave,
@@ -66,13 +66,13 @@ export const useModalStore = create<ModalStoreTypes>((set, get) => ({
       cancelLabel: cancelLabel,
       saveLabel: saveLabel,
       disableAutoClose: disableAutoClose,
-    })
+    });
   },
   resetModal: async () => {
     await set({
       isOpen: false,
       content: null,
-      title: '',
+      title: "",
       onSave: () => {},
       isLoading: false,
     });

@@ -1,23 +1,23 @@
-import classnames from 'classnames';
+import classnames from "classnames";
 
-import './SimpleInput.css';
+import "./SimpleInput.css";
 
 type ComponentPropTypes = {
-  className?: string,
-  value?: string | number,
-  onChange: (e: any) => void,
-  placeholder?: string,
-  type?: string,
+  className?: string;
+  value?: string | number;
+  onChange: (e: any) => void;
+  placeholder?: string;
+  type?: string;
 };
 
 export const SimpleInput = ({
   className = undefined,
-  value = '',
+  value = "",
   onChange,
-  placeholder = '',
-  type = 'text',
-}:ComponentPropTypes) => {
-  const classes = classnames('simpleinput', className);
+  placeholder = "",
+  type = "text",
+}: ComponentPropTypes) => {
+  const classes = classnames("simpleinput", className);
 
   return (
     <input

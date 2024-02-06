@@ -1,20 +1,20 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 import { doc, setDoc } from "firebase/firestore";
 
-import { user } from './api';
-import { db } from '../../services/firebase';
+import { user } from "./api";
+import { db } from "../../services/firebase";
 
 type AuthTypes = {
-  currentUser: user["schemas"] | null,
-  updateCurrentUser: (values: user["schemas"]) => void,
-  saveCurrentUser: () => void,
-  isLoggedIn: boolean,
-  setIsLoggedIn: (value: boolean) => void,
-  isCheckingAuthState: boolean,
-  idToken: string | null,
-  uid: string | null,
-  updateUID: (uid: string) => void,
-  saveLastLogin: (uid: string) => void,
+  currentUser: user["schemas"] | null;
+  updateCurrentUser: (values: user["schemas"]) => void;
+  saveCurrentUser: () => void;
+  isLoggedIn: boolean;
+  setIsLoggedIn: (value: boolean) => void;
+  isCheckingAuthState: boolean;
+  idToken: string | null;
+  uid: string | null;
+  updateUID: (uid: string) => void;
+  saveLastLogin: (uid: string) => void;
 };
 
 export const AuthDefault: AuthTypes = {
@@ -33,40 +33,25 @@ export const AuthDefault: AuthTypes = {
 export const getAppData = async () => {
   try {
     // load settings from firebase
-  } catch(e) {
-    console.log('Reading error: ', e);
-  }
-};
-
-const saveAppState = async (values: Partial<AuthTypes>) => {
-  try {
-    // save settings to firebase
   } catch (e) {
-    console.log('Saving error: ', e);
+    console.log("Reading error: ", e);
   }
-};
-
-const updateAppState = async (values:Partial<AuthTypes>, state: AuthTypes) => {
-  await saveAppState({
-    ...state,
-    ...values,
-  });
 };
 
 const saveCurrentUser = async (currentUser: user["schemas"]) => {
   try {
-    const docRef = doc(db, 'users', currentUser.id);
+    const docRef = doc(db, "users", currentUser.id);
     await setDoc(docRef, { ...currentUser }, { merge: true });
-  } catch(e) {
+  } catch (e) {
     console.log(e);
   }
 };
 
 const saveLastLogin = async (date: string, userId: string) => {
   try {
-    const docRef = doc(db, 'users', userId);
+    const docRef = doc(db, "users", userId);
     await setDoc(docRef, { lastLogin: date }, { merge: true });
-  } catch(e) {
+  } catch (e) {
     console.log(e);
   }
 };
@@ -99,5 +84,5 @@ export const useAuthStore = create<AuthTypes>((set, get) => ({
     if (currentUser) {
       await saveLastLogin(date, currentUser.id);
     }
-  }
+  },
 }));

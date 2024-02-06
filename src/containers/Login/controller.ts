@@ -1,13 +1,19 @@
 import { User as FirebaseUser, UserCredential } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import dayjs from 'dayjs';
-import { sha256 } from 'js-sha256';
+import dayjs from "dayjs";
+import { sha256 } from "js-sha256";
 
-import { GoogleAuth, auth, signInWithRedirect, db, GoogleAuthProvider } from '../../services/firebase';
+import {
+  GoogleAuth,
+  auth,
+  signInWithRedirect,
+  db,
+  GoogleAuthProvider,
+} from "../../services/firebase";
 import { useSettingsStateStore } from "../../store/Settings";
-import { fetchSettings, createSettings } from '../Settings/controller';
-import { useAuthStore } from '../../store/Auth';
-import { useAppStore } from '../../store/App';
+import { fetchSettings, createSettings } from "../Settings/controller";
+import { useAuthStore } from "../../store/Auth";
+import { useAppStore } from "../../store/App";
 
 export const getUserId = (uid: string) => {
   return sha256(uid);
@@ -15,17 +21,17 @@ export const getUserId = (uid: string) => {
 
 export const LoginWithGoogle = async () => {
   await useAppStore.getState().setIsLoading(true);
-  GoogleAuth.addScope('https://www.googleapis.com/auth/userinfo.email');
-  GoogleAuth.addScope('https://www.googleapis.com/auth/userinfo.profile');
+  GoogleAuth.addScope("https://www.googleapis.com/auth/userinfo.email");
+  GoogleAuth.addScope("https://www.googleapis.com/auth/userinfo.profile");
   auth.useDeviceLanguage();
-  GoogleAuth.setCustomParameters({ prompt: 'select_account'});
+  GoogleAuth.setCustomParameters({ prompt: "select_account" });
 
   // TODO Signing with redirect:  FirebaseError: Firebase: Error (auth/popup-blocked).
 
   try {
     await signInWithRedirect(auth, GoogleAuth);
   } catch (error) {
-    console.error('Signing with redirect: ', error);
+    console.error("Signing with redirect: ", error);
   }
 };
 
@@ -37,7 +43,7 @@ export const ProcessGoogleRedirect = async (result: UserCredential) => {
 
 export const loadUserFromDB = async (userId: string) => {
   try {
-    const docRef = doc(db, 'users', userId);
+    const docRef = doc(db, "users", userId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
@@ -49,13 +55,13 @@ export const loadUserFromDB = async (userId: string) => {
 
       return null;
     }
-  } catch(e) {
+  } catch (e) {
     console.log(e);
   }
 };
 
 type PropsStoreUserDataTypes = {
-  user: FirebaseUser,
+  user: FirebaseUser;
 };
 
 export const storeUserData = async ({ user }: PropsStoreUserDataTypes) => {
@@ -67,7 +73,7 @@ export const storeUserData = async ({ user }: PropsStoreUserDataTypes) => {
     userData = await loadUserFromDB(userId);
   } catch (e) {
     // Request to retrieve user data failed. We have to assume that user might already exist so we need to throw some error and stop here.
-    throw Error('Request failed');
+    throw Error("Request failed");
   }
 
   // If we don't have userData we should store user into DB
@@ -78,9 +84,9 @@ export const storeUserData = async ({ user }: PropsStoreUserDataTypes) => {
     // Save user locally
     const created = dayjs().format();
     await useAuthStore.getState().updateCurrentUser({
-      displayName: user?.displayName || '',
-      firstName:  user.displayName?.split(' ')[0] || '',
-      email: user?.email || '',
+      displayName: user?.displayName || "",
+      firstName: user.displayName?.split(" ")[0] || "",
+      email: user?.email || "",
       id: userId,
       created,
       lastLogin: created,
@@ -94,12 +100,12 @@ export const storeUserData = async ({ user }: PropsStoreUserDataTypes) => {
 
     // // Create settings
     await createSettings();
-  // Or just push data into store
+    // Or just push data into store
   } else {
     const lastLogin = dayjs().format();
     await useAuthStore.getState().updateCurrentUser({
       displayName: userData.displayName,
-      firstName:  userData.displayName.split(' ')[0],
+      firstName: userData.displayName.split(" ")[0],
       email: userData.email,
       id: userId,
       created: userData.created,
@@ -120,10 +126,10 @@ export const initializeApp = async (redirect: any) => {
     // Start setup
     // yield put(push({ pathname: '/setup' }));
     await useSettingsStateStore.getState().updateIsFirstLogin(false);
-    redirect('/myweek');
+    redirect("/myweek");
   } else {
     //checkURLWeek();
-    redirect('/myweek');
+    redirect("/myweek");
   }
 
   // await useAppStore.getState().setIsLoading(false);
@@ -133,5 +139,5 @@ export const logOut = async (redirect: any) => {
   await auth.signOut();
   await useAuthStore.getState().setIsLoggedIn(false);
 
-  redirect('/logout');
+  redirect("/logout");
 };

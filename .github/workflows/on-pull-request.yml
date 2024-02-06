@@ -2,7 +2,7 @@ name: On Pull Request
 run-name: ${{ github.actor }} running on-pull-request
 on: [opened, edited, reopened]
 jobs:
-  check-bats-version:
+  run-tests-and-linting:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4

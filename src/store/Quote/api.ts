@@ -1,6 +1,6 @@
 export interface quote {
   schemas: {
-    author: string,
-    content: string,
-  },
-};
+    author: string;
+    content: string;
+  };
+}

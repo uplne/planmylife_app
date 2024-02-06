@@ -1,8 +1,8 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 type AppTypes = {
-  isLoading: boolean,
-  setIsLoading: (value: boolean) => void,
+  isLoading: boolean;
+  setIsLoading: (value: boolean) => void;
 };
 
 const AppDefault: AppTypes = {

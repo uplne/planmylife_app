@@ -1,14 +1,14 @@
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
-import { TaskType } from '../../store/Tasks';
-import { StatusTypes, TasksTypes } from '../../types/status';
+import { TaskType } from "../../store/Tasks";
+import { StatusTypes, TasksTypes } from "../../types/status";
 
-export const mockedTaskDataDefault:TaskType[] = [
+export const mockedTaskDataDefault: TaskType[] = [
   {
-    id: 'id_default_1',
+    id: "id_default_1",
     type: TasksTypes.DEFAULT,
     status: StatusTypes.ACTIVE,
-    title: 'Test task 1',
+    title: "Test task 1",
     created: null,
     createdTimestamp: null,
     updated: null,
@@ -17,13 +17,13 @@ export const mockedTaskDataDefault:TaskType[] = [
     completed: null,
     moved: [],
     schedule: dayjs().format(),
-    repeatCompletedForWeeks: [] ,
+    repeatCompletedForWeeks: [],
   },
   {
-    id: 'id_default_2',
+    id: "id_default_2",
     type: TasksTypes.DEFAULT,
     status: StatusTypes.ACTIVE,
-    title: 'Test task 2',
+    title: "Test task 2",
     created: null,
     createdTimestamp: null,
     updated: null,
@@ -32,16 +32,16 @@ export const mockedTaskDataDefault:TaskType[] = [
     completed: null,
     moved: [],
     schedule: dayjs().format(),
-    repeatCompletedForWeeks: [] ,
-  }
+    repeatCompletedForWeeks: [],
+  },
 ];
 
-export const mockedTaskDataDefaultCompleted:TaskType[] = [
+export const mockedTaskDataDefaultCompleted: TaskType[] = [
   {
-    id: 'id2',
+    id: "id2",
     type: TasksTypes.DEFAULT,
     status: StatusTypes.COMPLETED,
-    title: 'Test task 2',
+    title: "Test task 2",
     created: null,
     createdTimestamp: null,
     updated: null,
@@ -50,6 +50,6 @@ export const mockedTaskDataDefaultCompleted:TaskType[] = [
     completed: null,
     moved: [],
     schedule: dayjs().format(),
-    repeatCompletedForWeeks: [] ,
-  }
+    repeatCompletedForWeeks: [],
+  },
 ];

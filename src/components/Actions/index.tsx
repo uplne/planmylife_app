@@ -1,10 +1,14 @@
-import { Menu, Dropdown } from 'antd';
+import { Menu, Dropdown } from "antd";
 
-import { TasksTypes, StatusTypes } from '../../types/status';
-import { TaskType, useTasksStore } from '../../store/Tasks/index';
-import { revertCompletedTask, saveTask, saveEditedTask } from '../Tasks/controller';
-import { useModalStore } from '../../store/Modal';
-import { IconButton } from '../../components/Buttons/IconButton';
+import { TasksTypes, StatusTypes } from "../../types/status";
+import { TaskType } from "../../store/Tasks/index";
+import {
+  revertCompletedTask,
+  saveTask,
+  saveEditedTask,
+} from "../Tasks/controller";
+import { useModalStore } from "../../store/Modal";
+import { IconButton } from "../../components/Buttons/IconButton";
 import {
   CheckIcon,
   BinIcon,
@@ -14,25 +18,21 @@ import {
   PencilIcon,
   StopIcon,
   FolderDownloadIcon,
-} from '../../components/Icons';
-import { AddTask } from '../Tasks/TaskModal/AddTask';
-import { completeTask as completeTaskAction } from '../Tasks/controller';
+} from "../../components/Icons";
+import { AddTask } from "../Tasks/TaskModal/AddTask";
+import { completeTask as completeTaskAction } from "../Tasks/controller";
 
-import { useWeekStore } from '../../store/Week';
+import { useWeekStore } from "../../store/Week";
 
-import './Actions.css';
+import "./Actions.css";
 
-type ComponentTypes =  {
-  task: TaskType,
+type ComponentTypes = {
+  task: TaskType;
 };
 
-export const Actions = ({
-  task,
-}: ComponentTypes) => {
+export const Actions = ({ task }: ComponentTypes) => {
   const selectedWeekId = useWeekStore().selectedWeekId;
-  const {
-    toggleModal,
-  } = useModalStore();
+  const { toggleModal } = useModalStore();
 
   const completeTask = () => {
     completeTaskAction(task.id);
@@ -41,7 +41,7 @@ export const Actions = ({
   const removeTask = async () => {
     await saveTask({
       ...task,
-      title: '',
+      title: "",
     });
   };
 
@@ -58,58 +58,58 @@ export const Actions = ({
     await revertCompletedTask(task.id, false);
   };
 
-  const editTaskHandler = async (e: React.MouseEvent<HTMLElement>) => {
+  const editTaskHandler = async () => {
     await toggleModal({
       isOpen: true,
       content: <AddTask task={task} editMode />,
-      title: 'Edit Task',
+      title: "Edit Task",
       onSave: () => saveEditedTask(task.id),
       disableAutoClose: true,
     });
   };
 
-  const removeRecurringFromThisWeek = () => {};//dispatch({ type: 'tasks/removeRecurringFromWeek', payload: id });
+  const removeRecurringFromThisWeek = () => {}; //dispatch({ type: 'tasks/removeRecurringFromWeek', payload: id });
   const completeRecurring = () => {}; //dispatch({ type: 'tasks/completeRecurring', payload: id });
   const unCheckRecurring = () => {}; //dispatch({ type: 'tasks/unCheckRecurring', payload: id });
 
   const getMenu = () => {
     const items = [];
 
-    if (task.status === StatusTypes.COMPLETED &&
-      (task.type !== TasksTypes.RECURRING &&
-      task.type !== TasksTypes.SCHEDULED_RECURRING)) {
+    if (
+      task.status === StatusTypes.COMPLETED &&
+      task.type !== TasksTypes.RECURRING &&
+      task.type !== TasksTypes.SCHEDULED_RECURRING
+    ) {
       items.push({
         label: (
-          <IconButton
-            className="task__button"
-            onClick={unCheck}
-            withCTA
-          >
+          <IconButton className="task__button" onClick={unCheck} withCTA>
             <CheckIcon /> Uncheck
           </IconButton>
         ),
-        key: 'uncheck',
+        key: "uncheck",
       });
     }
 
-    if (task.type === TasksTypes.RECURRING || task.type === TasksTypes.SCHEDULED_RECURRING) {
+    if (
+      task.type === TasksTypes.RECURRING ||
+      task.type === TasksTypes.SCHEDULED_RECURRING
+    ) {
       if (task.status === StatusTypes.COMPLETED) {
         items.push({
           label: (
-            <IconButton
-              className="task__button"
-              onClick={unCheck}
-              withCTA
-            >
+            <IconButton className="task__button" onClick={unCheck} withCTA>
               <CheckIcon /> Uncheck
             </IconButton>
           ),
-          key: 'recurring_uncheck',
+          key: "recurring_uncheck",
         });
       }
 
       if (task.status !== StatusTypes.COMPLETED) {
-        if ('repeatCompletedForWeeks' in task && task.repeatCompletedForWeeks.includes(selectedWeekId)) {
+        if (
+          "repeatCompletedForWeeks" in task &&
+          task.repeatCompletedForWeeks.includes(selectedWeekId)
+        ) {
           items.push({
             label: (
               <IconButton
@@ -120,10 +120,10 @@ export const Actions = ({
                 <CheckEmptyIcon /> Uncheck for this week
               </IconButton>
             ),
-            key: 'recurring_uncheck',
+            key: "recurring_uncheck",
           });
         }
-  
+
         items.push({
           label: (
             <IconButton
@@ -134,7 +134,7 @@ export const Actions = ({
               <StopIcon /> Recurring complete
             </IconButton>
           ),
-          key: 'recurring_complete',
+          key: "recurring_complete",
         });
       }
 
@@ -149,7 +149,7 @@ export const Actions = ({
               <FolderDownloadIcon /> Remove for this week
             </IconButton>
           ),
-          key: 'recurring_remove_for_week',
+          key: "recurring_remove_for_week",
         });
       }
     }
@@ -165,50 +165,36 @@ export const Actions = ({
             <PencilIcon /> Edit task
           </IconButton>
         ),
-        key: 'recurring_uncheck',
+        key: "recurring_uncheck",
       });
     }
 
     items.push({
       label: (
-        <IconButton
-          className="task__button"
-          onClick={removeTask}
-          withCTA
-        >
+        <IconButton className="task__button" onClick={removeTask} withCTA>
           <BinIcon /> Remove task
         </IconButton>
       ),
-      key: 'remove',
+      key: "remove",
     });
 
-    return (
-      <Menu
-        items={items}
-      />
-    );
-  }
+    return <Menu items={items} />;
+  };
 
   return (
     <div className="actions">
-      {task.status !== StatusTypes.COMPLETED  &&
-      <>
-        <IconButton
-          className="button__done"
-          onClick={completeTask}
-        >
-          <CheckIcon />
-        </IconButton>
-        <IconButton
-          className="button__done"
-          onClick={moveToNextWeek}
-        >
-          <ArrowCircleRight />
-        </IconButton>
-      </>
-      }
-      <Dropdown overlay={getMenu()} trigger={['click']}>
-        <a onClick={e => e.preventDefault()}>
+      {task.status !== StatusTypes.COMPLETED && (
+        <>
+          <IconButton className="button__done" onClick={completeTask}>
+            <CheckIcon />
+          </IconButton>
+          <IconButton className="button__done" onClick={moveToNextWeek}>
+            <ArrowCircleRight />
+          </IconButton>
+        </>
+      )}
+      <Dropdown overlay={getMenu()} trigger={["click"]}>
+        <a onClick={(e) => e.preventDefault()}>
           <IconButton onClick={() => {}}>
             <DotsIcon />
           </IconButton>
@@ -216,4 +202,4 @@ export const Actions = ({
       </Dropdown>
     </div>
   );
-}
+};

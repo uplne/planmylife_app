@@ -27,67 +27,69 @@ const collection: any = jest.fn(() => {
         collection: collection,
         update: jest.fn(() => Promise.resolve(true)),
         onSnapshot: jest.fn(() => Promise.resolve(true)),
-        get: jest.fn(() => Promise.resolve(true))
-      }
+        get: jest.fn(() => Promise.resolve(true)),
+      };
     }),
     where: jest.fn(() => {
       return {
         get: jest.fn(() => Promise.resolve(true)),
         onSnapshot: jest.fn(() => Promise.resolve(true)),
-      }
-    })
-  }
+      };
+    }),
+  };
 });
 
-const query = jest.fn((collection, url) => {
-
-})
+const query = jest.fn((collection, url) => {});
 
 const Firestore = () => {
   return {
-    collection
-  }
-}
+    collection,
+  };
+};
 
 Firestore.FieldValue = {
-  serverTimestamp: jest.fn()
-}
+  serverTimestamp: jest.fn(),
+};
 
 export class TestFirebase {
   static initializeApp = jest.fn();
 
   static auth = jest.fn(() => {
     return {
-      createUserAndRetrieveDataWithEmailAndPassword: jest.fn(() => Promise.resolve(true)),
+      createUserAndRetrieveDataWithEmailAndPassword: jest.fn(() =>
+        Promise.resolve(true),
+      ),
       sendPasswordResetEmail: jest.fn(() => Promise.resolve(true)),
-      signInAndRetrieveDataWithEmailAndPassword: jest.fn(() => Promise.resolve(true)),
+      signInAndRetrieveDataWithEmailAndPassword: jest.fn(() =>
+        Promise.resolve(true),
+      ),
       fetchSignInMethodsForEmail: jest.fn(() => Promise.resolve(true)),
       signOut: jest.fn(() => Promise.resolve(true)),
       onAuthStateChanged: jest.fn(),
       currentUser: {
-        sendEmailVerification: jest.fn(() => Promise.resolve(true))
-      }
-    }
+        sendEmailVerification: jest.fn(() => Promise.resolve(true)),
+      },
+    };
   });
 
   static firestore = Firestore;
 
   static notifications = jest.fn(() => {
     return {
-        onNotification: jest.fn(),
-        onNotificationDisplayed: jest.fn(),
-        onNotificationOpened: jest.fn()
-    }
+      onNotification: jest.fn(),
+      onNotificationDisplayed: jest.fn(),
+      onNotificationOpened: jest.fn(),
+    };
   });
 
   static messaging = jest.fn(() => {
     return {
-        hasPermission: jest.fn(() => Promise.resolve(true)),
-        subscribeToTopic: jest.fn(),
-        unsubscribeFromTopic: jest.fn(),
-        requestPermission: jest.fn(() => Promise.resolve(true)),
-        getToken: jest.fn(() => Promise.resolve('RN-Firebase-Token'))
-    }
+      hasPermission: jest.fn(() => Promise.resolve(true)),
+      subscribeToTopic: jest.fn(),
+      unsubscribeFromTopic: jest.fn(),
+      requestPermission: jest.fn(() => Promise.resolve(true)),
+      getToken: jest.fn(() => Promise.resolve("RN-Firebase-Token")),
+    };
   });
 
   static storage = jest.fn(() => {
@@ -96,11 +98,11 @@ export class TestFirebase {
         return {
           child: jest.fn(() => {
             return {
-              put: jest.fn(() => Promise.resolve(true))
-            }
-          })
-        }
-      })
-    }
-  })
+              put: jest.fn(() => Promise.resolve(true)),
+            };
+          }),
+        };
+      }),
+    };
+  });
 }

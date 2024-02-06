@@ -124,9 +124,9 @@ export const Tasks = () => {
                                 rawTaskData={task}
                               />
                               {/* {task.moved && <TaskIndicator moved />}
-                            {isRecurringTask(task.type) &&
-                              <TaskIndicator recurring={getRecurring(task)} isInactive={task.isInactive} />
-                            } */}
+                        {isRecurringTask(task.type) &&
+                          <TaskIndicator recurring={getRecurring(task)} isInactive={task.isInactive} />
+                        } */}
                             </div>
                           )}
                       </>

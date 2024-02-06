@@ -1,10 +1,7 @@
 import { useWeekStore } from "../../store/Week";
 
 export const goToCurrentWeek = async () => {
-  const {
-    currentWeekId,
-    setSelectedWeek,
-  } =  useWeekStore.getState();
+  const { currentWeekId, setSelectedWeek } = useWeekStore.getState();
 
   await setSelectedWeek(currentWeekId);
 
@@ -12,7 +9,7 @@ export const goToCurrentWeek = async () => {
 };
 
 export const gotoSelectedWeek = async (value: string) => {
-  const { setSelectedWeek } =  useWeekStore.getState();
+  const { setSelectedWeek } = useWeekStore.getState();
   await setSelectedWeek(value);
   // yield put({ type: 'week/weekSet' });
 };

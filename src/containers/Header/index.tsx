@@ -1,11 +1,11 @@
-import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
+import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
 
-import { HeaderButton } from './HeaderButton';
+import { HeaderButton } from "./HeaderButton";
 import { MenuButton } from "../../components/Buttons/MenuButton";
-import { logOut } from '../../containers/Login/controller';
+import { logOut } from "../../containers/Login/controller";
 
-import './Header.css';
+import "./Header.css";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -19,11 +19,16 @@ export const Header = () => {
       <div className="app-header__wrapper">
         <div className="app-header__menu">
           <HeaderButton label="My Week" to="/myweek" />
-          <HeaderButton label="My Goals" to={`/mygoals/${moment().format('YYYY')}`} />
+          <HeaderButton
+            label="My Goals"
+            to={`/mygoals/${dayjs().format("YYYY")}`}
+          />
         </div>
         <div className="app-header__menu">
           <HeaderButton label="Settings" to="/settings" />
-          <a onClick={onClick}><MenuButton label="Log Out" /></a>
+          <a onClick={onClick}>
+            <MenuButton label="Log Out" />
+          </a>
         </div>
       </div>
     </div>

@@ -1,12 +1,11 @@
-import { useState, useRef } from 'react';
-import { DatePicker } from 'antd';
-import 'moment/locale/en-gb';
-import locale from 'antd/es/date-picker/locale/en_GB';
+import { useState, useRef } from "react";
+import { DatePicker } from "antd";
+import locale from "antd/es/date-picker/locale/en_GB";
 
-import { gotoSelectedWeek } from '../controller';
-import { ArrowCircleRight } from '../../Icons/ArrowCircleRight';
+import { gotoSelectedWeek } from "../controller";
+import { ArrowCircleRight } from "../../Icons/ArrowCircleRight";
 
-import '../GoToCurrentWeek/GoToCurrentWeek.css';
+import "../GoToCurrentWeek/GoToCurrentWeek.css";
 
 export const GoToWeek = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -29,7 +28,7 @@ export const GoToWeek = () => {
       <div className="gotoweek__wrapper" onClick={onClick}>
         <ArrowCircleRight />
         <DatePicker
-          picker="week" 
+          picker="week"
           onChange={calendarOnClick}
           locale={locale}
           placeholder="Go to Week"

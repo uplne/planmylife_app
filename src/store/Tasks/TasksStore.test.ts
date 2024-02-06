@@ -1,163 +1,197 @@
-import { useTasksStore, TasksStoreDefault } from '../../store/Tasks';
-import { DATA_FETCHING_STATUS, StatusTypes, TasksTypes } from '../../types/status';
+import { useTasksStore } from "../../store/Tasks";
 import {
-  mockedTaskDataDefault,
-} from '../../store/Tasks/TasksStore.mock';
-import dayjs from 'dayjs';
+  DATA_FETCHING_STATUS,
+  StatusTypes,
+  TasksTypes,
+} from "../../types/status";
+import { mockedTaskDataDefault } from "../../store/Tasks/TasksStore.mock";
+import dayjs from "dayjs";
 
-describe('Tasks store', () => {
-  test('Default store state', () => {
-    expect(useTasksStore.getState().isLoading).toBe(DATA_FETCHING_STATUS.NODATA);
+describe("Tasks store", () => {
+  test("Default store state", () => {
+    expect(useTasksStore.getState().isLoading).toBe(
+      DATA_FETCHING_STATUS.NODATA,
+    );
     expect(useTasksStore.getState().tasks).toStrictEqual([]);
-    expect(useTasksStore.getState().newTask).toBe('');
+    expect(useTasksStore.getState().newTask).toBe("");
     expect(useTasksStore.getState().schedule).toBe(undefined);
   });
 
-  test('Update is loading', () => {
-    expect(useTasksStore.getState().isLoading).toBe(DATA_FETCHING_STATUS.NODATA);
-    
+  test("Update is loading", () => {
+    expect(useTasksStore.getState().isLoading).toBe(
+      DATA_FETCHING_STATUS.NODATA,
+    );
+
     useTasksStore.getState().updateIsLoading(DATA_FETCHING_STATUS.FETCHING);
 
-    expect(useTasksStore.getState().isLoading).toBe(DATA_FETCHING_STATUS.FETCHING);
+    expect(useTasksStore.getState().isLoading).toBe(
+      DATA_FETCHING_STATUS.FETCHING,
+    );
   });
 
-  test('fillTasks',  async () => {
+  test("fillTasks", async () => {
     expect(useTasksStore.getState().tasks).toStrictEqual([]);
 
     await useTasksStore.setState({
-      tasks: [
-        mockedTaskDataDefault[0],
-      ],
+      tasks: [mockedTaskDataDefault[0]],
     });
     await useTasksStore.getState().fillTasks(mockedTaskDataDefault);
 
     expect(useTasksStore.getState().tasks).toStrictEqual(mockedTaskDataDefault);
   });
 
-  test('Update newTask', () => {
-    expect(useTasksStore.getState().newTask).toBe('');
-    
-    useTasksStore.getState().updateNewTask('New task test');
+  test("Update newTask", () => {
+    expect(useTasksStore.getState().newTask).toBe("");
 
-    expect(useTasksStore.getState().newTask).toBe('New task test');
+    useTasksStore.getState().updateNewTask("New task test");
+
+    expect(useTasksStore.getState().newTask).toBe("New task test");
   });
 
-  describe('Task operations', () => {
-    test('Add new task', async () => {
+  describe("Task operations", () => {
+    test("Add new task", async () => {
       await useTasksStore.setState({
-        tasks: [
-          mockedTaskDataDefault[0],
-        ],
+        tasks: [mockedTaskDataDefault[0]],
       });
 
-      expect(useTasksStore.getState().tasks).toStrictEqual([mockedTaskDataDefault[0]]);
+      expect(useTasksStore.getState().tasks).toStrictEqual([
+        mockedTaskDataDefault[0],
+      ]);
 
       await useTasksStore.getState().addNewTask(mockedTaskDataDefault[1]);
-      
-      expect(useTasksStore.getState().tasks).toStrictEqual(mockedTaskDataDefault);
+
+      expect(useTasksStore.getState().tasks).toStrictEqual(
+        mockedTaskDataDefault,
+      );
     });
 
-    test('Update task', async () => {
+    test("Update task", async () => {
       await useTasksStore.setState({
-        tasks: [
-          mockedTaskDataDefault[0],
-        ],
+        tasks: [mockedTaskDataDefault[0]],
       });
 
-      expect(useTasksStore.getState().tasks).toStrictEqual([mockedTaskDataDefault[0]]);
+      expect(useTasksStore.getState().tasks).toStrictEqual([
+        mockedTaskDataDefault[0],
+      ]);
 
       const updatedTask = {
         ...mockedTaskDataDefault[0],
-        title: 'Test task updated',
+        title: "Test task updated",
       };
 
       await useTasksStore.getState().updateTask(updatedTask);
-      
+
       expect(useTasksStore.getState().tasks).toStrictEqual([updatedTask]);
     });
 
-    test('Remove task', async () => {
+    test("Remove task", async () => {
       await useTasksStore.setState({
         tasks: mockedTaskDataDefault,
       });
 
-      expect(useTasksStore.getState().tasks).toStrictEqual(mockedTaskDataDefault);
+      expect(useTasksStore.getState().tasks).toStrictEqual(
+        mockedTaskDataDefault,
+      );
 
       await useTasksStore.getState().removeTask(mockedTaskDataDefault[1].id);
-      
-      expect(useTasksStore.getState().tasks).toStrictEqual([mockedTaskDataDefault[0]]);
+
+      expect(useTasksStore.getState().tasks).toStrictEqual([
+        mockedTaskDataDefault[0],
+      ]);
     });
   });
 
-  describe('Task Schedule', () => {
-    test('Set schedule', () => {
+  describe("Task Schedule", () => {
+    test("Set schedule", () => {
       expect(useTasksStore.getState().schedule).toBe(undefined);
 
       const newSchedule = dayjs().format();
-    
+
       useTasksStore.getState().setSchedule(newSchedule);
-  
+
       expect(useTasksStore.getState().schedule).toBe(newSchedule);
     });
   });
 
-  describe('Revert completed', () => {
-    test('Revert for DEFAULT task', async () => {
+  describe("Revert completed", () => {
+    test("Revert for DEFAULT task", async () => {
       await useTasksStore.setState({
-        tasks: [{
-          ...mockedTaskDataDefault[0],
-          status: StatusTypes.COMPLETED,
-        }],
+        tasks: [
+          {
+            ...mockedTaskDataDefault[0],
+            status: StatusTypes.COMPLETED,
+          },
+        ],
       });
-      expect(useTasksStore.getState().tasks[0].status).toBe(StatusTypes.COMPLETED);
-    
-      await useTasksStore.getState().revertCompleted(mockedTaskDataDefault[0].id);
+      expect(useTasksStore.getState().tasks[0].status).toBe(
+        StatusTypes.COMPLETED,
+      );
+
+      await useTasksStore
+        .getState()
+        .revertCompleted(mockedTaskDataDefault[0].id);
 
       expect(useTasksStore.getState().tasks[0].status).toBe(StatusTypes.ACTIVE);
     });
 
-    test('Revert RECURRING only for one week', async () => {
-      const lastWeek = dayjs().subtract(1, 'week').format();
+    test("Revert RECURRING only for one week", async () => {
+      const lastWeek = dayjs().subtract(1, "week").format();
       await useTasksStore.setState({
-        tasks: [{
-          ...mockedTaskDataDefault[0],
-          type: TasksTypes.RECURRING,
-          repeatCompletedForWeeks: [lastWeek],
-          status: StatusTypes.ACTIVE,
-        }],
+        tasks: [
+          {
+            ...mockedTaskDataDefault[0],
+            type: TasksTypes.RECURRING,
+            repeatCompletedForWeeks: [lastWeek],
+            status: StatusTypes.ACTIVE,
+          },
+        ],
       });
       expect(useTasksStore.getState().tasks[0].status).toBe(StatusTypes.ACTIVE);
-      expect(useTasksStore.getState().tasks[0].repeatCompletedForWeeks).toStrictEqual([lastWeek]);
-    
-      await useTasksStore.getState().revertCompleted(mockedTaskDataDefault[0].id, true);
+      expect(
+        useTasksStore.getState().tasks[0].repeatCompletedForWeeks,
+      ).toStrictEqual([lastWeek]);
+
+      await useTasksStore
+        .getState()
+        .revertCompleted(mockedTaskDataDefault[0].id, true);
 
       expect(useTasksStore.getState().tasks[0].status).toBe(StatusTypes.ACTIVE);
-      expect(useTasksStore.getState().tasks[0].repeatCompletedForWeeks).toStrictEqual([]);
+      expect(
+        useTasksStore.getState().tasks[0].repeatCompletedForWeeks,
+      ).toStrictEqual([]);
     });
 
-    test('Revert SCHEDULED RECURRING only for one week', async () => {
-      const lastWeek = dayjs().subtract(1, 'week').format();
+    test("Revert SCHEDULED RECURRING only for one week", async () => {
+      const lastWeek = dayjs().subtract(1, "week").format();
       await useTasksStore.setState({
-        tasks: [{
-          ...mockedTaskDataDefault[0],
-          type: TasksTypes.SCHEDULED_RECURRING,
-          repeatCompletedForWeeks: [lastWeek],
-          status: StatusTypes.ACTIVE,
-        }],
+        tasks: [
+          {
+            ...mockedTaskDataDefault[0],
+            type: TasksTypes.SCHEDULED_RECURRING,
+            repeatCompletedForWeeks: [lastWeek],
+            status: StatusTypes.ACTIVE,
+          },
+        ],
       });
       expect(useTasksStore.getState().tasks[0].status).toBe(StatusTypes.ACTIVE);
-      expect(useTasksStore.getState().tasks[0].repeatCompletedForWeeks).toStrictEqual([lastWeek]);
-    
-      await useTasksStore.getState().revertCompleted(mockedTaskDataDefault[0].id, true);
+      expect(
+        useTasksStore.getState().tasks[0].repeatCompletedForWeeks,
+      ).toStrictEqual([lastWeek]);
+
+      await useTasksStore
+        .getState()
+        .revertCompleted(mockedTaskDataDefault[0].id, true);
 
       expect(useTasksStore.getState().tasks[0].status).toBe(StatusTypes.ACTIVE);
-      expect(useTasksStore.getState().tasks[0].repeatCompletedForWeeks).toStrictEqual([]);
+      expect(
+        useTasksStore.getState().tasks[0].repeatCompletedForWeeks,
+      ).toStrictEqual([]);
     });
   });
 
-  describe('Selectors', () => {
-    describe('Default selectors', () => {
-      test('defaultTasksSelector', async () => {
+  describe("Selectors", () => {
+    describe("Default selectors", () => {
+      test("defaultTasksSelector", async () => {
         const day = dayjs().day(0).format();
         const nextDay = dayjs().day(1).format();
         const tasks = [
@@ -166,9 +200,9 @@ describe('Tasks store', () => {
             assigned: nextDay,
           },
           {
-          ...mockedTaskDataDefault[0],
-          assigned: day,
-          }
+            ...mockedTaskDataDefault[0],
+            assigned: day,
+          },
         ];
 
         await useTasksStore.setState({
@@ -183,8 +217,8 @@ describe('Tasks store', () => {
       });
     });
 
-    describe('Completed', () => {
-      test('defaultCompletedTasks', async () => {
+    describe("Completed", () => {
+      test("defaultCompletedTasks", async () => {
         const day = dayjs().day(0).format();
         const nextDay = dayjs().day(1).format();
         const tasks = [
@@ -194,10 +228,10 @@ describe('Tasks store', () => {
             status: StatusTypes.COMPLETED,
           },
           {
-          ...mockedTaskDataDefault[0],
-          assigned: day,
-          status: StatusTypes.COMPLETED,
-          }
+            ...mockedTaskDataDefault[0],
+            assigned: day,
+            status: StatusTypes.COMPLETED,
+          },
         ];
 
         await useTasksStore.setState({
@@ -211,7 +245,7 @@ describe('Tasks store', () => {
         expect(results).toStrictEqual(tasks.reverse());
       });
 
-      test('allCompletedTasks', async () => {
+      test("allCompletedTasks", async () => {
         const day = dayjs().day(0).format();
         const nextDay = dayjs().day(1).format();
         const tasks = [
@@ -221,10 +255,10 @@ describe('Tasks store', () => {
             status: StatusTypes.COMPLETED,
           },
           {
-          ...mockedTaskDataDefault[0],
-          assigned: day,
-          status: StatusTypes.COMPLETED,
-          }
+            ...mockedTaskDataDefault[0],
+            assigned: day,
+            status: StatusTypes.COMPLETED,
+          },
         ];
 
         await useTasksStore.setState({

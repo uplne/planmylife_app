@@ -7,16 +7,9 @@ export const enum DOW {
   "MONDAY" = 1,
   "SUNDAY" = 0,
 }
-export interface settings {
-  schemas: {
-    WeeklyEmailReminder: boolean;
-    GoalNotifications: {
-      EndOfYear: boolean;
-      HalfYear: boolean;
-      quarter: boolean;
-    };
-    isFirstLogin: boolean;
-    tier: TIER;
-    dayOfWeek: number;
-  };
-}
+export type SettingsAPITypes = {
+  weekly_email_reminder: boolean;
+  is_first_login: boolean;
+  tier: TIER;
+  day_of_week: number;
+};

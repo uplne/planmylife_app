@@ -6,7 +6,7 @@ import { Scheduler } from "../../../components/TaskScheduler";
 import { SimpleInput } from "../../SimpleInput";
 import { TaskType, useTasksStore } from "../../../store/Tasks";
 import { useModalStore } from "../../../store/Modal";
-import { saveNewTask } from "../controller";
+import { saveNewTask } from "../tasks.controller";
 
 import "./TaskModal.css";
 

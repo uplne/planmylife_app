@@ -1,69 +1,52 @@
-import { doc, setDoc, getDoc } from "firebase/firestore";
-
 import { useSettingsStateStore, LOADING } from "../../store/Settings";
-import { useAuthStore } from "../../store/Auth";
-import { db } from "../../services/firebase";
+import { saveSettings, getSettings } from "./api";
 
 export const createSettings = async () => {
-  const settings = await useSettingsStateStore.getState();
-  const userId = await useAuthStore.getState().currentUser?.id;
+  const weekly_email_reminder =
+    await useSettingsStateStore.getState().weekly_email_reminder;
+  const is_first_login = await useSettingsStateStore.getState().is_first_login;
+  const tier = await useSettingsStateStore.getState().tier;
+  const day_of_week = await useSettingsStateStore.getState().day_of_week;
 
-  if (userId) {
-    try {
-      const docRef = doc(db, "settings", userId);
-      await setDoc(
-        docRef,
-        {
-          WeeklyEmailReminder: settings.WeeklyEmailReminder,
-          isFirstLogin: settings.isFirstLogin,
-          tier: settings.tier,
-          dow: settings.dow,
-        },
-        { merge: true },
-      );
-    } catch (e) {
-      console.log("Failed fetching settings: ", e);
-    }
+  try {
+    await saveSettings({
+      weekly_email_reminder,
+      is_first_login,
+      tier,
+      day_of_week,
+    });
+  } catch (e) {
+    throw new Error("Error creating settings");
   }
 };
 
 export const fetchSettings = async () => {
-  const userId = await useAuthStore.getState().currentUser?.id;
+  const updateIsLoading =
+    await useSettingsStateStore.getState().updateIsLoading;
+  const updateWeeklyEmailReminder =
+    await useSettingsStateStore.getState().updateWeeklyEmailReminder;
+  const updateLocale = await useSettingsStateStore.getState().updateLocale;
+  const updateIsFirstLogin =
+    await useSettingsStateStore.getState().updateIsFirstLogin;
 
-  if (userId) {
-    const {
-      updateIsLoading,
-      updateWeeklyEmailReminder,
-      updateLocale,
-      updateIsFirstLogin,
-    } = await useSettingsStateStore.getState();
+  await updateIsLoading(LOADING.FETCHING);
 
-    await updateIsLoading(LOADING.FETCHING);
+  // Load settings for the user from DB
+  try {
+    const result = await getSettings();
 
-    // Load settings for the user from DB
-    try {
-      const docRef = doc(db, "settings", userId);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        const settingsData = docSnap.data();
-
-        console.log("settingsData: ", settingsData);
-
-        if (settingsData) {
-          if ("emailWeeklyReminderOptOut" in settingsData) {
-            await updateWeeklyEmailReminder(settingsData.WeeklyEmailReminder);
-          }
-
-          await updateIsFirstLogin(settingsData.isFirstLogin);
-          await updateLocale(settingsData.dow);
-
-          await updateIsLoading(LOADING.LOADED);
-        }
+    if (result) {
+      if ("weekly_email_reminder" in result) {
+        updateWeeklyEmailReminder(result.weekly_email_reminder);
       }
-    } catch (e) {
-      console.log("Fetching settings failed: ", e);
-      await updateIsLoading(LOADING.ERROR);
+
+      await updateIsFirstLogin(result.is_first_login);
+      await updateLocale(result.day_of_week);
+
+      await updateIsLoading(LOADING.LOADED);
     }
+  } catch (e) {
+    await updateIsLoading(LOADING.ERROR);
+    throw new Error(`Fetching settings failed: ${e}`);
   }
 };

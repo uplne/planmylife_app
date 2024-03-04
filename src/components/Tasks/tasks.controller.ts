@@ -1,11 +1,4 @@
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  doc,
-  setDoc,
-} from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 
@@ -18,12 +11,12 @@ import { useConfirmStore } from "../../store/Confirm";
 import { useModalStore } from "../../store/Modal";
 import {
   useTaskSchedulerStore,
-  SCHEDULER_TYPE,
+  SchedulerType,
 } from "../../store/TaskScheduler";
 import { StatusTypes, TasksTypes } from "../../types/status";
-import { db, Timestamp, CollectionType } from "../../services/firebase";
+import { db } from "../../services/firebase";
 import { idType } from "../../types/idtype";
-import { updateTaskAPI, removeTaskAPI } from "./api";
+import { updateTaskAPI, removeTaskAPI, saveTaskAPI } from "./tasks.service";
 import { showSuccessNotification } from "../Notification/controller";
 
 export const fetchDefaultData = async () => {
@@ -70,6 +63,7 @@ export const fetchDefaultData = async () => {
 
 export const saveNewTask = async () => {
   const { newTask, schedule } = await useTasksStore.getState();
+  const userId = await useAuthStore.getState().currentUser?.id;
   const selectedWeek = await useWeekStore.getState().selectedWeek;
   // const {
   //   repeatType,
@@ -78,6 +72,7 @@ export const saveNewTask = async () => {
   // } = useTaskSchedulerStore.getState();
   let newTaskData: TaskType = {
     id: StatusTypes.NEW,
+    userId,
     type: TasksTypes.DEFAULT,
     assigned: dayjs(selectedWeek).format(),
     title: newTask,
@@ -142,12 +137,19 @@ export const saveTask = async (task: TaskType) => {
 export const removeTask = async (id: idType) => {
   const removeTask = await useTasksStore.getState().removeTask;
 
-  await removeTaskAPI(id);
-  await removeTask(id);
-  await showSuccessNotification({
-    message: "Task removed",
-    type: NOTIFICATION_TYPE.SUCCESS,
-  });
+  try {
+    await removeTaskAPI(id);
+    await removeTask(id);
+    await showSuccessNotification({
+      message: "Task removed",
+      type: NOTIFICATION_TYPE.SUCCESS,
+    });
+  } catch (e) {
+    await showSuccessNotification({
+      message: `Task removing failed. ${e as Error}`,
+      type: NOTIFICATION_TYPE.FAIL,
+    });
+  }
 };
 
 export const updateTask = async (task: TaskType) => {
@@ -161,7 +163,7 @@ export const updateTask = async (task: TaskType) => {
   } else {
     const updateTask = await useTasksStore.getState().updateTask;
     await updateTask(newTask);
-    await saveTaskToDB(task.id);
+    await saveTaskAPI(task.id);
   }
 
   await showSuccessNotification({
@@ -171,58 +173,24 @@ export const updateTask = async (task: TaskType) => {
 };
 
 export const createNewTask = async (task: TaskType) => {
-  let selectedWeek = await useWeekStore.getState().selectedWeek;
   const { resetModal } = useModalStore.getState();
+  let selectedWeek = dayjs().format();
 
   if (task.assigned) {
     selectedWeek = dayjs(task.assigned).format();
   }
 
-  const timeStamp = Timestamp.fromDate(new Date(selectedWeek));
   const newTask: TaskType = {
     ...task,
     status: StatusTypes.ACTIVE,
     created: dayjs().format(),
-    createdTimestamp: timeStamp,
-    assignedTimestamp: timeStamp,
+    createdTimestamp: selectedWeek,
+    assignedTimestamp: selectedWeek,
   };
 
   await useTasksStore.getState().addNewTask(newTask);
-  await saveTaskToDB(task.id);
+  await saveTaskAPI(task.id);
   await resetModal();
-};
-
-export const saveTaskToDB = async (id: idType) => {
-  const tasks = await useTasksStore.getState().tasks;
-  const userId = await useAuthStore.getState().currentUser?.id;
-  const taskData = tasks.find((task) => task.id === id);
-
-  if (!userId) {
-    throw new Error("Save task: No user id");
-  }
-
-  try {
-    let collection: CollectionType = "default";
-
-    // It's recurring task
-    if (
-      taskData &&
-      "type" in taskData &&
-      (taskData.type === TasksTypes.RECURRING ||
-        taskData.type === TasksTypes.SCHEDULED_RECURRING)
-    ) {
-      collection = "recurring";
-    }
-
-    try {
-      const docRef = doc(db, `tasks/${userId}/${collection}/${id}`);
-      await setDoc(docRef, taskData, { merge: true });
-    } catch (e) {
-      console.log("Failed saving task: ", e);
-    }
-  } catch (e) {
-    console.log(e);
-  }
 };
 
 export const findTaskById = async (id: idType): Promise<TaskType> => {
@@ -235,10 +203,9 @@ export const findTaskById = async (id: idType): Promise<TaskType> => {
 
 export const completeTask = async (id: idType, recurringCompleted = false) => {
   const selectedWeek = await useWeekStore.getState().selectedWeek;
-  const today = await useWeekStore.getState().today;
   const updateTask = await useTasksStore.getState().updateTask;
 
-  const task = await findTaskById(id);
+  const task: TaskType = await findTaskById(id);
 
   if (
     "type" in task &&
@@ -246,21 +213,17 @@ export const completeTask = async (id: idType, recurringCompleted = false) => {
       task.type === TasksTypes.SCHEDULED_RECURRING) &&
     !recurringCompleted
   ) {
-    if ("repeatCompleted" in task) {
+    if ("repeatCompletedForWeeks" in task) {
       task.repeatCompletedForWeeks.push(selectedWeek);
-    } else {
-      task.repeatCompletedForWeeks = [selectedWeek];
     }
   } else {
     task.status = StatusTypes.COMPLETED;
-    task.completed = today.format();
+    task.completed = dayjs().format();
 
     // If the recurring is completed add this date to repeatCompleted as well
     if (recurringCompleted) {
-      if ("repeatCompleted" in task) {
+      if ("repeatCompletedForWeeks" in task) {
         task.repeatCompletedForWeeks.push(selectedWeek);
-      } else {
-        task.repeatCompletedForWeeks = [selectedWeek];
       }
     }
   }
@@ -279,12 +242,29 @@ export const revertCompletedTask = async (
   id: idType,
   recurringRevert: boolean,
 ) => {
-  const revertCompleted = useTasksStore.getState().revertCompleted;
-  const task = await findTaskById(id);
+  const selectedWeekId = useWeekStore.getState().selectedWeekId;
+  const updateTask = await useTasksStore.getState().updateTask;
+  const task: TaskType = await findTaskById(id);
 
-  await revertCompleted(id, recurringRevert);
+  // Revert only one recurrence (for one week)
+  if (
+    "type" in task &&
+    (task.type === TasksTypes.RECURRING ||
+      task.type === TasksTypes.SCHEDULED_RECURRING) &&
+    recurringRevert
+  ) {
+    const newArray = task.repeatCompletedForWeeks.filter((week) =>
+      dayjs(week).isSame(dayjs(selectedWeekId), "week"),
+    );
+    task.repeatCompletedForWeeks = newArray;
+    // Revert completed
+  } else {
+    task.status = StatusTypes.ACTIVE;
+    task.completed = null;
+  }
+
+  await updateTask(task);
   await updateTaskAPI(task);
-
   await showSuccessNotification({
     message: "Task reverted to status: ACTIVE",
     type: NOTIFICATION_TYPE.SUCCESS,
@@ -298,15 +278,17 @@ export const saveEditedTask = async (id: idType) => {
   const resetModal = useModalStore.getState().resetModal;
   const storedTask: TaskType = await findTaskById(id);
   const { newTask: newTaskTitle, schedule } = await useTasksStore.getState();
-  const { repeatType, repeatTimes, repeatPeriod } =
-    useTaskSchedulerStore.getState();
+  const repeatType = useTaskSchedulerStore.getState().repeatType;
+  const repeatTimes = useTaskSchedulerStore.getState().repeatTimes;
+  const repeatPeriod = useTaskSchedulerStore.getState().repeatPeriod;
 
   let newTask = null;
 
   // If task is a recurring task we need to create a new one and close/stop the edited one
   // But only if we change recurring or schedule
   if (
-    storedTask.type === TasksTypes.RECURRING &&
+    (storedTask.type === TasksTypes.RECURRING ||
+      storedTask.type === TasksTypes.SCHEDULED_RECURRING) &&
     (Boolean(schedule) !== Boolean(storedTask.schedule) ||
       repeatType !== storedTask.repeatType ||
       repeatTimes !== storedTask.repeatTimes ||
@@ -315,8 +297,8 @@ export const saveEditedTask = async (id: idType) => {
     newTask = {
       ...storedTask,
       id: StatusTypes.NEW,
-      type: TasksTypes.DEFAULT,
       title: newTaskTitle,
+      repeatCompletedForWeeks: [],
     };
 
     if (schedule) {
@@ -324,16 +306,16 @@ export const saveEditedTask = async (id: idType) => {
       newTask.type = TasksTypes.SCHEDULE;
     }
 
-    if (repeatType !== SCHEDULER_TYPE["1"].key) {
+    if (repeatType !== SchedulerType.no) {
       newTask = Object.assign({}, newTask, {
         repeatType,
         repeatTimes,
         repeatPeriod,
-        type: TasksTypes.RECURRING,
+        type: schedule ? TasksTypes.SCHEDULED_RECURRING : TasksTypes.RECURRING,
       });
     }
 
-    // yield call(completeRecurring, { payload: id });
+    await completeTask(id, true);
   } else {
     newTask = Object.assign({}, storedTask, {
       title: newTaskTitle,
@@ -345,7 +327,7 @@ export const saveEditedTask = async (id: idType) => {
     }
 
     // It's recurring task
-    if (repeatType !== SCHEDULER_TYPE["1"].key) {
+    if (repeatType !== SchedulerType.no) {
       newTask = Object.assign({}, newTask, {
         repeatType,
         repeatTimes,
@@ -362,6 +344,9 @@ export const saveEditedTask = async (id: idType) => {
 
 export const moveToNextWeek = async (id: idType) => {
   const storedTask: TaskType = await findTaskById(id);
+  let newTask = {
+    ...storedTask,
+  };
 
   let movedArray: string[] = [];
 
@@ -388,15 +373,15 @@ export const moveToNextWeek = async (id: idType) => {
     });
   }
 
-  if (storedTask?.assigned) {
-    movedArray.push(storedTask.assigned);
-    const newTask = {
-      ...storedTask,
-      moved: movedArray,
-    };
-
-    newTask.assigned = dayjs(storedTask.assigned).add(7, "days").format();
-
-    await updateTask(newTask);
+  if (storedTask?.schedule) {
+    movedArray.push(storedTask.schedule);
+    newTask.moved = movedArray;
+    newTask.schedule = dayjs(storedTask.schedule).add(7, "days").format();
+  } else {
+    movedArray.push(dayjs().format());
+    newTask.moved = movedArray;
+    newTask.assigned = dayjs().add(7, "days").format();
   }
+
+  await updateTask(newTask);
 };

@@ -12,7 +12,7 @@ import { Task as TaskComponent } from "../Task";
 import { useTasksStore, TaskType } from "../../store/Tasks";
 import { useWeekStore } from "../../store/Week";
 import { useModalStore } from "../../store/Modal";
-import { fetchDefaultData, saveNewTask } from "./controller";
+import { fetchDefaultData, saveNewTask } from "./tasks.controller";
 import { DATA_FETCHING_STATUS, TasksTypes } from "../../types/status";
 
 import "./Tasks.css";
@@ -97,22 +97,22 @@ export const Tasks = () => {
                     {allCompletedTasks.map((task) => (
                       <>
                         {/* {task.type === TasksTypes.SCHEDULE || task.type === TasksTypes.SCHEDULED_RECURRING &&
-                          <div className="tasks__container tasks__container--with-date">
-                            <div className="tasks__date tasks__date--completed">
-                              {getDisplayDate(task)}
-                            </div>
-                            <Row
-                              key={task.id}
-                              id={task.id}
-                              task={task.title}
-                              state={TASK_STATE.COMPLETED}
-                              raw={task}
-                            />
-                            {isRecurringTask(task.type) &&
-                              <TaskIndicator recurring={getRecurring(task)} isInactive={task.isInactive} />
-                            }
+                        <div className="tasks__container tasks__container--with-date">
+                          <div className="tasks__date tasks__date--completed">
+                            {getDisplayDate(task)}
                           </div>
-                        } */}
+                          <Row
+                            key={task.id}
+                            id={task.id}
+                            task={task.title}
+                            state={TASK_STATE.COMPLETED}
+                            raw={task}
+                          />
+                          {isRecurringTask(task.type) &&
+                            <TaskIndicator recurring={getRecurring(task)} isInactive={task.isInactive} />
+                          }
+                        </div>
+                      } */}
                         {task.type !== TasksTypes.SCHEDULE &&
                           task.type !== TasksTypes.SCHEDULED_RECURRING && (
                             <div className="tasks__container">
@@ -124,9 +124,9 @@ export const Tasks = () => {
                                 rawTaskData={task}
                               />
                               {/* {task.moved && <TaskIndicator moved />}
-                        {isRecurringTask(task.type) &&
-                          <TaskIndicator recurring={getRecurring(task)} isInactive={task.isInactive} />
-                        } */}
+                      {isRecurringTask(task.type) &&
+                        <TaskIndicator recurring={getRecurring(task)} isInactive={task.isInactive} />
+                      } */}
                             </div>
                           )}
                       </>

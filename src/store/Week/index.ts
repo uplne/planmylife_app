@@ -9,7 +9,7 @@ type WeekTypes = {
   selectedWeek: string;
   selectedWeekId: string;
   setSelectedWeek: (value: string) => void;
-  today: dayjs.Dayjs;
+  today: string;
   udpateToday: () => void;
   currentWeekId: string;
   selectedWeekNumber: number;
@@ -26,7 +26,7 @@ type WeekTypes = {
 export const WeekDefault: WeekTypes = {
   selectedWeek: dayjs().format(),
   selectedWeekId: dayjs().format(WEEK_ID_FORMAT),
-  today: dayjs(),
+  today: dayjs().format(),
   setSelectedWeek: () => null,
   udpateToday: () => null,
   currentWeekId: dayjs().format(WEEK_ID_FORMAT),
@@ -78,7 +78,7 @@ export const useWeekStore = create<WeekTypes>((set, get) => ({
   today: WeekDefault.today,
   udpateToday: async () => {
     await set({
-      today: dayjs(),
+      today: dayjs().format(),
       currentWeekId: dayjs().format(WEEK_ID_FORMAT),
     });
   },
@@ -106,12 +106,13 @@ export const useWeekStore = create<WeekTypes>((set, get) => ({
     //   search: `?week=${nextWeek}`,
     // }));
     // yield put({ type: 'week/weekSet' });
+    return previousWeekId;
   },
   reset: async () => {
     await set({
-      selectedWeek: dayjs().toString(),
+      selectedWeek: dayjs().format(),
       selectedWeekId: dayjs().format(WEEK_ID_FORMAT),
-      today: dayjs(),
+      today: dayjs().format(),
       currentWeekId: dayjs().format(WEEK_ID_FORMAT),
       selectedWeekNumber: dayjs().week(),
       selectedWeekStartPretty: dayjs()
@@ -123,7 +124,7 @@ export const useWeekStore = create<WeekTypes>((set, get) => ({
         .endOf("week")
         .format("MMM D, YYYY"),
       showCurrentWeekLink: !dayjs(dayjs().format(WEEK_ID_FORMAT)).isSame(
-        dayjs(dayjs().toString()),
+        dayjs(dayjs().format()),
         "week",
       ),
       nextWeekId: dayjs().clone().add(1, "week").format(WEEK_ID_FORMAT),

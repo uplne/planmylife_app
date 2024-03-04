@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} running on-pull-request
 on: [opened, edited, reopened]
 jobs:
   run-tests-and-linting:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3

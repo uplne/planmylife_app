@@ -6,6 +6,7 @@ import { idType } from "../../types/idtype";
 
 export enum NOTIFICATION_TYPE {
   "SUCCESS" = "success",
+  "FAIL" = "fail",
 }
 
 export type NotificationType = {

@@ -6,7 +6,7 @@ import {
   revertCompletedTask,
   saveTask,
   saveEditedTask,
-} from "../Tasks/controller";
+} from "../Tasks/tasks.controller";
 import { useModalStore } from "../../store/Modal";
 import { IconButton } from "../../components/Buttons/IconButton";
 import {
@@ -20,7 +20,7 @@ import {
   FolderDownloadIcon,
 } from "../../components/Icons";
 import { AddTask } from "../Tasks/TaskModal/AddTask";
-import { completeTask as completeTaskAction } from "../Tasks/controller";
+import { completeTask as completeTaskAction } from "../Tasks/tasks.controller";
 
 import { useWeekStore } from "../../store/Week";
 

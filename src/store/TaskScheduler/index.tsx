@@ -1,87 +1,70 @@
 import { create } from "zustand";
 
-export enum ScheduleTypes {
-  "NO" = "no",
-  "EVERY" = "every",
+export enum SchedulerType {
+  "no",
+  "every",
 }
 
-export type SchedulerTypes = {
-  1: {
-    label: ScheduleTypes.NO;
-    key: number;
-  };
-  2: {
-    label: ScheduleTypes.EVERY;
-    key: number;
+export type SchedulerTypeLabelTypes = {
+  [key in SchedulerType]: {
+    label: string;
+    key: key;
   };
 };
 
-export let SCHEDULER_TYPE: SchedulerTypes = {
-  1: {
-    label: ScheduleTypes.NO,
-    key: 1,
+export const SCHEDULER_TYPE = {
+  0: {
+    label: SchedulerType[SchedulerType.no],
+    key: 0,
   },
-  2: {
-    label: ScheduleTypes.EVERY,
-    key: 2,
+  1: {
+    label: SchedulerType[SchedulerType.every],
+    key: 1,
   },
 };
 
 export enum SchedulerPeriod {
-  "WEEK" = "week",
-  "WEEKS" = "weeks",
-  "MONTH" = "month",
-  "MONTHS" = "months",
-  "YEAR" = "year",
-  "YEARS" = "years",
+  "week",
+  "month",
+  "year",
 }
 
-export type SchedulerPeriodTypes = {
-  1: {
-    label: SchedulerPeriod.WEEK;
-    labelPlural: SchedulerPeriod.WEEKS;
-    key: number;
-  };
-  2: {
-    label: SchedulerPeriod.MONTH;
-    labelPlural: SchedulerPeriod.MONTHS;
-    key: number;
-  };
-  3: {
-    label: SchedulerPeriod.YEAR;
-    labelPlural: SchedulerPeriod.YEARS;
-    key: number;
+export type SchedulerPeriodLabelTypes = {
+  [key in SchedulerPeriod]: {
+    label: string;
+    labelPlural: string;
+    key: key;
   };
 };
 
-export let SCHEDULER_PERIOD: SchedulerPeriodTypes = {
+export let SCHEDULER_PERIOD_LABEL: SchedulerPeriodLabelTypes = {
+  0: {
+    label: SchedulerPeriod[SchedulerPeriod.week],
+    labelPlural: "weeks",
+    key: 0,
+  },
   1: {
-    label: SchedulerPeriod.WEEK,
-    labelPlural: SchedulerPeriod.WEEKS,
+    label: SchedulerPeriod[SchedulerPeriod.month],
+    labelPlural: "months",
     key: 1,
   },
   2: {
-    label: SchedulerPeriod.MONTH,
-    labelPlural: SchedulerPeriod.MONTHS,
+    label: SchedulerPeriod[SchedulerPeriod.year],
+    labelPlural: "years",
     key: 2,
-  },
-  3: {
-    label: SchedulerPeriod.YEAR,
-    labelPlural: SchedulerPeriod.YEARS,
-    key: 3,
   },
 };
 
 export interface TaskSchedulerStoreDefaultTypes {
-  repeatType: SchedulerTypes["1"]["key"];
-  repeatPeriod: SchedulerPeriodTypes["1"]["key"];
+  repeatType: SchedulerType;
+  repeatPeriod: SchedulerPeriod;
   repeatTimes: number;
 }
 
 export interface TaskSchedulerStoreTypes
   extends TaskSchedulerStoreDefaultTypes {
-  repeatType: SchedulerTypes["1"]["key"];
-  repeatPeriod: SchedulerPeriodTypes["1"]["key"];
+  repeatType: SchedulerType;
+  repeatPeriod: SchedulerPeriod;
   repeatTimes: number;
   setRepeatType: (value: number) => void;
   setRepeatPeriod: (value: number) => void;
@@ -90,8 +73,8 @@ export interface TaskSchedulerStoreTypes
 }
 
 export const TaskSchedulerStoreDefault: TaskSchedulerStoreDefaultTypes = {
-  repeatType: SCHEDULER_TYPE["1"].key,
-  repeatPeriod: SCHEDULER_PERIOD["1"].key,
+  repeatType: SchedulerType.no,
+  repeatPeriod: SchedulerPeriod.week,
   repeatTimes: 1,
 };
 

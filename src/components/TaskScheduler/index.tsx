@@ -5,10 +5,9 @@ import { DownOutlined } from "@ant-design/icons";
 
 import {
   SCHEDULER_TYPE,
-  SchedulerTypes,
-  SCHEDULER_PERIOD,
-  SchedulerPeriodTypes,
+  SCHEDULER_PERIOD_LABEL,
   useTaskSchedulerStore,
+  SchedulerType,
 } from "../../store/TaskScheduler";
 
 import "./TaskScheduler.css";
@@ -60,7 +59,7 @@ export const Scheduler = ({ className = undefined }: ComponentProps) => {
     <Menu
       onClick={handleMenuClick}
       items={Object.keys(SCHEDULER_TYPE).map(
-        (item) => SCHEDULER_TYPE[Number(item) as keyof SchedulerTypes],
+        (key) => SCHEDULER_TYPE[Number(key) as keyof typeof SCHEDULER_TYPE],
       )}
     />
   );
@@ -68,8 +67,11 @@ export const Scheduler = ({ className = undefined }: ComponentProps) => {
   const menuPeriod = (
     <Menu
       onClick={handleMenuPeriodClick}
-      items={Object.keys(SCHEDULER_PERIOD).map(
-        (item) => SCHEDULER_PERIOD[Number(item) as keyof SchedulerPeriodTypes],
+      items={Object.keys(SCHEDULER_PERIOD_LABEL).map(
+        (item) =>
+          SCHEDULER_PERIOD_LABEL[
+            Number(item) as keyof typeof SCHEDULER_PERIOD_LABEL
+          ],
       )}
     />
   );
@@ -80,12 +82,16 @@ export const Scheduler = ({ className = undefined }: ComponentProps) => {
         <Dropdown overlay={menu} trigger={["click"]}>
           <Button>
             <Space>
-              {SCHEDULER_TYPE[Number(repeatType) as keyof SchedulerTypes].label}
+              {
+                SCHEDULER_TYPE[
+                  Number(repeatType) as keyof typeof SCHEDULER_TYPE
+                ].label
+              }
               <DownOutlined />
             </Space>
           </Button>
         </Dropdown>
-        {repeatType === SCHEDULER_TYPE["2"].key && (
+        {repeatType === SchedulerType.every && (
           <>
             <SimpleInput
               className="taskscheduler__input"
@@ -97,11 +103,15 @@ export const Scheduler = ({ className = undefined }: ComponentProps) => {
               <Button>
                 <Space>
                   {repeatTimes > 1
-                    ? SCHEDULER_PERIOD[
-                        Number(repeatPeriod) as keyof SchedulerPeriodTypes
+                    ? SCHEDULER_PERIOD_LABEL[
+                        Number(
+                          repeatPeriod,
+                        ) as keyof typeof SCHEDULER_PERIOD_LABEL
                       ].labelPlural
-                    : SCHEDULER_PERIOD[
-                        Number(repeatPeriod) as keyof SchedulerPeriodTypes
+                    : SCHEDULER_PERIOD_LABEL[
+                        Number(
+                          repeatPeriod,
+                        ) as keyof typeof SCHEDULER_PERIOD_LABEL
                       ].label}
                   <DownOutlined />
                 </Space>

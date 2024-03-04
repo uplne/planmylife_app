@@ -7,7 +7,11 @@ module.exports = {
       node: true // Defines things like process.env when generating through node
   },
   extends: [
-    "eslint:recommended", "plugin:import/errors", "plugin:import/warnings", "plugin:import/typescript",
+      "eslint:recommended",
+      "plugin:import/errors",
+      "plugin:import/warnings",
+      "plugin:import/typescript",
+      "plugin:storybook/recommended"
   ],
   // ignorePatterns: ["/*", "!/src"],
   parser: "@babel/eslint-parser", // Uses babel-eslint transforms.
@@ -28,7 +32,7 @@ module.exports = {
           "warn",
           "never"
       ],
-      "eol-last": "error",
+      "eol-last": "off",
       "import/order": [
           "warn",
           {
@@ -47,7 +51,7 @@ module.exports = {
           }
       ],
       indent: [
-          "error",
+          "warn",
           2
       ],
       "jsx-quotes": [

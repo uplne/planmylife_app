@@ -1,19 +1,16 @@
 import { User as FirebaseUser, UserCredential } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import axios from "axios";
 import dayjs from "dayjs";
+import { decrypt } from "../../services/encryption";
 import { sha256 } from "js-sha256";
 
-import {
-  GoogleAuth,
-  auth,
-  signInWithRedirect,
-  db,
-  GoogleAuthProvider,
-} from "../../services/firebase";
+import { GoogleAuth, auth, signInWithRedirect } from "../../services/firebase";
 import { useSettingsStateStore } from "../../store/Settings";
 import { fetchSettings, createSettings } from "../Settings/controller";
 import { useAuthStore } from "../../store/Auth";
 import { useAppStore } from "../../store/App";
+import { getUserById, saveUser, saveLastLogin } from "./api";
+import { UserTypes } from "../../store/Auth/api";
 
 export const getUserId = (uid: string) => {
   return sha256(uid);
@@ -41,39 +38,28 @@ export const ProcessGoogleRedirect = async (result: UserCredential) => {
   });
 };
 
-export const loadUserFromDB = async (userId: string) => {
-  try {
-    const docRef = doc(db, "users", userId);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      const userData = docSnap.data();
-
-      if (userData) {
-        return userData;
-      }
-
-      return null;
-    }
-  } catch (e) {
-    console.log(e);
-  }
-};
-
 type PropsStoreUserDataTypes = {
   user: FirebaseUser;
 };
 
 export const storeUserData = async ({ user }: PropsStoreUserDataTypes) => {
-  let userData = null;
+  let userData: UserTypes | null = null;
   const userId = await getUserId(user.uid);
+
+  // Store UID locally
+  await useAuthStore.getState().updateUID(user.uid);
+  const token = await auth.currentUser?.getIdToken();
+
+  // Add token and userId to API requests
+  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  axios.defaults.headers.common["User"] = userId;
 
   try {
     // Check if we have user already in DB
-    userData = await loadUserFromDB(userId);
+    userData = await getUserById(userId);
   } catch (e) {
     // Request to retrieve user data failed. We have to assume that user might already exist so we need to throw some error and stop here.
-    throw Error("Request failed");
+    throw new Error("Request failed");
   }
 
   // If we don't have userData we should store user into DB
@@ -83,20 +69,18 @@ export const storeUserData = async ({ user }: PropsStoreUserDataTypes) => {
 
     // Save user locally
     const created = dayjs().format();
-    await useAuthStore.getState().updateCurrentUser({
-      displayName: user?.displayName || "",
-      firstName: user.displayName?.split(" ")[0] || "",
+    const currentUser = {
+      display_name: user?.displayName || "",
+      first_name: user.displayName?.split(" ")[0] || "",
       email: user?.email || "",
-      id: userId,
+      user_id: userId,
       created,
-      lastLogin: created,
-    });
-
-    // Store UID locally
-    await useAuthStore.getState().updateUID(user.uid);
+      last_login: created,
+    };
+    await useAuthStore.getState().updateCurrentUser(currentUser);
 
     // Save user to DB
-    await useAuthStore.getState().saveCurrentUser();
+    await saveUser(currentUser);
 
     // // Create settings
     await createSettings();
@@ -104,14 +88,14 @@ export const storeUserData = async ({ user }: PropsStoreUserDataTypes) => {
   } else {
     const lastLogin = dayjs().format();
     await useAuthStore.getState().updateCurrentUser({
-      displayName: userData.displayName,
-      firstName: userData.displayName.split(" ")[0],
-      email: userData.email,
-      id: userId,
+      display_name: await decrypt(userData.display_name),
+      first_name: await decrypt(userData.first_name),
+      email: await decrypt(userData.email),
+      user_id: userId,
       created: userData.created,
-      lastLogin,
+      last_login: lastLogin,
     });
-    await useAuthStore.getState().saveLastLogin(lastLogin);
+    await saveLastLogin(lastLogin, userId);
   }
 
   await useAuthStore.getState().setIsLoggedIn(true);
@@ -120,7 +104,7 @@ export const storeUserData = async ({ user }: PropsStoreUserDataTypes) => {
 export const initializeApp = async (redirect: any) => {
   await fetchSettings();
 
-  const isFirstLogin = await useSettingsStateStore.getState().isFirstLogin;
+  const isFirstLogin = await useSettingsStateStore.getState().is_first_login;
 
   if (isFirstLogin) {
     // Start setup

@@ -1,12 +1,10 @@
 import { create } from "zustand";
 import dayjs from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "../../services/firebase";
 
 import { useWeekStore } from "../Week";
 import { useAuthStore } from "../Auth";
-import { settings, TIER, DOW } from "./api";
+import { SettingsAPITypes, TIER, DOW } from "./api";
 
 export enum LOADING {
   "NODATA" = "NODATA",
@@ -16,61 +14,52 @@ export enum LOADING {
 }
 
 type SettingsTypes = {
-  WeeklyEmailReminder: settings["schemas"]["WeeklyEmailReminder"];
+  weekly_email_reminder: SettingsAPITypes["weekly_email_reminder"];
   updateWeeklyEmailReminder: (value: boolean) => void;
-  isFirstLogin: settings["schemas"]["isFirstLogin"];
+  is_first_login: SettingsAPITypes["is_first_login"];
   updateIsFirstLogin: (value: boolean) => void;
-  tier: settings["schemas"]["tier"];
-  dow: settings["schemas"]["dayOfWeek"];
+  tier: SettingsAPITypes["tier"];
+  day_of_week: SettingsAPITypes["day_of_week"];
   isLoading: LOADING;
   updateIsLoading: (value: LOADING) => void;
   updateLocale: (value: DOW) => void;
 };
 
-const SettingsDefault = {
-  WeeklyEmailReminder: true,
-  isFirstLogin: true,
+export const SettingsDefault = {
+  weekly_email_reminder: true,
+  is_first_login: true,
   tier: TIER.FREE,
-  dow: DOW.MONDAY,
+  day_of_week: DOW.MONDAY,
   isLoading: LOADING.NODATA,
 };
 
-const saveAppState = async (values: Partial<SettingsTypes>, userId: string) => {
-  try {
-    const docRef = doc(db, "settings", userId);
-    await updateDoc(docRef, { ...values });
-  } catch (e) {
-    console.log("Saving settings error: ", e);
-  }
-};
-
-export const useSettingsStateStore = create<SettingsTypes>((set, get) => ({
-  WeeklyEmailReminder: SettingsDefault.WeeklyEmailReminder,
+export const useSettingsStateStore = create<SettingsTypes>((set) => ({
+  weekly_email_reminder: SettingsDefault.weekly_email_reminder,
   updateWeeklyEmailReminder: async (value) => {
     const userId = useAuthStore.getState().currentUser?.id;
 
     if (userId) {
-      await saveAppState({ WeeklyEmailReminder: value }, userId);
-      set({ WeeklyEmailReminder: value });
+      // await saveAppState({ WeeklyEmailReminder: value }, userId);
+      set({ weekly_email_reminder: value });
     }
   },
-  isFirstLogin: SettingsDefault.isFirstLogin,
+  is_first_login: SettingsDefault.is_first_login,
   updateIsFirstLogin: async (value) => {
     const userId = useAuthStore.getState().currentUser?.id;
 
     if (userId) {
-      await saveAppState({ isFirstLogin: value }, userId);
-      set({ isFirstLogin: value });
+      // await saveAppState({ is_first_login: value }, userId);
+      set({ is_first_login: value });
     }
   },
   tier: SettingsDefault.tier,
-  dow: SettingsDefault.dow,
+  day_of_week: SettingsDefault.day_of_week,
   isLoading: SettingsDefault.isLoading,
   updateIsLoading: async (value) => {
     set({ isLoading: value });
   },
   updateLocale: async (value: DOW) => {
-    await set({ dow: value });
+    await set({ day_of_week: value });
     dayjs.extend(updateLocale);
     dayjs.updateLocale("en", {
       weekStart: value,

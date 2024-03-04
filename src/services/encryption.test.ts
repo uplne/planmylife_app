@@ -1,7 +1,7 @@
 import { decrypt, encrypt } from "./encryption";
 import { useAuthStore, AuthDefault } from "../store/Auth";
 
-jest.mock("../store/auth");
+jest.mock("../store/Auth");
 
 describe("Encryption", () => {
   beforeEach(() => {

@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { collection, getDocs, where } from "firebase/firestore";
 
 import { useAuthStore, AuthDefault } from "../../store/Auth";
-import { useWeekStore, WeekDefault } from "../../store/Week";
+import { useWeekStore } from "../../store/Week";
 import { useConfirmStore } from "../../store/Confirm";
 import { useTasksStore, TasksStoreDefault, TaskType } from "../../store/Tasks";
 import {
@@ -56,7 +56,7 @@ const TASKS_MOCK: TaskType[] = [
 ];
 
 jest.mock("../../store/Auth");
-jest.mock("../../store/Week");
+const initialWeekStoreState = useWeekStore.getState();
 jest.mock("../../store/Tasks");
 jest.mock("./tasks.service", () => ({
   removeTaskAPI: jest.fn(),
@@ -115,6 +115,7 @@ const mockTaskSchedulerStore = {
 
 describe("Tasks controller", () => {
   beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(new Date("2023-01-10"));
     const mockAuthStore = {
       ...AuthDefault,
       currentUser: {
@@ -123,16 +124,20 @@ describe("Tasks controller", () => {
       },
     };
     useAuthStore.getState = () => mockAuthStore as any;
-
-    const mockWeekStore = {
-      ...WeekDefault,
-      selectedWeek,
-    };
-    useWeekStore.getState = () => mockWeekStore;
+    (selectedWeek = dayjs().format()),
+      useWeekStore.setState(
+        {
+          ...initialWeekStoreState,
+          selectedWeek,
+          today: dayjs().format(),
+        },
+        true,
+      );
 
     useTasksStore.getState = () => mockTasksStore;
 
     useTaskSchedulerStore.getState = () => mockTaskSchedulerStore;
+    jest.useRealTimers();
   });
 
   describe("Fetching data", () => {
@@ -152,7 +157,9 @@ describe("Tasks controller", () => {
       );
 
       expect(useAuthStore.getState().currentUser!.id).toBe("123-123");
-      expect(useWeekStore.getState().selectedWeek).toBe(selectedWeek);
+      expect(useWeekStore.getState().selectedWeek).toBe(
+        "2023-01-10T00:00:00+00:00",
+      );
       expect(useTasksStore.getState().isLoading).toBe(
         DATA_FETCHING_STATUS.NODATA,
       );
@@ -239,7 +246,7 @@ describe("Tasks controller", () => {
         id: StatusTypes.NEW,
         userId: "123-123",
         type: TasksTypes.DEFAULT,
-        assigned: dayjs(selectedWeek).format(),
+        assigned: dayjs("2023-01-10T00:00:00+00:00").format(),
         title: "New Task",
         status: StatusTypes.NEW,
         created: null,
@@ -567,6 +574,7 @@ describe("Tasks controller", () => {
   describe("Complete task", () => {
     beforeEach(() => {
       jest.useFakeTimers().setSystemTime(new Date("2023-01-10"));
+      selectedWeek = dayjs().format();
     });
 
     afterEach(() => {
@@ -594,7 +602,6 @@ describe("Tasks controller", () => {
     });
 
     test("it should complete the RECURRING task - with recurringComplete flag", async () => {
-      jest.useFakeTimers().setSystemTime(new Date("2023-01-10"));
       TASKS_MOCK[0].type = TasksTypes.RECURRING;
       useTasksStore.getState = () => ({
         ...mockTasksStore,
@@ -604,10 +611,6 @@ describe("Tasks controller", () => {
             repeatCompletedForWeeks: [],
           },
         ],
-      });
-      useWeekStore.getState = () => ({
-        ...WeekDefault,
-        today: dayjs().format(),
       });
       const FINAL_TASK = {
         ...TASKS_MOCK[0],
@@ -629,7 +632,6 @@ describe("Tasks controller", () => {
       });
 
       expect(result).toStrictEqual(FINAL_TASK);
-      jest.useRealTimers();
     });
 
     test("it should complete the SCHEDULED RECURRING task - with recurringComplete flag", async () => {
@@ -642,10 +644,6 @@ describe("Tasks controller", () => {
             repeatCompletedForWeeks: [],
           },
         ],
-      });
-      useWeekStore.getState = () => ({
-        ...WeekDefault,
-        today: dayjs().format(),
       });
       const FINAL_TASK = {
         ...TASKS_MOCK[0],
@@ -682,10 +680,6 @@ describe("Tasks controller", () => {
           },
         ],
       });
-      useWeekStore.getState = () => ({
-        ...WeekDefault,
-        today: dayjs().format(),
-      });
       const FINAL_TASK = {
         ...TASKS_MOCK[0],
         completed: null,
@@ -717,10 +711,6 @@ describe("Tasks controller", () => {
             repeatCompletedForWeeks: [],
           },
         ],
-      });
-      useWeekStore.getState = () => ({
-        ...WeekDefault,
-        today: dayjs().format(),
       });
       const FINAL_TASK = {
         ...TASKS_MOCK[0],

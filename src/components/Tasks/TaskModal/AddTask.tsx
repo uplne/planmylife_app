@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { DatePicker } from "antd";
-import { type Dayjs } from "dayjs";
+import dayjs, { type Dayjs } from "dayjs";
 
 import { Scheduler } from "../../../components/TaskScheduler";
 import { SimpleInput } from "../../SimpleInput";
@@ -53,16 +53,14 @@ export const AddTask = ({ task = null, editMode = false }: ComponentTypes) => {
     }
   };
 
-  const calendarOnClick = () => {
-    // if (date) {
-    //   dispatch(setSchedule(date.format()));
-    // } else {
-    //   dispatch(setSchedule(null));
-    // }
-    // dispatch({
-    //   type: 'modal/toggleSaveDisable',
-    //   payload: task.schedule === date.toISOString(),
-    // });
+  const calendarOnClick = async (date: dayjs.Dayjs) => {
+    if (date) {
+      setSchedule(date.format());
+    } else {
+      setSchedule(undefined);
+    }
+
+    await toggleSaveDisable(task?.schedule === date.format());
   };
 
   const customFormat = (value: Dayjs) => value.format("MMM D, YYYY - HH:mm");
@@ -108,7 +106,6 @@ export const AddTask = ({ task = null, editMode = false }: ComponentTypes) => {
           format={customFormat}
           showTime={{ format: customTimeFormat }}
           onChange={calendarOnClick}
-          // {...calendarPickerProps}
         />
       </div>
 

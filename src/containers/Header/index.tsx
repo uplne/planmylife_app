@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { HeaderButton } from "./HeaderButton";
 import { MenuButton } from "../../components/Buttons/MenuButton";
-import { logOut } from "../../containers/Login/controller";
+import { logOut } from "../Login/login.controller";
 
 import "./Header.css";
 

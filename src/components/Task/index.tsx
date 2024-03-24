@@ -20,6 +20,7 @@ type ComponentProps = {
   inactive?: boolean;
   noActions?: boolean;
   rawTaskData: TaskType | null;
+  isCompleted?: boolean;
 };
 
 export const Task = ({
@@ -30,6 +31,7 @@ export const Task = ({
   inactive = false,
   noActions = false,
   rawTaskData = null,
+  isCompleted = false,
 }: ComponentProps) => {
   const shouldShowCompleted = () => {
     if (!rawTaskData) {
@@ -44,7 +46,7 @@ export const Task = ({
     } else {
       if ("isInactive" in rawTaskData) {
         return false;
-      } else if ("isCompletedForThisWeek" in rawTaskData) {
+      } else if (isCompleted) {
         return true;
       } else {
         return rawTaskData.status === StatusTypes.COMPLETED;
@@ -64,6 +66,9 @@ export const Task = ({
     "task--isCompleted": shouldShowCompleted(),
     "task--isInactive": shouldShowReadOnly(),
     "task--isPlaceholder": !title,
+    "mt-6":
+      rawTaskData?.type === TasksTypes.SCHEDULE ||
+      rawTaskData?.type === TasksTypes.SCHEDULED_RECURRING,
   });
 
   // type OnSaveTypes = {

@@ -1,4 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
+import dayjs from "dayjs";
+import weekday from "dayjs/plugin/weekday";
 
 import { Box } from "../Box";
 import { SubHeading } from "../SubHeading";
@@ -8,38 +10,67 @@ import { PlusIcon } from "../../components/Icons/PlusIcon";
 import { BasicButton } from "../../components/Buttons/BasicButton";
 import { AddTask } from "./TaskModal/AddTask";
 import { Task as TaskComponent } from "../Task";
+import { TaskDate } from "./TaskDate";
+import { TaskStatus } from "./TaskStatus";
 
-import { useTasksStore, TaskType } from "../../store/Tasks";
+import { TaskType } from "../../store/Tasks";
 import { useWeekStore } from "../../store/Week";
 import { useModalStore } from "../../store/Modal";
-import { fetchDefaultData, saveNewTask } from "./tasks.controller";
-import { DATA_FETCHING_STATUS, TasksTypes } from "../../types/status";
+import {
+  fetchRecurringData,
+  fetchDefaultData,
+  saveNewTask,
+} from "./tasks.controller";
+import {
+  allDefaultScheduledTasksSelector,
+  todayDefaultScheduledTasksSelector,
+  tomorrowDefaultScheduledTasksSelector,
+  otherDaysDefaultScheduledTasksSelector,
+} from "../../store/Tasks/selectors/default-scheduled.selector";
+import { allCompletedTasksSelector } from "../../store/Tasks/selectors/completed.selector";
+import { isLoadingSelector } from "../../store/Tasks/selectors/loading.selector";
+import { allDefaultTasksSelector } from "../../store/Tasks/selectors/default.selector";
 
 import "./Tasks.css";
+
+dayjs.extend(weekday);
 
 type useFetchHookTypes = {
   selectedWeek: string;
 };
 
-export const useFetchData = ({ selectedWeek }: useFetchHookTypes) =>
+export const useFetchDefaultTasksData = ({ selectedWeek }: useFetchHookTypes) =>
   useQuery({
     queryKey: ["tasks", selectedWeek],
     queryFn: fetchDefaultData,
+    staleTime: 86400000, // set to 1 day
+  });
+
+export const useFetchRecurringTasksData = () =>
+  useQuery({
+    queryKey: ["recurringTasks"],
+    queryFn: fetchRecurringData,
+    staleTime: 86400000, // set to 1 day
   });
 
 export const Tasks = () => {
-  const { isLoading } = useTasksStore();
-  const defaultActiveTasks: TaskType[] = useTasksStore((state) =>
-    state.defaultTasksSelector(),
-  );
-  const allCompletedTasks: TaskType[] = useTasksStore((state) =>
-    state.allCompletedTasks(),
-  );
+  const isLoading = isLoadingSelector();
+  const defaultActiveTasks: TaskType[] = allDefaultTasksSelector();
+  const allCompletedTasks: TaskType[] = allCompletedTasksSelector();
+
+  // const allDefaultScheduledCompleted = allDefaultScheduledCompletedTasksSelector;
+  const allTodayDefaultScheduled: TaskType[] =
+    todayDefaultScheduledTasksSelector();
+  const allTomorrowDefaultScheduled: TaskType[] =
+    tomorrowDefaultScheduledTasksSelector();
+  const allOtherDaysScheduled: TaskType[] =
+    otherDaysDefaultScheduledTasksSelector();
 
   const { selectedWeek } = useWeekStore();
   const { toggleModal } = useModalStore();
-  useFetchData({ selectedWeek });
-  const loading = isLoading !== DATA_FETCHING_STATUS.LOADED;
+
+  useFetchDefaultTasksData({ selectedWeek });
+  useFetchRecurringTasksData();
 
   const addTaskSave = async () => {
     await saveNewTask();
@@ -62,26 +93,83 @@ export const Tasks = () => {
     <TasksBox>
       <Box>
         <SubHeading>Tasks</SubHeading>
-        {loading && <Preloader small />}
-        {!loading && (
+        {isLoading && <Preloader small />}
+        {!isLoading && (
           <>
             <div className="tasks__wrapper">
+              {allTodayDefaultScheduled.length > 0 && (
+                <div>
+                  <h3 className="tasks__subtitle">Today</h3>
+                  {allTodayDefaultScheduled.map((task) => {
+                    return (
+                      <div className="tasks__container">
+                        <TaskDate task={task} />
+                        <TaskComponent
+                          key={String(task.taskId)}
+                          id={task.taskId}
+                          title={task.title}
+                          status={task.status}
+                          rawTaskData={task}
+                        />
+                        <TaskStatus task={task} />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {allTomorrowDefaultScheduled.length > 0 && (
+                <div>
+                  <h3 className="tasks__subtitle">Tomorrow</h3>
+                  {allTomorrowDefaultScheduled.map((task) => {
+                    return (
+                      <div className="tasks__container">
+                        <TaskDate task={task} />
+                        <TaskComponent
+                          key={String(task.taskId)}
+                          id={task.taskId}
+                          title={task.title}
+                          status={task.status}
+                          rawTaskData={task}
+                        />
+                        <TaskStatus task={task} />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {allOtherDaysScheduled.length > 0 && (
+                <div>
+                  <h3 className="tasks__subtitle">This week scheduled</h3>
+                  {allOtherDaysScheduled.map((task) => {
+                    return (
+                      <div className="tasks__container">
+                        <TaskDate task={task} />
+                        <TaskComponent
+                          key={String(task.taskId)}
+                          id={task.taskId}
+                          title={task.title}
+                          status={task.status}
+                          rawTaskData={task}
+                        />
+                        <TaskStatus task={task} />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
               {defaultActiveTasks.length > 0 && (
                 <>
                   <h3 className="tasks__subtitle">This week</h3>
                   {defaultActiveTasks.map((task) => (
                     <div className="tasks__container">
                       <TaskComponent
-                        key={String(task.id)}
-                        id={task.id}
+                        key={String(task.taskId)}
+                        id={task.taskId}
                         title={task.title}
                         status={task.status}
                         rawTaskData={task}
                       />
-                      {/* {task.moved && <TaskIndicator moved />}
-                      {isRecurringTask(task.type) &&
-                        <TaskIndicator recurring={getRecurring(task)} isInactive={task.isInactive} />
-                      } */}
+                      <TaskStatus task={task} />
                     </div>
                   ))}
                 </>
@@ -95,41 +183,18 @@ export const Tasks = () => {
                   <div>
                     <h3 className="tasks__subtitle">Completed</h3>
                     {allCompletedTasks.map((task) => (
-                      <>
-                        {/* {task.type === TasksTypes.SCHEDULE || task.type === TasksTypes.SCHEDULED_RECURRING &&
-                        <div className="tasks__container tasks__container--with-date">
-                          <div className="tasks__date tasks__date--completed">
-                            {getDisplayDate(task)}
-                          </div>
-                          <Row
-                            key={task.id}
-                            id={task.id}
-                            task={task.title}
-                            state={TASK_STATE.COMPLETED}
-                            raw={task}
-                          />
-                          {isRecurringTask(task.type) &&
-                            <TaskIndicator recurring={getRecurring(task)} isInactive={task.isInactive} />
-                          }
-                        </div>
-                      } */}
-                        {task.type !== TasksTypes.SCHEDULE &&
-                          task.type !== TasksTypes.SCHEDULED_RECURRING && (
-                            <div className="tasks__container">
-                              <TaskComponent
-                                key={String(task.id)}
-                                id={task.id}
-                                title={task.title}
-                                status={task.status}
-                                rawTaskData={task}
-                              />
-                              {/* {task.moved && <TaskIndicator moved />}
-                      {isRecurringTask(task.type) &&
-                        <TaskIndicator recurring={getRecurring(task)} isInactive={task.isInactive} />
-                      } */}
-                            </div>
-                          )}
-                      </>
+                      <div className="tasks__container">
+                        <TaskDate task={task} />
+                        <TaskComponent
+                          key={String(task.taskId)}
+                          id={task.taskId}
+                          title={task.title}
+                          status={task.status}
+                          rawTaskData={task}
+                          isCompleted
+                        />
+                        <TaskStatus task={task} />
+                      </div>
                     ))}
                   </div>
                 )}

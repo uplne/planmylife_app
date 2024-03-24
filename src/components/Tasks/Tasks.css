@@ -12,13 +12,12 @@
   right: var(--spacing-normal);
 }
 
-
 .tasks__container {
   position: relative;
   background-color: #ffffff;
   border-radius: 6px;
   box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.15);
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .tasks__container--with-date {
@@ -27,22 +26,6 @@
 
 .tasks__container:last-of-type {
   border-bottom: 0;
-}
-
-.tasks__date {
-  background: #d1cdcb;
-  padding: 0 5px;
-  border-radius: 6px;
-  position: absolute;
-  top: -10px;
-  left: var(--spacing-small);
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  font-size: 11px;
-  text-align: left;
-  z-index: 10;
 }
 
 .tasks__date--completed {

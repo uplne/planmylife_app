@@ -2,7 +2,6 @@
 
 .editable-input {
   font-size: var(--font-size-normal);
-  width: 100%;
   color: var(--color-header-text);
   text-align: left;
   cursor: pointer;

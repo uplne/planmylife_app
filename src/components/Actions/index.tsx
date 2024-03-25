@@ -24,9 +24,9 @@ import { AddTask } from "../Tasks/TaskModal/AddTask";
 import {
   completeTask as completeTaskAction,
   removeRecurringFromWeek,
+  completeRecurring,
+  unCheckRecurring,
 } from "../Tasks/tasks.controller";
-
-import { useWeekStore } from "../../store/Week";
 
 import "./Actions.css";
 
@@ -35,7 +35,6 @@ type ComponentTypes = {
 };
 
 export const Actions = ({ task }: ComponentTypes) => {
-  const selectedWeekId = useWeekStore().selectedWeekId;
   const { toggleModal } = useModalStore();
 
   const completeTask = () => {
@@ -71,8 +70,12 @@ export const Actions = ({ task }: ComponentTypes) => {
     await removeRecurringFromWeek(task.taskId);
   };
 
-  const completeRecurring = () => {};
-  const unCheckRecurring = () => {}; //dispatch({ type: 'tasks/unCheckRecurring', payload: id });
+  const completeRecurringHandler = async () => {
+    await completeRecurring(task.taskId);
+  };
+  const unCheckRecurringHandler = async () => {
+    await unCheckRecurring(task.taskId);
+  };
 
   const getMenu = () => {
     const items = [];
@@ -108,15 +111,12 @@ export const Actions = ({ task }: ComponentTypes) => {
       }
 
       if (task.status !== StatusTypes.COMPLETED) {
-        if (
-          "repeatCompletedForWeeks" in task &&
-          task.repeatCompletedForWeeks.includes(selectedWeekId)
-        ) {
+        if ("repeatCompletedForWeeks" in task && task.completedForThisWeek) {
           items.push({
             label: (
               <IconButton
                 className="task__button"
-                onClick={unCheckRecurring}
+                onClick={unCheckRecurringHandler}
                 withCTA
               >
                 <CheckEmptyIcon /> Uncheck for this week
@@ -130,7 +130,7 @@ export const Actions = ({ task }: ComponentTypes) => {
           label: (
             <IconButton
               className="task__button"
-              onClick={completeRecurring}
+              onClick={completeRecurringHandler}
               withCTA
             >
               <StopIcon /> Recurring complete
@@ -185,7 +185,7 @@ export const Actions = ({ task }: ComponentTypes) => {
 
   return (
     <div className="actions">
-      {task.status !== StatusTypes.COMPLETED && (
+      {!task.completedForThisWeek && task.status !== StatusTypes.COMPLETED && (
         <>
           <IconButton className="button__done" onClick={completeTask}>
             <CheckIcon />

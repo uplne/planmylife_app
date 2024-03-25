@@ -22,6 +22,7 @@ export interface TasksAPITypes {
   repeatTimes?: number | null;
   repeatCompletedForWeeks: string[];
   removedForWeek: string[];
+  completedForThisWeek?: boolean;
 }
 
 /*

@@ -118,6 +118,10 @@ export const allCompletedRecurringTasksSelector = () => {
           weekIsInArray(task.repeatCompletedForWeeks, selectedWeek) ||
           task.status === StatusTypes.COMPLETED,
       )
+      .map((item: TasksAPITypes) => ({
+        ...item,
+        completedForThisWeek: true,
+      }))
       .sort(sortByAssigned);
 
     setTempTasks(newTasks);

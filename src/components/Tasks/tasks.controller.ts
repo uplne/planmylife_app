@@ -430,6 +430,10 @@ export const removeRecurringFromWeek = async (id: idType) => {
   });
 };
 
-// export const completeRecurring = (action) => {
-//   yield put({ type: 'tasks/completeTask', payload: { id: action.payload, recurringCompleted: true }});
-// };
+export const completeRecurring = async (id: idType) => {
+  await completeTask(id, true);
+};
+
+export const unCheckRecurring = async (id: idType) => {
+  await revertCompletedTask(id, true);
+};

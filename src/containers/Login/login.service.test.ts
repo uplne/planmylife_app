@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import { auth } from "../../services/firebase";
-import { getUserById, saveUser } from "./api";
+import { getUserById, saveUser } from "./login.service";
 import { UserTypes } from "../../store/Auth/api";
 import { useAuthStore, AuthDefault } from "../../store/Auth";
 import { encrypt } from "../../services/encryption";

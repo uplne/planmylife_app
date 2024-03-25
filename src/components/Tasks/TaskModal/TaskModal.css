@@ -13,6 +13,10 @@
       color: var(--color-primary);
     }
   }
+
+  .ant-btn-primary : {
+    background-color: var(--color-primary);
+  }
 }
 
 .taskmodal__container {

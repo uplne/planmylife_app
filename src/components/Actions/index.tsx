@@ -6,6 +6,7 @@ import {
   revertCompletedTask,
   saveTask,
   saveEditedTask,
+  moveToNextWeek,
 } from "../Tasks/tasks.controller";
 import { useModalStore } from "../../store/Modal";
 import { IconButton } from "../../components/Buttons/IconButton";
@@ -20,9 +21,12 @@ import {
   FolderDownloadIcon,
 } from "../../components/Icons";
 import { AddTask } from "../Tasks/TaskModal/AddTask";
-import { completeTask as completeTaskAction } from "../Tasks/tasks.controller";
-
-import { useWeekStore } from "../../store/Week";
+import {
+  completeTask as completeTaskAction,
+  removeRecurringFromWeek,
+  completeRecurring,
+  unCheckRecurring,
+} from "../Tasks/tasks.controller";
 
 import "./Actions.css";
 
@@ -31,11 +35,10 @@ type ComponentTypes = {
 };
 
 export const Actions = ({ task }: ComponentTypes) => {
-  const selectedWeekId = useWeekStore().selectedWeekId;
   const { toggleModal } = useModalStore();
 
   const completeTask = () => {
-    completeTaskAction(task.id);
+    completeTaskAction(task.taskId);
   };
 
   const removeTask = async () => {
@@ -45,17 +48,12 @@ export const Actions = ({ task }: ComponentTypes) => {
     });
   };
 
-  const moveToNextWeek = () => {
-    // dispatch({
-    //   type: 'tasks/moveTaskToNextWeek',
-    //   payload: {
-    //     id,
-    //   },
-    // });
+  const moveToNextWeekHandler = async () => {
+    await moveToNextWeek(task.taskId);
   };
 
   const unCheck = async () => {
-    await revertCompletedTask(task.id, false);
+    await revertCompletedTask(task.taskId, false);
   };
 
   const editTaskHandler = async () => {
@@ -63,14 +61,21 @@ export const Actions = ({ task }: ComponentTypes) => {
       isOpen: true,
       content: <AddTask task={task} editMode />,
       title: "Edit Task",
-      onSave: () => saveEditedTask(task.id),
+      onSave: () => saveEditedTask(task.taskId),
       disableAutoClose: true,
     });
   };
 
-  const removeRecurringFromThisWeek = () => {}; //dispatch({ type: 'tasks/removeRecurringFromWeek', payload: id });
-  const completeRecurring = () => {}; //dispatch({ type: 'tasks/completeRecurring', payload: id });
-  const unCheckRecurring = () => {}; //dispatch({ type: 'tasks/unCheckRecurring', payload: id });
+  const removeRecurringFromThisWeek = async () => {
+    await removeRecurringFromWeek(task.taskId);
+  };
+
+  const completeRecurringHandler = async () => {
+    await completeRecurring(task.taskId);
+  };
+  const unCheckRecurringHandler = async () => {
+    await unCheckRecurring(task.taskId);
+  };
 
   const getMenu = () => {
     const items = [];
@@ -106,15 +111,12 @@ export const Actions = ({ task }: ComponentTypes) => {
       }
 
       if (task.status !== StatusTypes.COMPLETED) {
-        if (
-          "repeatCompletedForWeeks" in task &&
-          task.repeatCompletedForWeeks.includes(selectedWeekId)
-        ) {
+        if ("repeatCompletedForWeeks" in task && task.completedForThisWeek) {
           items.push({
             label: (
               <IconButton
                 className="task__button"
-                onClick={unCheckRecurring}
+                onClick={unCheckRecurringHandler}
                 withCTA
               >
                 <CheckEmptyIcon /> Uncheck for this week
@@ -128,7 +130,7 @@ export const Actions = ({ task }: ComponentTypes) => {
           label: (
             <IconButton
               className="task__button"
-              onClick={completeRecurring}
+              onClick={completeRecurringHandler}
               withCTA
             >
               <StopIcon /> Recurring complete
@@ -183,12 +185,12 @@ export const Actions = ({ task }: ComponentTypes) => {
 
   return (
     <div className="actions">
-      {task.status !== StatusTypes.COMPLETED && (
+      {!task.completedForThisWeek && task.status !== StatusTypes.COMPLETED && (
         <>
           <IconButton className="button__done" onClick={completeTask}>
             <CheckIcon />
           </IconButton>
-          <IconButton className="button__done" onClick={moveToNextWeek}>
+          <IconButton className="button__done" onClick={moveToNextWeekHandler}>
             <ArrowCircleRight />
           </IconButton>
         </>

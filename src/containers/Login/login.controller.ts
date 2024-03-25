@@ -1,7 +1,6 @@
 import { User as FirebaseUser, UserCredential } from "firebase/auth";
 import axios from "axios";
 import dayjs from "dayjs";
-import { decrypt } from "../../services/encryption";
 import { sha256 } from "js-sha256";
 
 import { GoogleAuth, auth, signInWithRedirect } from "../../services/firebase";
@@ -9,7 +8,7 @@ import { useSettingsStateStore } from "../../store/Settings";
 import { fetchSettings, createSettings } from "../Settings/controller";
 import { useAuthStore } from "../../store/Auth";
 import { useAppStore } from "../../store/App";
-import { getUserById, saveUser, saveLastLogin } from "./api";
+import { getUserById, saveUser, saveLastLogin } from "./login.service";
 import { UserTypes } from "../../store/Auth/api";
 
 export const getUserId = (uid: string) => {
@@ -88,9 +87,9 @@ export const storeUserData = async ({ user }: PropsStoreUserDataTypes) => {
   } else {
     const lastLogin = dayjs().format();
     await useAuthStore.getState().updateCurrentUser({
-      display_name: await decrypt(userData.display_name),
-      first_name: await decrypt(userData.first_name),
-      email: await decrypt(userData.email),
+      display_name: userData.display_name,
+      first_name: userData.first_name,
+      email: userData.email,
       user_id: userId,
       created: userData.created,
       last_login: lastLogin,

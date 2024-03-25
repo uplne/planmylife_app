@@ -3,7 +3,8 @@ import { StatusTypes, TasksTypes } from "../../types/status";
 import { SchedulerType, SchedulerPeriod } from "../TaskScheduler";
 
 export interface TasksAPITypes {
-  id: idType;
+  id?: idType;
+  taskId: idType;
   userId?: string;
   type: TasksTypes;
   status: StatusTypes;
@@ -20,11 +21,14 @@ export interface TasksAPITypes {
   repeatPeriod?: SchedulerPeriod | null;
   repeatTimes?: number | null;
   repeatCompletedForWeeks: string[];
+  removedForWeek: string[];
+  completedForThisWeek?: boolean;
 }
 
 /*
   CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
+    task_id TEXT,
     user_id TEXT,
     type TEXT,
     status TEXT,

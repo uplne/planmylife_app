@@ -43,7 +43,7 @@ export const EditableInput = forwardRef(
     const [isEditable, setIsEditable] = useState(false);
     const [taskContent, setTaskContent] = useState<string>(taskTitle);
     const inputRef = useRef<HTMLInputElement | null>(null);
-    const classes = classnames("editable-input", className, {
+    const classes = classnames("editable-input w-9/12", className, {
       "editable-input--isCompleted": isCompleted,
     });
 

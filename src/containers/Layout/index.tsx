@@ -7,7 +7,7 @@ import { NotificationContainer } from "../../components/Notification";
 
 export const Layout = () => {
   return (
-    <main className="bg-main-background h-full">
+    <main className="bg-main-background h-full pb-xl">
       <Header />
       <Outlet />
       <Modal />

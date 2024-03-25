@@ -1,122 +1,134 @@
-import axios from "axios";
-import { doc, setDoc, deleteDoc } from "firebase/firestore";
+import axios, { AxiosError } from "axios";
 
 import { TasksTypes } from "../../types/status";
-import { db, CollectionType } from "../../services/firebase";
+import { CollectionType } from "../../services/firebase";
 
 import { TaskType } from "../../store/Tasks";
-import { useAuthStore } from "../../store/Auth";
 import { useTasksStore } from "../../store/Tasks";
-import { showSuccessNotification } from "../Notification/controller";
 import { idType } from "../../types/idtype";
 
-export const getTasks = async (
+export const getDefaultTasks = async (
   from: string,
   to: string,
   type: TasksTypes = TasksTypes.DEFAULT,
 ) => {
   try {
-    const userId = await useAuthStore.getState().currentUser?.id;
     const response = await axios.get(
-      `http://localhost:3001/api/v1/tasks/${userId}/${type}/${from}/${to}`,
+      `http://localhost:3001/api/v1/tasks/${from}/${to}`,
     );
 
     if (response.data && response.data.length > 0) {
-      return response.data[0];
+      return response.data;
     }
 
-    return null;
+    return [];
   } catch (e) {
     throw new Error(`Get ${type} tasks: ${e}`);
   }
 };
 
-export const updateTaskAPI = async (newTaskData: TaskType) => {
-  const userId = await useAuthStore.getState().currentUser?.id;
+export const getRecurringTasks = async () => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3001/api/v1/tasks/recurring`,
+    );
 
-  if (!userId) {
-    throw new Error("Save task: No user id");
+    if (response.data && response.data.length > 0) {
+      return response.data;
+    }
+
+    return [];
+  } catch (e) {
+    throw new Error(`Get recurring tasks: ${e}`);
+  }
+};
+
+export const updateTaskAPI = async (newTaskData: TaskType) => {
+  let collection: CollectionType = "default";
+
+  // It's recurring task
+  if (
+    "type" in newTaskData &&
+    (newTaskData.type === TasksTypes.RECURRING ||
+      newTaskData.type === TasksTypes.SCHEDULED_RECURRING)
+  ) {
+    collection = "recurring";
   }
 
   try {
-    let collection: CollectionType = "default";
+    const response = await axios.put(
+      `http://localhost:3001/api/v1/tasks/${newTaskData.taskId}`,
+      {
+        ...newTaskData,
+      },
+    );
 
-    // It's recurring task
-    if (
-      "type" in newTaskData &&
-      (newTaskData.type === TasksTypes.RECURRING ||
-        newTaskData.type === TasksTypes.SCHEDULED_RECURRING)
-    ) {
-      collection = "recurring";
+    return response;
+  } catch (error: any | AxiosError) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        throw new Error(
+          `Failed to update task: ${newTaskData.taskId}, error - response: ${error.response.status} ${error.response.data}`,
+        );
+      } else if (error.request) {
+        throw new Error(
+          `Failed to update task: ${newTaskData.taskId}, error - request: ${error.request}`,
+        );
+      }
+    } else {
+      throw new Error(
+        `Failed to update task: ${newTaskData.taskId}, error: ${error.message}`,
+      );
     }
-
-    const docRef = doc(db, `tasks/${userId}/${collection}/${newTaskData.id}`);
-    await setDoc(docRef, newTaskData, { merge: true });
-    await showSuccessNotification();
-  } catch (e) {
-    throw new Error(`Failed to update task: ${newTaskData.id}, error: ${e}`);
   }
 };
 
 export const removeTaskAPI = async (id: idType) => {
-  const userId = await useAuthStore.getState().currentUser?.id;
+  const storedTasks = await useTasksStore.getState().tasks;
+  const taskData = storedTasks.find((task) => task.taskId === id);
+  let collection: CollectionType = "default";
 
-  if (!userId) {
-    throw new Error("Save task: No user id");
+  // It's recurring task
+  if (
+    taskData &&
+    "type" in taskData &&
+    (taskData.type === TasksTypes.RECURRING ||
+      taskData.type === TasksTypes.SCHEDULED_RECURRING)
+  ) {
+    collection = "recurring";
   }
 
   try {
-    const storedTasks = await useTasksStore.getState().tasks;
-    const taskData = storedTasks.find((task) => task.id === id);
+    const response = await axios.delete(
+      `http://localhost:3001/api/v1/tasks/${id}`,
+    );
 
-    let collection: CollectionType = "default";
-
-    // It's recurring task
-    if (
-      taskData &&
-      "type" in taskData &&
-      (taskData.type === TasksTypes.RECURRING ||
-        taskData.type === TasksTypes.SCHEDULED_RECURRING)
-    ) {
-      collection = "recurring";
+    return response;
+  } catch (error: any | AxiosError) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        throw new Error(
+          `Failed to delete task: ${id}, error - response: ${error.response.status} ${error.response.data}`,
+        );
+      } else if (error.request) {
+        throw new Error(
+          `Failed to delete task: ${id}, error - request: ${error.request}`,
+        );
+      }
+    } else {
+      throw new Error(`Failed to delete task: ${id}, error: ${error.message}`);
     }
-
-    const docRef = doc(db, `tasks/${userId}/${collection}/${id}`);
-    await deleteDoc(docRef);
-  } catch (e) {
-    throw new Error(`Failed to delete task: ${id}, error: ${e}`);
   }
 };
 
-export const saveTaskAPI = async (id: idType) => {
-  const tasks = await useTasksStore.getState().tasks;
-  const userId = await useAuthStore.getState().currentUser?.id;
-  const taskData = tasks.find((task) => task.id === id);
-
-  if (!userId) {
-    throw new Error("Save task: No user id");
-  }
-
+export const saveTaskAPI = async (task: TaskType) => {
   try {
-    let collection: CollectionType = "default";
+    const response = await axios.post(`http://localhost:3001/api/v1/tasks`, {
+      ...task,
+    });
 
-    // It's recurring task
-    if (
-      taskData &&
-      "type" in taskData &&
-      (taskData.type === TasksTypes.RECURRING ||
-        taskData.type === TasksTypes.SCHEDULED_RECURRING)
-    ) {
-      collection = "recurring";
-    }
-
-    try {
-      const docRef = doc(db, `tasks/${userId}/${collection}/${id}`);
-      await setDoc(docRef, taskData, { merge: true });
-    } catch (e) {
-      console.log("Failed saving task: ", e);
-    }
+    return response;
   } catch (e) {
-    console.log(e);
+    throw new Error(`Failed to save task: ${task.id}, error: ${e}`);
   }
 };

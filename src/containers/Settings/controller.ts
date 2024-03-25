@@ -33,6 +33,7 @@ export const fetchSettings = async () => {
 
   // Load settings for the user from DB
   try {
+    console.log("get settings");
     const result = await getSettings();
 
     if (result) {
@@ -41,6 +42,7 @@ export const fetchSettings = async () => {
       }
 
       await updateIsFirstLogin(result.is_first_login);
+      console.log("update locale");
       await updateLocale(result.day_of_week);
 
       await updateIsLoading(LOADING.LOADED);

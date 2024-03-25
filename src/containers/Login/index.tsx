@@ -1,18 +1,22 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { CenteredBox } from '../../components/CenteredBox';
-import { Box } from '../../components/Box';
-import { IconButton } from '../../components/Buttons/IconButton';
-import { GoogleIcon } from '../../components/Icons/GoogleIcon';
-import { InitialLoader } from '../../components/InitialLoader';
-import { HorizontalText } from '../../components/HorizontalText';
-import { LoginWithGoogle, ProcessGoogleRedirect, initializeApp, storeUserData } from './controller';
-import { auth, getRedirectResult } from '../../services/firebase';
-import { useAuthStore } from '../../store/Auth';
-import { useAppStore } from '../../store/App';
+import { CenteredBox } from "../../components/CenteredBox";
+import { Box } from "../../components/Box";
+import { IconButton } from "../../components/Buttons/IconButton";
+import { GoogleIcon } from "../../components/Icons/GoogleIcon";
+import { InitialLoader } from "../../components/InitialLoader";
+import {
+  LoginWithGoogle,
+  ProcessGoogleRedirect,
+  initializeApp,
+  storeUserData,
+} from "./login.controller";
+import { auth, getRedirectResult } from "../../services/firebase";
+import { useAuthStore } from "../../store/Auth";
+import { useAppStore } from "../../store/App";
 
-import './styles.css';
+import "./styles.css";
 
 export const Login = () => {
   const { isLoggedIn, setIsLoggedIn } = useAuthStore();
@@ -28,17 +32,18 @@ export const Login = () => {
       await setIsLoading(true);
 
       await auth.onAuthStateChanged(async (user) => {
+        console.log("onAuthStateChanged", user);
         if (user) {
           await storeUserData({
             user,
           });
           await setIsLoggedIn(true);
           await setIsLoading(false);
-          navigate('/myweek');
+          navigate("/myweek");
         } else {
           await setIsLoggedIn(false);
           await setIsLoading(false);
-          navigate('/login');
+          navigate("/login");
         }
       });
     })();
@@ -71,13 +76,12 @@ export const Login = () => {
   return (
     <CenteredBox>
       <Box className="w-full md:w-1/2">
-        <h1 className="text-3xl font-bold text-center mb-20">Hi. Where are you headed?</h1>
+        <h1 className="text-3xl font-bold text-center mb-20">
+          Hi. Where are you headed?
+        </h1>
 
         <div className="login__wrapper">
-          <IconButton
-            className="icon-button--login"
-            onClick={onClickGoogle}
-          >
+          <IconButton className="icon-button--login" onClick={onClickGoogle}>
             <GoogleIcon />
             Continue with Google
           </IconButton>

@@ -1,10 +1,10 @@
 import { auth } from "../../services/firebase";
 import axios from "axios";
 
-import { getUserId, storeUserData, initializeApp } from "./controller";
+import { getUserId, storeUserData, initializeApp } from "./login.controller";
 import { useAuthStore } from "../../store/Auth";
 import { useSettingsStateStore } from "../../store/Settings";
-import { getUserById, saveLastLogin, saveUser } from "./api";
+import { getUserById, saveLastLogin, saveUser } from "./login.service";
 import { decrypt } from "../../services/encryption";
 import { createSettings, fetchSettings } from "../Settings/controller";
 

@@ -1,8 +1,5 @@
 import { create } from "zustand";
 import dayjs from "dayjs";
-import flow from "lodash/fp/flow";
-import sortBy from "lodash/fp/sortBy";
-import filter from "lodash/fp/filter";
 import uniqBy from "lodash/fp/uniqBy";
 import remove from "lodash/remove";
 
@@ -21,7 +18,8 @@ export type FlowType = (tasks: TaskType[]) => TaskType[];
 export interface TasksStoreDefaultTypes {
   tasks: TaskType[];
   newTask: string;
-  isLoading: DATA_FETCHING_STATUS;
+  loadingDefaultTasksStatus: DATA_FETCHING_STATUS;
+  loadingRecurringTasksStatus: DATA_FETCHING_STATUS;
   schedule: string | undefined;
 }
 
@@ -29,8 +27,10 @@ export interface TasksStoreTypes extends TasksStoreDefaultTypes {
   tasks: TaskType[];
   newTask: string;
   fillTasks: (tasks: TaskType[]) => Promise<void>;
-  isLoading: DATA_FETCHING_STATUS;
-  updateIsLoading: (value: DATA_FETCHING_STATUS) => void;
+  loadingDefaultTasksStatus: DATA_FETCHING_STATUS;
+  updateLoadingDefaultTasksStatus: (value: DATA_FETCHING_STATUS) => void;
+  loadingRecurringTasksStatus: DATA_FETCHING_STATUS;
+  updateLoadingRecurringTasksStatus: (value: DATA_FETCHING_STATUS) => void;
   updateNewTask: (value: string) => void;
   schedule: string | undefined;
   setSchedule: (value: string | undefined) => void;
@@ -38,28 +38,30 @@ export interface TasksStoreTypes extends TasksStoreDefaultTypes {
   updateTask: (value: TaskType) => void;
   revertCompleted: (id: idType, recurringRevert?: boolean) => void;
   removeTask: (id: idType) => void;
-
-  defaultTasksSelector: () => TaskType[];
-  defaultCompletedTasks: () => TaskType[];
-  allCompletedTasks: () => TaskType[];
 }
 
 export const TasksStoreDefault: TasksStoreDefaultTypes = {
-  isLoading: DATA_FETCHING_STATUS.NODATA,
+  loadingDefaultTasksStatus: DATA_FETCHING_STATUS.NODATA,
+  loadingRecurringTasksStatus: DATA_FETCHING_STATUS.NODATA,
   tasks: [],
   newTask: "",
   schedule: undefined,
 };
 
 export const useTasksStore = create<TasksStoreTypes>((set, get) => ({
-  isLoading: TasksStoreDefault.isLoading,
-  updateIsLoading: async (value) => {
-    set({ isLoading: value });
+  loadingDefaultTasksStatus: TasksStoreDefault.loadingDefaultTasksStatus,
+  updateLoadingDefaultTasksStatus: async (value) => {
+    set({ loadingDefaultTasksStatus: value });
+  },
+  loadingRecurringTasksStatus: TasksStoreDefault.loadingRecurringTasksStatus,
+  updateLoadingRecurringTasksStatus: async (value) => {
+    set({ loadingRecurringTasksStatus: value });
   },
   tasks: TasksStoreDefault.tasks,
   fillTasks: async (tasks: TaskType[]) => {
     const storedTasks = await get().tasks;
-    const newTasks = uniqBy((item) => item.id, storedTasks.concat(tasks));
+    const newTasks = uniqBy((item) => item.taskId, storedTasks.concat(tasks));
+
     await set({
       tasks: newTasks,
     });
@@ -88,21 +90,23 @@ export const useTasksStore = create<TasksStoreTypes>((set, get) => ({
   },
 
   updateTask: async (newTaskData: TaskType) => {
-    const storedTasks = [...(await get().tasks)];
-    const index = storedTasks.findIndex((task) => task.id === newTaskData.id);
+    const storedTasks = await get().tasks;
+    const index = storedTasks.findIndex(
+      (task) => task.taskId === newTaskData.taskId,
+    );
 
     storedTasks[index] = {
       ...storedTasks[index],
       ...newTaskData,
     };
 
-    await set({ tasks: storedTasks });
+    await set({ tasks: [...storedTasks] });
   },
 
   revertCompleted: async (id: idType, recurringRevert: boolean = false) => {
-    const selectedWeekId = useWeekStore.getState().selectedWeekId;
+    const selectedWeek = useWeekStore.getState().selectedWeek;
     const storedTasks = await get().tasks;
-    const index = storedTasks.findIndex((task) => task.id === id);
+    const index = storedTasks.findIndex((task) => task.taskId === id);
     const task = storedTasks[index];
 
     // Revert only one recurrence (for one week)
@@ -113,7 +117,7 @@ export const useTasksStore = create<TasksStoreTypes>((set, get) => ({
       recurringRevert
     ) {
       const newArray = storedTasks[index].repeatCompletedForWeeks.filter(
-        (week) => dayjs(week).isSame(dayjs(selectedWeekId), "week"),
+        (week) => dayjs(week).isSame(dayjs(selectedWeek), "week"),
       );
       storedTasks[index].repeatCompletedForWeeks = newArray;
       // Revert completed
@@ -127,56 +131,7 @@ export const useTasksStore = create<TasksStoreTypes>((set, get) => ({
 
   removeTask: async (id: idType) => {
     const storedTasks = [...get().tasks];
-    remove(storedTasks, (task) => task.id === id);
-    await set({ tasks: storedTasks });
-  },
-
-  // Selectors - DEFAULT
-  defaultTasksSelector: () => {
-    const storedTasks = [...get().tasks];
-    const selectedWeekId = useWeekStore.getState().selectedWeekId;
-
-    const result = (
-      flow(
-        filter(
-          (task: TaskType) =>
-            task.type === TasksTypes.DEFAULT &&
-            task.status === StatusTypes.ACTIVE &&
-            dayjs(task.assigned).isSame(dayjs(selectedWeekId), "week"),
-        ),
-        sortBy((item: TaskType) => item.assigned),
-      ) as FlowType
-    )(storedTasks);
-
-    return result;
-  },
-
-  // Completed
-
-  // Completed - DEFAULT
-  defaultCompletedTasks: () => {
-    const storedTasks = get().tasks;
-    const selectedWeekId = useWeekStore.getState().selectedWeekId;
-
-    const result = (
-      flow(
-        filter(
-          (task: TaskType) =>
-            task.type === TasksTypes.DEFAULT &&
-            task.status === StatusTypes.COMPLETED &&
-            dayjs(task.assigned).isSame(dayjs(selectedWeekId), "week"),
-        ),
-        sortBy((item: TaskType) => item.assigned),
-      ) as FlowType
-    )(storedTasks);
-
-    return result;
-  },
-  allCompletedTasks: () => {
-    const defaultCompletedTasks = get().defaultCompletedTasks();
-
-    const result = flow(sortBy("assigned"))([...defaultCompletedTasks]);
-
-    return result;
+    remove(storedTasks, (task) => task.taskId === id);
+    await set({ tasks: [...storedTasks] });
   },
 }));

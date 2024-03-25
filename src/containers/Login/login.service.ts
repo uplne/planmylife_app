@@ -1,7 +1,6 @@
 import axios from "axios";
 
 import { UserTypes } from "../../store/Auth/api";
-import { encrypt } from "../../services/encryption";
 
 export const getUserById = async (userId: string) => {
   try {
@@ -9,8 +8,8 @@ export const getUserById = async (userId: string) => {
       `http://localhost:3001/api/v1/users/${userId}`,
     );
 
-    if (response.data && response.data.length > 0) {
-      return response.data[0];
+    if (response.data) {
+      return response.data;
     }
 
     return null;
@@ -23,9 +22,9 @@ export const saveUser = async (currentUser: Omit<UserTypes, "id">) => {
   try {
     const response = await axios.post(`http://localhost:3001/api/v1/users`, {
       ...currentUser,
-      display_name: await encrypt(currentUser.display_name),
-      first_name: await encrypt(currentUser.first_name),
-      email: await encrypt(currentUser.email),
+      display_name: currentUser.display_name,
+      first_name: currentUser.first_name,
+      email: currentUser.email,
     });
 
     return response.status;

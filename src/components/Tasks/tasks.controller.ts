@@ -406,7 +406,7 @@ export const moveToNextWeek = async (id: idType) => {
   } else {
     movedArray.push(dayjs().format());
     newTask.moved = movedArray;
-    newTask.assigned = dayjs().add(7, "days").format();
+    newTask.assigned = dayjs(storedTask.assigned).add(7, "days").format();
   }
 
   await updateTask(newTask);

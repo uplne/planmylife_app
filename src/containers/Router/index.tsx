@@ -1,13 +1,12 @@
-import {
-  redirect,
-} from "react-router-dom";
+import { redirect } from "react-router-dom";
 
-import { Overview } from '../Overview';
-import { Login } from '../Login';
+import { Overview } from "../Overview";
+import { Login } from "../Login";
 import { LogOut } from "../LogOut";
-import { Layout } from '../Layout';
-import { Header } from '../Header';
-import { useAuthStore } from '../../store/Auth';
+import { Layout } from "../Layout";
+import { Header } from "../Header";
+import { parseUrlParameters } from "../../services/parseurl";
+import { useAuthStore } from "../../store/Auth";
 
 // export default ({...props}) =>
 //   <Switch>
@@ -30,7 +29,9 @@ export const Router = [
     path: "/",
     async loader() {
       if (!useAuthStore.getState().isLoggedIn) {
-        return redirect("/login");
+        const { week } = parseUrlParameters();
+
+        return redirect(`/login?week=${week}`);
       }
 
       return null;
@@ -38,17 +39,17 @@ export const Router = [
     Component: Layout,
     children: [
       {
-        path: 'myweek',
+        path: "myweek",
         Component: Overview,
       },
     ],
   },
   {
-    path: 'logout',
+    path: "logout",
     Component: LogOut,
   },
   {
     path: "login",
     Component: Login,
   },
-]
+];

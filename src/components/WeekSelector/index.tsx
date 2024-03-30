@@ -1,19 +1,17 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { ArrowIcon } from '../Icons/ArrowIcon';
-import { GoToCurrentWeek } from './GoToCurrentWeek';
-import { GoToWeek } from './GoToWeek';
-import { IconButton } from '../Buttons/IconButton';
+import { ArrowIcon } from "../Icons/ArrowIcon";
+import { GoToCurrentWeek } from "./GoToCurrentWeek";
+import { GoToWeek } from "./GoToWeek";
+import { IconButton } from "../Buttons/IconButton";
 // import tabActiveEventManager from '../../utils/tabActiveEventManager';
-import { useWeekStore } from '../../store/Week';
+import { useWeekStore } from "../../store/Week";
 
-import './WeekSelector.css';
+import "./WeekSelector.css";
 
 export const WeekSelector = () => {
   const {
-    // updateToday,
-    currentWeekId,
     selectedWeekNumber,
     selectedWeekStartPretty,
     selectedWeekEndPretty,
@@ -48,17 +46,18 @@ export const WeekSelector = () => {
           >
             <ArrowIcon className="weekselector__arrow-icon" />
           </IconButton>
-          <IconButton
-            className="weekselector__button"
-            onClick={goToNextWeek}
-          >
+          <IconButton className="weekselector__button" onClick={goToNextWeek}>
             <ArrowIcon className="weekselector__arrow-icon" right />
           </IconButton>
         </div>
         <h1 className="weekselector__title">
           <div className="weekselector__title-wrap">
             Week {selectedWeekNumber}
-            <span className="weekselector__subtitle">{selectedWeekStartPretty} <span className="weekselector__to">to</span> {selectedWeekEndPretty}</span>
+            <span className="weekselector__subtitle">
+              {selectedWeekStartPretty}{" "}
+              <span className="weekselector__to">to</span>{" "}
+              {selectedWeekEndPretty}
+            </span>
           </div>
           <div className="weekselector__links">
             {showCurrentWeekLink && <GoToCurrentWeek />}

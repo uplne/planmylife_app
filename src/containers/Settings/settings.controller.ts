@@ -1,5 +1,6 @@
 import { useSettingsStateStore, LOADING } from "../../store/Settings";
 import { saveSettings, getSettings } from "./api";
+import { updateSettingsAPI } from "./settings.service";
 
 export const createSettings = async () => {
   const weekly_email_reminder =
@@ -20,7 +21,7 @@ export const createSettings = async () => {
   }
 };
 
-export const fetchSettings = async () => {
+export const fetchSettings = async (): Promise<boolean> => {
   const updateIsLoading =
     await useSettingsStateStore.getState().updateIsLoading;
   const updateWeeklyEmailReminder =
@@ -42,13 +43,31 @@ export const fetchSettings = async () => {
       }
 
       await updateIsFirstLogin(result.is_first_login);
-      console.log("update locale");
       await updateLocale(result.day_of_week);
 
       await updateIsLoading(LOADING.LOADED);
+
+      return result.is_first_login;
     }
+
+    return false;
   } catch (e) {
     await updateIsLoading(LOADING.ERROR);
     throw new Error(`Fetching settings failed: ${e}`);
   }
+};
+
+export const updateFirstLogin = async () => {
+  const updateIsFirstLogin =
+    await useSettingsStateStore.getState().updateIsFirstLogin;
+  const { weekly_email_reminder, tier, day_of_week } =
+    await useSettingsStateStore.getState();
+
+  await updateIsFirstLogin(false);
+  await updateSettingsAPI({
+    weekly_email_reminder,
+    is_first_login: false,
+    tier,
+    day_of_week,
+  });
 };

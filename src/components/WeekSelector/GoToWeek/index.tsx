@@ -26,8 +26,9 @@ export const GoToWeek = () => {
   return (
     <div className="gotoweek">
       <div className="gotoweek__wrapper" onClick={onClick}>
-        <ArrowCircleRight />
+        <ArrowCircleRight className="mt-[2px]" />
         <DatePicker
+          className="bg-[transparent] border-0 hover:bg-[transparent]"
           picker="week"
           onChange={calendarOnClick}
           locale={locale}

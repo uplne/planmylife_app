@@ -3,21 +3,21 @@ import dayjs from "dayjs";
 
 import { TasksAPITypes } from "../api";
 import { useWeekStore } from "../../Week";
+import { useTasksStore } from "../index";
 import { StatusTypes, TasksTypes } from "../../../types/status";
 import { sortByAssigned } from "../../../services/sorting";
-import { allDefaultTasksSelector } from "./default.selector";
 import { allActiveScheduledRecurringTasksSelector } from "./recurring.selector";
 
 // ACTIVE TASKS
 export const allDefaultScheduledTasksSelector = (): TasksAPITypes[] => {
   const selectedWeek = useWeekStore().selectedWeek;
-  const defaultTasks: TasksAPITypes[] = allDefaultTasksSelector();
+  const tasks: TasksAPITypes[] = useTasksStore().tasks;
   const allActiveScheduledRecurringTasks =
     allActiveScheduledRecurringTasksSelector();
   const [tempTasks, setTempTasks] = useState<TasksAPITypes[]>([]);
 
   useEffect(() => {
-    const newTasks = [...defaultTasks]
+    const newTasks = [...tasks]
       .filter(
         (task: TasksAPITypes) =>
           task.type === TasksTypes.SCHEDULE &&
@@ -28,7 +28,7 @@ export const allDefaultScheduledTasksSelector = (): TasksAPITypes[] => {
       .sort(sortByAssigned);
 
     setTempTasks(newTasks);
-  }, [selectedWeek, defaultTasks, allActiveScheduledRecurringTasks]);
+  }, [selectedWeek, tasks, allActiveScheduledRecurringTasks]);
 
   return tempTasks;
 };

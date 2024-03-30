@@ -8,6 +8,7 @@ import {
   SCHEDULER_PERIOD_LABEL,
   useTaskSchedulerStore,
   SchedulerType,
+  SchedulerPeriod,
 } from "../../store/TaskScheduler";
 
 import "./TaskScheduler.css";
@@ -15,9 +16,17 @@ import { SimpleInput } from "../SimpleInput";
 
 export type ComponentProps = {
   className?: string;
+  type?: SchedulerType | null;
+  period?: SchedulerPeriod | null;
+  times?: number | null;
 };
 
-export const Scheduler = ({ className = undefined }: ComponentProps) => {
+export const Scheduler = ({
+  className = undefined,
+  type,
+  period,
+  times,
+}: ComponentProps) => {
   const classes = classnames("taskscheduler", className);
   const {
     repeatType,
@@ -47,11 +56,11 @@ export const Scheduler = ({ className = undefined }: ComponentProps) => {
     (async () => {
       await resetScheduler();
 
-      // if (type) {
-      //   setRepeatType(Number(type));
-      //   setRepeatPeriod(Number(period));
-      //   setRepeatTimes(Number(times));
-      // }
+      if (type) {
+        setRepeatType(Number(type));
+        setRepeatPeriod(Number(period));
+        setRepeatTimes(Number(times));
+      }
     })();
   }, []);
 

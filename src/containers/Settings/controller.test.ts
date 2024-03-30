@@ -1,6 +1,6 @@
 import * as API from "./api";
 import { SettingsAPITypes, TIER } from "../../store/Settings/api";
-import { createSettings, fetchSettings } from "./controller";
+import { createSettings, fetchSettings } from "./settings.controller";
 import { useSettingsStateStore, LOADING } from "../../store/Settings";
 
 const MOCK_SETTINGS: SettingsAPITypes = {

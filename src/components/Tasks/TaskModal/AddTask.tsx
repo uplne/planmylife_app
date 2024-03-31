@@ -6,9 +6,10 @@ import { Scheduler } from "../../../components/TaskScheduler";
 import { SimpleInput } from "../../SimpleInput";
 import { TaskType, useTasksStore } from "../../../store/Tasks";
 import { useModalStore } from "../../../store/Modal";
-import { saveNewTask } from "../tasks.controller";
+import { saveNewTask, saveEditedTask } from "../tasks.controller";
 
 import "./TaskModal.css";
+import { TasksTypes } from "../../../types/status";
 
 type ComponentTypes = {
   task?: TaskType | null;
@@ -25,6 +26,10 @@ export const AddTask = ({ task = null, editMode = false }: ComponentTypes) => {
     inputRef.current?.focus();
     updateNewTask(editMode && task ? task.title : "");
 
+    if (editMode) {
+      toggleSaveDisable(false);
+    }
+
     return () => {
       updateNewTask("");
       setSchedule(undefined);
@@ -33,15 +38,15 @@ export const AddTask = ({ task = null, editMode = false }: ComponentTypes) => {
 
   const onChange = async (e: React.FormEvent<HTMLInputElement>) => {
     await updateNewTask((e.target as HTMLInputElement).value);
-    await toggleSaveDisable((e.target as HTMLInputElement).value === "");
+
+    if (!editMode) {
+      await toggleSaveDisable((e.target as HTMLInputElement).value === "");
+    }
   };
 
   const onSave = async () => {
-    if (editMode) {
-      // dispatch({
-      //   type: 'tasks/saveEditedTask',
-      //   payload: task,
-      // });
+    if (editMode && task?.taskId) {
+      await saveEditedTask(task?.taskId);
     } else {
       await saveNewTask();
     }
@@ -60,36 +65,37 @@ export const AddTask = ({ task = null, editMode = false }: ComponentTypes) => {
       setSchedule(undefined);
     }
 
-    await toggleSaveDisable(task?.schedule === date.format());
+    if (!editMode) {
+      await toggleSaveDisable(task?.schedule === date.format());
+    }
   };
 
   const customFormat = (value: Dayjs) => value.format("MMM D, YYYY - HH:mm");
   const customTimeFormat = "HH:mm";
 
-  // if (task.type === TASK_TYPE.RECURRING) {
-  //   schedulerProps = {
-  //     type: task.repeatType,
-  //     times: task.repeatTimes,
-  //     period: task.repeatPeriod,
-  //   };
-  // }
+  let schedulerProps = null;
+  let defaultValue = null;
 
-  // let SCHEDULER_OPTIONS = [{
-  //   title: 'day',
-  //   options: [1,1,1,1,1,1,1],
-  // },
-  // {
-  //   title: 'working day',
-  //   options: [1,1,1,1,1,0,0]
-  // },
-  // {
-  //   title: 'selected day',
-  //   options: [0,0,0,0,0,0,0],
-  // }];
+  if (task) {
+    if (
+      task.type === TasksTypes.RECURRING ||
+      task.type === TasksTypes.SCHEDULED_RECURRING
+    ) {
+      schedulerProps = {
+        type: task.repeatType,
+        times: task.repeatTimes,
+        period: task.repeatPeriod,
+      };
+    }
 
-  // const calendarPickerProps = editMode && 'date' in task ? {
-  //   defaultValue: moment(task.date),
-  // } : {};
+    if (
+      editMode &&
+      (task.type === TasksTypes.SCHEDULE ||
+        task.type === TasksTypes.SCHEDULED_RECURRING)
+    ) {
+      defaultValue = dayjs(task.assigned);
+    }
+  }
 
   return (
     <div className="taskmodal" onKeyPress={onKeyPress}>
@@ -106,12 +112,17 @@ export const AddTask = ({ task = null, editMode = false }: ComponentTypes) => {
           format={customFormat}
           showTime={{ format: customTimeFormat }}
           onChange={calendarOnClick}
+          defaultValue={defaultValue}
         />
       </div>
 
       <div className="taskmodal__options-wrapper">
         <h4>Repeat Task</h4>
-        <Scheduler />
+        <Scheduler
+          type={task?.repeatType}
+          period={task?.repeatPeriod}
+          times={task?.repeatTimes}
+        />
       </div>
     </div>
   );

@@ -18,14 +18,6 @@
   position: relative;
 }
 
-.gotoweek .arrow-circle-right-icon {
-  fill: var(--color-primary);
-  width: 16px;
-  height: 16px;
-  margin-right: var(--spacing-xsmall);
-  margin-top: 0;
-}
-
 .gotoweek__link {
   cursor: pointer;
   color: var(--color-primary);

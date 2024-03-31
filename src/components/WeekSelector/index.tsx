@@ -1,19 +1,17 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { ArrowIcon } from '../Icons/ArrowIcon';
-import { GoToCurrentWeek } from './GoToCurrentWeek';
-import { GoToWeek } from './GoToWeek';
-import { IconButton } from '../Buttons/IconButton';
+import { ArrowIcon } from "../Icons/ArrowIcon";
+import { GoToCurrentWeek } from "./GoToCurrentWeek";
+import { GoToWeek } from "./GoToWeek";
+import { IconButton } from "../Buttons/IconButton";
 // import tabActiveEventManager from '../../utils/tabActiveEventManager';
-import { useWeekStore } from '../../store/Week';
+import { useWeekStore } from "../../store/Week";
 
-import './WeekSelector.css';
+import "./WeekSelector.css";
 
 export const WeekSelector = () => {
   const {
-    // updateToday,
-    currentWeekId,
     selectedWeekNumber,
     selectedWeekStartPretty,
     selectedWeekEndPretty,
@@ -43,22 +41,26 @@ export const WeekSelector = () => {
       <div className="weekselector__wrapper">
         <div className="weekselector__actions">
           <IconButton
-            className="weekselector__button"
+            className="weekselector__button hover:translate-y-[-2px] transition-transform ease-in-out"
             onClick={goToPreviousWeek}
           >
             <ArrowIcon className="weekselector__arrow-icon" />
           </IconButton>
           <IconButton
-            className="weekselector__button"
+            className="weekselector__button hover:translate-y-[-2px] transition-transform ease-in-out"
             onClick={goToNextWeek}
           >
             <ArrowIcon className="weekselector__arrow-icon" right />
           </IconButton>
         </div>
         <h1 className="weekselector__title">
-          <div className="weekselector__title-wrap">
+          <div className="flex flex-col">
             Week {selectedWeekNumber}
-            <span className="weekselector__subtitle">{selectedWeekStartPretty} <span className="weekselector__to">to</span> {selectedWeekEndPretty}</span>
+            <span className="text-sm font-normal">
+              {selectedWeekStartPretty}{" "}
+              <span className="weekselector__to">to</span>{" "}
+              {selectedWeekEndPretty}
+            </span>
           </div>
           <div className="weekselector__links">
             {showCurrentWeekLink && <GoToCurrentWeek />}

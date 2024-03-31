@@ -1,7 +1,3 @@
-import { AddTask } from './AddTask';
-// import EditTask from './EditTask';
+import { AddTask } from "./AddTask";
 
-export {
-  AddTask,
-  // EditTask,
-};
+export { AddTask };

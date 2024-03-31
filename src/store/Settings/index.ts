@@ -48,7 +48,6 @@ export const useSettingsStateStore = create<SettingsTypes>((set) => ({
     const userId = useAuthStore.getState().currentUser?.id;
 
     if (userId) {
-      // await saveAppState({ is_first_login: value }, userId);
       set({ is_first_login: value });
     }
   },

@@ -6,7 +6,7 @@ import { useAuthStore } from "../../store/Auth";
 import { useSettingsStateStore } from "../../store/Settings";
 import { getUserById, saveLastLogin, saveUser } from "./login.service";
 import { decrypt } from "../../services/encryption";
-import { createSettings, fetchSettings } from "../Settings/controller";
+import { createSettings, fetchSettings } from "../Settings/settings.controller";
 
 jest.mock("../../services/firebase", () => ({
   auth: {

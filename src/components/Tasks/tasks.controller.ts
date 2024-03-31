@@ -328,8 +328,11 @@ export const saveEditedTask = async (id: idType) => {
     };
 
     if (schedule) {
-      newTask.schedule = schedule;
-      newTask.type = TasksTypes.SCHEDULE;
+      newTask.assigned = schedule;
+      newTask.type =
+        repeatType !== SchedulerType.no
+          ? TasksTypes.SCHEDULED_RECURRING
+          : TasksTypes.SCHEDULE;
     }
 
     if (repeatType !== SchedulerType.no) {
@@ -348,8 +351,11 @@ export const saveEditedTask = async (id: idType) => {
     });
 
     if (schedule) {
-      newTask.schedule = schedule;
-      newTask.type = TasksTypes.SCHEDULE;
+      newTask.assigned = schedule;
+      newTask.type =
+        repeatType !== SchedulerType.no
+          ? TasksTypes.SCHEDULED_RECURRING
+          : TasksTypes.SCHEDULE;
     }
 
     // It's recurring task

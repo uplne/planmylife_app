@@ -4,15 +4,44 @@ import dayjs from "dayjs";
 import { sha256 } from "js-sha256";
 
 import { GoogleAuth, auth, signInWithRedirect } from "../../services/firebase";
+import { parseUrlParameters, parseUrlPathname } from "../../services/parseurl";
 import { useSettingsStateStore } from "../../store/Settings";
-import { fetchSettings, createSettings } from "../Settings/controller";
+import {
+  fetchSettings,
+  createSettings,
+  updateFirstLogin,
+} from "../Settings/../Settings/settings.controller";
 import { useAuthStore } from "../../store/Auth";
 import { useAppStore } from "../../store/App";
+import { useWeekStore } from "../../store/Week";
 import { getUserById, saveUser, saveLastLogin } from "./login.service";
 import { UserTypes } from "../../store/Auth/api";
 
 export const getUserId = (uid: string) => {
   return sha256(uid);
+};
+
+export const checkWeekInURL = async () => {
+  const { week } = parseUrlParameters();
+  const pathname = parseUrlPathname();
+  const setSelectedWeek = useWeekStore.getState().setSelectedWeek;
+
+  if (!week) {
+    const selectedWeekId = await useWeekStore.getState().selectedWeekId;
+
+    if (
+      pathname !== "/myweek" &&
+      pathname !== "/login" &&
+      pathname !== "/create" &&
+      pathname !== "/setup"
+    ) {
+      return pathname;
+    } else {
+      return `/myweek?week=${selectedWeekId}`;
+    }
+  }
+
+  await setSelectedWeek(week);
 };
 
 export const LoginWithGoogle = async () => {
@@ -101,21 +130,20 @@ export const storeUserData = async ({ user }: PropsStoreUserDataTypes) => {
 };
 
 export const initializeApp = async (redirect: any) => {
-  await fetchSettings();
-
-  const isFirstLogin = await useSettingsStateStore.getState().is_first_login;
+  const isFirstLogin = await fetchSettings();
 
   if (isFirstLogin) {
     // Start setup
     // yield put(push({ pathname: '/setup' }));
-    await useSettingsStateStore.getState().updateIsFirstLogin(false);
+    await updateFirstLogin();
     redirect("/myweek");
   } else {
-    //checkURLWeek();
-    redirect("/myweek");
+    const redirectTo = await checkWeekInURL();
+
+    redirect(redirectTo);
   }
 
-  // await useAppStore.getState().setIsLoading(false);
+  await useAppStore.getState().setIsLoading(false);
 };
 
 export const logOut = async (redirect: any) => {

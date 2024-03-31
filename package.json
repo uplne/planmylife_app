@@ -7,7 +7,8 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --quiet",
     "preview": "vite preview",
-    "test": "jest --colors --coverage",
+    "test": "echo \"Skipping test for now\" && exit 1",
+    "tests": "jest --colors --coverage",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

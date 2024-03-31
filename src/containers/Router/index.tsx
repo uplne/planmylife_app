@@ -4,7 +4,7 @@ import { Overview } from "../Overview";
 import { Login } from "../Login";
 import { LogOut } from "../LogOut";
 import { Layout } from "../Layout";
-import { Header } from "../Header";
+import { Goals } from "../Goals";
 import { parseUrlParameters } from "../../services/parseurl";
 import { useAuthStore } from "../../store/Auth";
 
@@ -41,6 +41,10 @@ export const Router = [
       {
         path: "myweek",
         Component: Overview,
+      },
+      {
+        path: "mygoals",
+        Component: Goals,
       },
     ],
   },

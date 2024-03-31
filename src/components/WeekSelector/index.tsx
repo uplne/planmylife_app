@@ -41,19 +41,22 @@ export const WeekSelector = () => {
       <div className="weekselector__wrapper">
         <div className="weekselector__actions">
           <IconButton
-            className="weekselector__button"
+            className="weekselector__button hover:translate-y-[-2px] transition-transform ease-in-out"
             onClick={goToPreviousWeek}
           >
             <ArrowIcon className="weekselector__arrow-icon" />
           </IconButton>
-          <IconButton className="weekselector__button" onClick={goToNextWeek}>
+          <IconButton
+            className="weekselector__button hover:translate-y-[-2px] transition-transform ease-in-out"
+            onClick={goToNextWeek}
+          >
             <ArrowIcon className="weekselector__arrow-icon" right />
           </IconButton>
         </div>
         <h1 className="weekselector__title">
-          <div className="weekselector__title-wrap">
+          <div className="flex flex-col">
             Week {selectedWeekNumber}
-            <span className="weekselector__subtitle">
+            <span className="text-sm font-normal">
               {selectedWeekStartPretty}{" "}
               <span className="weekselector__to">to</span>{" "}
               {selectedWeekEndPretty}

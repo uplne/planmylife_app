@@ -21,7 +21,15 @@ const router = createBrowserRouter(Router);
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ConfigProvider theme={{ hashed: false }}>
+      <ConfigProvider
+        theme={{
+          hashed: false,
+          token: {
+            colorPrimary: "#e45f4b",
+            colorBorder: "black",
+          },
+        }}
+      >
         <AuthProvider>
           <RouterProvider
             router={router}

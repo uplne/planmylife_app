@@ -34,7 +34,7 @@ export const EditableInput = forwardRef(
       taskTitle = "",
       status = StatusTypes.ACTIVE,
       onFocus = () => {},
-      onClick = () => {},
+      onClick,
       isInactive,
       isCompleted = false,
     }: ComponentProps,

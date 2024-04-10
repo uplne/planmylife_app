@@ -6,6 +6,7 @@ import { Box } from "../../components/Box";
 import { IconButton } from "../../components/Buttons/IconButton";
 import { GoogleIcon } from "../../components/Icons/GoogleIcon";
 import { InitialLoader } from "../../components/InitialLoader";
+import { parseUrlParameters, parseUrlPathname } from "../../services/parseurl";
 import {
   LoginWithGoogle,
   ProcessGoogleRedirect,
@@ -32,14 +33,26 @@ export const Login = () => {
       await setIsLoading(true);
 
       await auth.onAuthStateChanged(async (user) => {
-        console.log("onAuthStateChanged", user);
+        const pathname = parseUrlPathname();
+        const urlParam = parseUrlParameters();
+        let redirectPath = "/myweek";
+
         if (user) {
           await storeUserData({
             user,
           });
           await setIsLoggedIn(true);
           await setIsLoading(false);
-          navigate("/myweek");
+
+          if ("page" in urlParam) {
+            redirectPath = `/${urlParam.page}`;
+          }
+
+          if ("week" in urlParam) {
+            redirectPath = `/myweek?week=${urlParam.week}`;
+          }
+
+          navigate(redirectPath);
         } else {
           await setIsLoggedIn(false);
           await setIsLoading(false);

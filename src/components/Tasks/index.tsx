@@ -66,8 +66,6 @@ export const Tasks = () => {
   const allOtherDaysScheduled: TaskType[] =
     otherDaysDefaultScheduledTasksSelector();
 
-  console.log("allTomorrowDefaultScheduled: ", allTomorrowDefaultScheduled);
-
   const { selectedWeek } = useWeekStore();
   const { toggleModal } = useModalStore();
 

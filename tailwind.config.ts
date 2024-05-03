@@ -8,17 +8,22 @@ module.exports = {
     colors: {
       "main-background": "#f0eeed",
       border: "#dcdcdc",
+      borderSecondary: "rgb(226 232 240)",
 
       primary: "#e45f4b",
-      secondary: "#f9f7f3",
+      primaryHover: "#cc4e3b",
+      secondary: "rgb(241 245 249)",
+      secondaryHover: "rgb(226 232 240)",
 
       text: "#605e5c",
+      textSecondary: "black",
       "header-text": "rgb(17, 32, 53)",
 
       tag: "#d1cdcb",
       tagText: "rgba(0,0,0,.5)",
       tagActive: "#F2CB3D",
       tagInactive: "#d1cdcb",
+      white: "#ffffff",
     },
     fontFamily: {
       rubik: ["Rubik", "sans-serif"],

@@ -19,10 +19,7 @@ export const Header = () => {
       <div className="app-header__wrapper">
         <div className="app-header__menu">
           <HeaderButton label="My Week" to="/myweek" />
-          <HeaderButton
-            label="My Goals"
-            to={`/mygoals/${dayjs().format("YYYY")}`}
-          />
+          <HeaderButton label="My Goals" to={`/mygoals`} />
         </div>
         <div className="app-header__menu">
           <HeaderButton label="Settings" to="/settings" />

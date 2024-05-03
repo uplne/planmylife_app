@@ -16,13 +16,13 @@ import "./EditableInput.css";
 type ComponentProps = {
   className?: string | undefined;
   label?: string;
-  taskTitle?: string;
+  title?: string;
   onBlur: () => void;
   status?: StatusTypes;
   onFocus: () => void;
   id: idType;
   onClick?: (e: React.MouseEvent<HTMLElement>) => void | null;
-  isInactive: boolean;
+  isInactive?: boolean;
   isCompleted?: boolean;
 };
 
@@ -31,17 +31,17 @@ export const EditableInput = forwardRef(
     {
       className = undefined,
       label = "Add task",
-      taskTitle = "",
+      title = "",
       status = StatusTypes.ACTIVE,
       onFocus = () => {},
-      onClick = () => {},
-      isInactive,
+      onClick,
+      isInactive = false,
       isCompleted = false,
     }: ComponentProps,
     ref,
   ) => {
     const [isEditable, setIsEditable] = useState(false);
-    const [taskContent, setTaskContent] = useState<string>(taskTitle);
+    const [taskContent, setTaskContent] = useState<string>(title);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const classes = classnames("editable-input w-9/12", className, {
       "editable-input--isCompleted": isCompleted,
@@ -54,8 +54,8 @@ export const EditableInput = forwardRef(
     });
 
     useEffect(() => {
-      setTaskContent(taskTitle);
-    }, [taskTitle]);
+      setTaskContent(title);
+    }, [title]);
 
     useImperativeHandle(ref, () => ({
       addFocus: () => {

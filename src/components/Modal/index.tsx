@@ -1,10 +1,10 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect } from "react";
 
-import { BasicButton } from '../Buttons/BasicButton';
+import { BasicButton } from "../Buttons/BasicButton";
 
-import { useModalStore } from '../../store/Modal';
+import { useModalStore } from "../../store/Modal";
 
-import './Modal.css';
+import "./Modal.css";
 
 export const Modal = () => {
   const modalRef = useRef<HTMLInputElement | null>(null);
@@ -29,10 +29,15 @@ export const Modal = () => {
 
   const closeModal = () => {
     resetModal();
-  }
+  };
 
-  const onClose= (e:any) => {
-    if (modalRef && modalRef.current && !modalRef.current.contains(e.target) && !disableAutoClose) {
+  const onClose = (e: any) => {
+    if (
+      modalRef &&
+      modalRef.current &&
+      !modalRef.current.contains(e.target) &&
+      !disableAutoClose
+    ) {
       closeModal();
     }
   };
@@ -41,11 +46,11 @@ export const Modal = () => {
     if (!onSave) {
       return;
     }
-    
+
     await setIsLoading(true);
     await onSave();
     await setIsLoading(false);
-  }
+  };
 
   if (!isOpen || !content) {
     return null;
@@ -55,23 +60,22 @@ export const Modal = () => {
     <div className="modal" onClick={onClose}>
       <div ref={modalRef} className="modal__wrapper">
         <h2 className="modal__header font-bold">{title}</h2>
-        <div className="modal__content">
-          {content}
-        </div>
+        <div className="modal__content">{content}</div>
         <div className="modal__actions">
-          <BasicButton
-            className="modal__button"
-            ternary
-            onClick={closeModal}
-          >{cancelLabel}</BasicButton>
-          {!noOnSave &&
-          <BasicButton
-            className="modal__button"
-            onClick={saveModal}
-            loading={isLoading}
-            disabled={saveDisabled || isLoading}
-          >{saveLabel}</BasicButton>
-          }
+          <BasicButton className="modal__button" ternary onClick={closeModal}>
+            {cancelLabel}
+          </BasicButton>
+          {!noOnSave && (
+            <BasicButton
+              className="modal__button"
+              primary
+              onClick={saveModal}
+              loading={isLoading}
+              disabled={saveDisabled || isLoading}
+            >
+              {saveLabel}
+            </BasicButton>
+          )}
         </div>
       </div>
     </div>

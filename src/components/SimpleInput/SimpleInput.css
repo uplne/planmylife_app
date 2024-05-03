@@ -16,8 +16,8 @@
   white-space: nowrap;
 }
 
-.simpleinput:hover {
-  background: var(--color-input-bg-inactive);
+.simpleinput:hover,
+.simpleinput:focus {
   border-color: var(--color-primary);
 }
 

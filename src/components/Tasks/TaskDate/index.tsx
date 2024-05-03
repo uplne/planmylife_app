@@ -19,7 +19,7 @@ export const TaskDate = ({ task }: ComponentProps) => {
   const date = dayjs(task.assigned).clone();
 
   return (
-    <div className="absolute top-[-9px] left-sm">
+    <div className="absolute top-[-9px] left-sm z-10">
       <DateTag date={date} />
     </div>
   );

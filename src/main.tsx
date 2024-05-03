@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConfigProvider } from "antd";
@@ -21,7 +22,16 @@ const router = createBrowserRouter(Router);
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ConfigProvider theme={{ hashed: false }}>
+      <ReactQueryDevtools initialIsOpen={false} />
+      <ConfigProvider
+        theme={{
+          hashed: false,
+          token: {
+            colorPrimary: "#e45f4b",
+            colorBorder: "black",
+          },
+        }}
+      >
         <AuthProvider>
           <RouterProvider
             router={router}

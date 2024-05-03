@@ -1,12 +1,7 @@
 @import '../../../css/constants.css';
 
 .icon-button {
-  width: 16px;
-  height: 16px;
   border: 0;
-  background: none;
-  padding: 0;
-  margin: var(--spacing-xsmall);
   cursor: pointer;
   outline:none;
 
@@ -21,6 +16,12 @@
   svg {
     fill: var(--color-link-hover);
   }
+}
+
+.icon--secondary .icon {
+  width: 12px;
+  height: 12px;
+  fill: #ffffff;
 }
 
 .icon-button--withcta {

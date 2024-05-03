@@ -7,7 +7,7 @@ import { SubHeading } from "../SubHeading";
 import { TasksBox } from "../TasksBox";
 import { Preloader } from "../Preloader";
 import { PlusIcon } from "../../components/Icons/PlusIcon";
-import { BasicButton } from "../../components/Buttons/BasicButton";
+import { IconButton } from "../../components/Buttons/IconButton";
 import { AddTask } from "./TaskModal/AddTask";
 import { Task as TaskComponent } from "../Task";
 import { TaskDate } from "./TaskDate";
@@ -174,10 +174,10 @@ export const Tasks = () => {
                   ))}
                 </>
               )}
-              <BasicButton onClick={openModal} withIcon>
+              <IconButton onClick={openModal} secondary withCTA>
                 <PlusIcon />
                 Add task
-              </BasicButton>
+              </IconButton>
               <>
                 {allCompletedTasks.length > 0 && (
                   <div>

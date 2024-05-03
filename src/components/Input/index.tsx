@@ -1,25 +1,28 @@
-import classnames from 'classnames';
+import classnames from "classnames";
 
-import './styles.css';
+import "./styles.css";
 
 type PropTypes = {
-  placeholder?: string,
-  value?: string,
-  className?: string | undefined,
-  onChange: () => void,
+  placeholder?: string;
+  value?: string;
+  className?: string | undefined;
+  autoFocus?: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export const Input = ({
-  placeholder = '',
-  value = '',
+  placeholder = "",
+  value = "",
   className = undefined,
   onChange,
+  autoFocus = false,
   ...otherProps
 }: PropTypes) => {
-  const classes = classnames('input', className);
+  const classes = classnames("input", className);
 
   return (
     <input
+      autoFocus={autoFocus}
       className={classes}
       placeholder={placeholder}
       value={value}

@@ -3,6 +3,7 @@ import classnames from "classnames";
 import "./SimpleInput.css";
 
 type ComponentPropTypes = {
+  id?: string;
   className?: string;
   value?: string | number;
   onChange: (e: any) => void;
@@ -11,6 +12,7 @@ type ComponentPropTypes = {
 };
 
 export const SimpleInput = ({
+  id = undefined,
   className = undefined,
   value = "",
   onChange,
@@ -21,6 +23,7 @@ export const SimpleInput = ({
 
   return (
     <input
+      id={id}
       className={classes}
       value={value}
       onChange={onChange}

@@ -5,16 +5,13 @@ import { ModalRow } from "../ModalRow";
 import { ModalSplit } from "../ModalSplit";
 import { H3 } from "../../../../components/Headlines/H3";
 import { useGoalsStore } from "../../../../store/Goals";
+import { GoalProgress } from "../../../../components/GoalProgress";
 
-type ComponentProps = {
-  value: number;
-};
-
-export const SMARTGoal = ({ value }: ComponentProps) => {
-  const setTempGoal = useGoalsStore().setTempGoal;
+export const SMARTGoal = () => {
+  const setTempGoalByKey = useGoalsStore().setTempGoalByKey;
   const tempGoal = useGoalsStore().tempGoal;
 
-  const dataHandler = (key: string, value: any) => setTempGoal(key, value);
+  const dataHandler = (key: string, value: any) => setTempGoalByKey(key, value);
 
   return (
     <>
@@ -59,6 +56,20 @@ export const SMARTGoal = ({ value }: ComponentProps) => {
             />
           </div>
         </ModalSplit>
+      </ModalRow>
+
+      <ModalRow>
+        <H3>Track progress</H3>
+        <GoalProgress
+          onChangeTracker={(value: number) =>
+            dataHandler("progressType", Number(value))
+          }
+          selectedTracker={tempGoal?.progressType}
+          onChangeUnits={(value: string | null) =>
+            dataHandler("progressOwnUnits", value)
+          }
+          selectedUnits={tempGoal?.progressOwnUnits || null}
+        />
       </ModalRow>
     </>
   );

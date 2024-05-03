@@ -87,7 +87,7 @@ export const Task = ({
     <div className={taskClasses}>
       <EditableInput
         id={id}
-        taskTitle={title}
+        title={title}
         label={LABEL}
         onBlur={() => {}} //onSave}
         onFocus={() => {}} //onSave}

@@ -2,7 +2,6 @@ import { idType } from "../../types/idtype";
 import { StatusTypes } from "../../types/status";
 
 export enum ProgressType {
-  "PERCENT",
   "TASKS_FINISHED",
   "OWN",
 }
@@ -14,25 +13,25 @@ export enum GoalType {
 
 export interface GoalsAPITypes {
   id?: idType;
-  goalId: idType;
+  goalId?: idType;
   userId?: string;
-  categoryId: idType;
-  goalType: GoalType;
-  status: StatusTypes;
-  objective: string;
-  created: string | null;
-  updated: string | null;
-  assigned: string | null;
-  completed: string | null;
-  why: string;
+  categoryId?: idType;
+  keyId?: idType;
+  goalType?: GoalType;
+  status?: StatusTypes;
+  objective?: string;
+  created?: string | null;
+  updated?: string | null;
+  assigned?: string | null;
+  completed?: string | null;
+  why?: string;
 
-  startDate: string | null;
-  endDate: string | null;
-  progress_type: number;
-  progress_percent: string | null;
-  progress_own_value: string | null;
-  progress_own_units: string | null;
-  progress_tasks_finished: string | null;
+  startDate?: string | null;
+  endDate?: string | null;
+  progressType?: ProgressType;
+  progressPercent?: number | null;
+  progressOwnValue?: string | null;
+  progressOwnUnits?: string | null;
 }
 
 /*
@@ -63,7 +62,6 @@ export interface GoalsAPITypes {
     progress_percent smallint,
     progress_own_value TEXT,
     progress_own_units TEXT,
-    progress_tasks_finished smallint,
     FOREIGN KEY (goal_id) REFERENCES goals(goal_id) ON DELETE CASCADE
   );
 
@@ -78,7 +76,6 @@ export interface GoalsAPITypes {
     progress_percent smallint,
     progress_own_value TEXT,
     progress_own_units TEXT,
-    progress_tasks_finished smallint,
     FOREIGN KEY (goal_id) REFERENCES goals(goal_id) ON DELETE CASCADE
   );
 

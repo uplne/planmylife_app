@@ -87,7 +87,12 @@ export const Actions = ({ task }: ComponentTypes) => {
     ) {
       items.push({
         label: (
-          <IconButton className="task__button" onClick={unCheck} withCTA>
+          <IconButton
+            className="task__button"
+            onClick={unCheck}
+            primary
+            withCTA
+          >
             <CheckIcon /> Uncheck
           </IconButton>
         ),
@@ -102,7 +107,12 @@ export const Actions = ({ task }: ComponentTypes) => {
       if (task.status === StatusTypes.COMPLETED) {
         items.push({
           label: (
-            <IconButton className="task__button" onClick={unCheck} withCTA>
+            <IconButton
+              className="task__button"
+              onClick={unCheck}
+              primary
+              withCTA
+            >
               <CheckIcon /> Uncheck
             </IconButton>
           ),
@@ -117,6 +127,7 @@ export const Actions = ({ task }: ComponentTypes) => {
               <IconButton
                 className="task__button"
                 onClick={unCheckRecurringHandler}
+                primary
                 withCTA
               >
                 <CheckEmptyIcon /> Uncheck for this week
@@ -131,6 +142,7 @@ export const Actions = ({ task }: ComponentTypes) => {
             <IconButton
               className="task__button"
               onClick={completeRecurringHandler}
+              primary
               withCTA
             >
               <StopIcon /> Recurring complete
@@ -146,6 +158,7 @@ export const Actions = ({ task }: ComponentTypes) => {
             <IconButton
               className="task__button"
               onClick={removeRecurringFromThisWeek}
+              primary
               withCTA
             >
               <FolderDownloadIcon /> Remove for this week
@@ -162,18 +175,24 @@ export const Actions = ({ task }: ComponentTypes) => {
           <IconButton
             className="task__button"
             onClick={editTaskHandler}
+            primary
             withCTA
           >
             <PencilIcon /> Edit task
           </IconButton>
         ),
-        key: "recurring_uncheck",
+        key: "edit_task",
       });
     }
 
     items.push({
       label: (
-        <IconButton className="task__button" onClick={removeTask} withCTA>
+        <IconButton
+          className="task__button"
+          onClick={removeTask}
+          primary
+          withCTA
+        >
           <BinIcon /> Remove task
         </IconButton>
       ),
@@ -187,17 +206,21 @@ export const Actions = ({ task }: ComponentTypes) => {
     <div className="actions">
       {!task.completedForThisWeek && task.status !== StatusTypes.COMPLETED && (
         <>
-          <IconButton className="button__done" onClick={completeTask}>
+          <IconButton className="button__done" onClick={completeTask} primary>
             <CheckIcon />
           </IconButton>
-          <IconButton className="button__done" onClick={moveToNextWeekHandler}>
+          <IconButton
+            className="button__done"
+            onClick={moveToNextWeekHandler}
+            primary
+          >
             <ArrowCircleRight />
           </IconButton>
         </>
       )}
       <Dropdown overlay={getMenu()} trigger={["click"]}>
         <a onClick={(e) => e.preventDefault()}>
-          <IconButton onClick={() => {}}>
+          <IconButton onClick={() => {}} primary>
             <DotsIcon />
           </IconButton>
         </a>

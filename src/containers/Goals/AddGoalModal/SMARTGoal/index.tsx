@@ -35,22 +35,12 @@ export const SMARTGoal = () => {
 
       <ModalRow>
         <ModalSplit>
-          <div className="w-1/2 mr-1">
-            <H3>Start Date</H3>
-            <DatePicker
-              className="w-full py-[7px]"
-              onChange={(date) => dataHandler("startDate", date)}
-              placeholder="Start Date"
-              value={tempGoal?.startDate}
-              format="DD/MM/YYYY"
-            />
-          </div>
-          <div className="w-1/2 ml-1">
-            <H3>End Date</H3>
+          <div className="w-1/2">
+            <H3>I will achieve this goal by</H3>
             <DatePicker
               className="w-full py-[7px]"
               onChange={(date) => dataHandler("endDate", date)}
-              placeholder="End Date"
+              placeholder="Success Date"
               value={tempGoal?.endDate}
               format="DD/MM/YYYY"
             />

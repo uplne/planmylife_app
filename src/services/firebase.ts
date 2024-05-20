@@ -14,7 +14,7 @@ import { getFunctions } from "firebase/functions";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  // put back API key
+  apiKey: "AIzaSyDIt5QgV5lsEQBh0TTCtdMhudiyPudXKBU",
   authDomain: "planmylife-1c7fd.firebaseapp.com",
   databaseURL: "https://planmylife-1c7fd.firebaseio.com",
   projectId: "planmylife-1c7fd",

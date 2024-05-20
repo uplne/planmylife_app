@@ -22,10 +22,10 @@ export const IconButton = ({
   hasBounce = false,
   ...otherProps
 }: PropTypes) => {
-  const classes = classnames("icon-button m-0", className, {
+  const classes = classnames("icon-button m-0 cursor-pointer", className, {
     "hover:translate-y-[-2px] transition-transform ease-in-out": hasBounce,
     "icon-button--withcta": withCTA,
-    "bg-[transparent] m-5": primary,
+    "bg-[transparent] my-5": primary,
     "icon--secondary flex items-center justify-center pt-[11px] pb-[10px] px-10 leading-4 outline-none border-0 rounded cursor-pointer transition-all bg-[black] text-white hover:bg-primaryHover":
       secondary,
   });

@@ -11,6 +11,7 @@ import { Goal } from "../../components/Goal";
 import { useModalStore } from "../../store/Modal";
 import { useGoalsStore } from "../../store/Goals";
 import { fetchActiveGoals, saveGoal } from "./goals.controller";
+import { useFetchCategories } from "../../components/Categories";
 
 export const useFetchActiveGoalsData = () =>
   useQuery({
@@ -25,6 +26,7 @@ export const Goals = () => {
   const goals = useGoalsStore().goals;
 
   useFetchActiveGoalsData();
+  useFetchCategories();
 
   const openModal = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();

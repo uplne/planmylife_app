@@ -34,6 +34,19 @@ export interface GoalsAPITypes {
   progressOwnUnits?: string | null;
 }
 
+export interface GoalTasksTypes {
+  id?: idType;
+  goalId?: idType;
+  userId?: string;
+  taskId?: idType;
+  status?: StatusTypes;
+  title?: string;
+  created?: string | null;
+  updated?: string | null;
+  assigned?: string | null;
+  completed?: string | null;
+}
+
 /*
   CREATE TABLE goals (
     id SERIAL PRIMARY KEY,
@@ -87,8 +100,11 @@ export interface GoalsAPITypes {
     user_id TEXT,
     title TEXT,
     status TEXT,
-    UNIQUE(task_id),
-    FOREIGN KEY (goal_id) REFERENCES goals(goal_id) ON DELETE CASCADE
+    created timestamp,
+    updated timestamp,
+    assigned timestamp,
+    completed timestamp,
+    UNIQUE(task_id)
   );
 
   CREATE TABLE goal_subtasks (
@@ -100,6 +116,6 @@ export interface GoalsAPITypes {
     user_id TEXT,
     title TEXT,
     status TEXT,
-    FOREIGN KEY (task_id) REFERENCES goal_tasks(task_id) ON DELETE CASCADE
+    UNIQUE(task_id)
   );
 */

@@ -9,7 +9,7 @@ import {
   moveToNextWeek,
 } from "../Tasks/tasks.controller";
 import { useModalStore } from "../../store/Modal";
-import { IconButton } from "../../components/Buttons/IconButton";
+import { IconButton } from "../Buttons/IconButton";
 import {
   CheckIcon,
   BinIcon,
@@ -19,7 +19,7 @@ import {
   PencilIcon,
   StopIcon,
   FolderDownloadIcon,
-} from "../../components/Icons";
+} from "../Icons";
 import { AddTask } from "../Tasks/TaskModal/AddTask";
 import {
   completeTask as completeTaskAction,

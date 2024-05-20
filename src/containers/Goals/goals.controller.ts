@@ -2,7 +2,11 @@ import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 
 import { useGoalsStore, GoalsStoreDefaultTypes } from "../../store/Goals";
-import { GoalsAPITypes, ProgressType } from "../../store/Goals/api";
+import {
+  GoalsAPITypes,
+  ProgressType,
+  GoalTasksTypes,
+} from "../../store/Goals/api";
 import { DATA_FETCHING_STATUS } from "../../types/status";
 import { useAuthStore } from "../../store/Auth";
 import { saveGoalAPI } from "./goals.service";

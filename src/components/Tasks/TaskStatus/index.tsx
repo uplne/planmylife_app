@@ -10,8 +10,10 @@ type ComponentProps = {
 };
 
 const weekIsInArray = (movedWeeks: string[], selectedWeek: string) =>
-  movedWeeks.some((date: string) =>
-    dayjs(date).add(1, "week").isSame(dayjs(selectedWeek), "week"),
+  movedWeeks.some(
+    (date: string) =>
+      dayjs(date).isSame(dayjs(selectedWeek), "week") ||
+      dayjs(date).add(1, "week").isSame(dayjs(selectedWeek), "week"),
   );
 
 export const TaskStatus = ({ task }: ComponentProps) => {

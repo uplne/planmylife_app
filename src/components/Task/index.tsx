@@ -3,7 +3,7 @@ import classnames from "classnames";
 import { TasksTypes, StatusTypes } from "../../types/status";
 import { EditableInput } from "../../components/EditableInput";
 // import { AddTask } from '../Tasks/TaskModal/AddTask';
-import { Actions } from "../Actions";
+import { Actions } from "../Actions/TaskActions";
 
 import { idType } from "../../types/idtype";
 import { TaskType } from "../../store/Tasks/index";

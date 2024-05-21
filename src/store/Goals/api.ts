@@ -1,5 +1,5 @@
 import { idType } from "../../types/idtype";
-import { StatusTypes } from "../../types/status";
+import { StatusTypes, GoalAssignmentTypes } from "../../types/status";
 
 export enum ProgressType {
   "TASKS_FINISHED",
@@ -40,6 +40,7 @@ export interface GoalTasksTypes {
   userId?: string;
   taskId?: idType;
   status?: StatusTypes;
+  assignment?: GoalAssignmentTypes;
   title?: string;
   created?: string | null;
   updated?: string | null;

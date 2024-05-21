@@ -29,6 +29,7 @@ import {
 } from "../Tasks/tasks.controller";
 
 import "./Actions.css";
+import { useCallback } from "react";
 
 type ComponentTypes = {
   task: TaskType;
@@ -37,9 +38,9 @@ type ComponentTypes = {
 export const Actions = ({ task }: ComponentTypes) => {
   const { toggleModal } = useModalStore();
 
-  const completeTask = () => {
+  const completeTask = useCallback(() => {
     completeTaskAction(task.taskId);
-  };
+  }, []);
 
   const removeTask = async () => {
     await saveTask({

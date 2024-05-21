@@ -12,6 +12,11 @@ export enum TasksTypes {
   "SCHEDULE" = "SCHEDULE",
 }
 
+export enum GoalAssignmentTypes {
+  "DEFAULT" = "DEFAULT",
+  "HABIT" = "HABIT",
+}
+
 export enum DATA_FETCHING_STATUS {
   "NODATA" = "NODATA",
   "FETCHING" = "FETCHING",

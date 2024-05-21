@@ -76,6 +76,22 @@ export const getGoalTasksAPI = async (goalId: idType) => {
   }
 };
 
+export const getGoalTasksForWeekAPI = async (selectedWeek: string) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3001/api/v1/goals/tasks-for-week/${selectedWeek}`,
+    );
+
+    if (response.data && response.data.length > 0) {
+      return response.data;
+    }
+
+    return [];
+  } catch (e) {
+    throw new Error(`Get ${StatusTypes.ACTIVE} goal tasks: ${e}`);
+  }
+};
+
 export const updateGoalTaskAPI = async (newTaskData: GoalTasksTypes) => {
   try {
     const response = await axios.put(

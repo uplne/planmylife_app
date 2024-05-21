@@ -6,7 +6,7 @@ import { ContainerContent } from "../../components/ContainerContent";
 import { WeekSelector } from "../../components/WeekSelector";
 import { DailyQuote } from "../../components/DailyQuote";
 import { Tasks } from "../../components/Tasks";
-import { WeeklyGoals } from "../../components/WeeklyGoals";
+import { WeeklyGoals } from "../../containers/WeeklyGoals";
 import { Split } from "./Split";
 
 export const Overview = () => {

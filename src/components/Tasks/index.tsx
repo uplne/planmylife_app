@@ -89,8 +89,6 @@ export const Tasks = () => {
     });
   };
 
-  console.log(defaultActiveTasks);
-
   return (
     <TasksBox>
       <Box>

@@ -1,10 +1,9 @@
-import { StatusTypes } from "../../types/status";
-import { EditableInput } from "../../components/EditableInput";
+import { StatusTypes } from "../../../types/status";
+import { EditableInput } from "../../../components/EditableInput";
 // import { AddTask } from '../Tasks/TaskModal/AddTask';
-import { Actions } from "../Actions/GoalTasksActions";
-import { GoalTasksTypes } from "../../store/Goals/api";
-import type { goalTaskActionTypes } from "../Actions/types";
-import { TagInProgress } from "../../components/TaskIndicator/TagInProgress";
+import { Actions } from "../../../components/Actions/GoalTasksActions";
+import type { goalTaskActionTypes } from "../../../components/Actions/types";
+import { GoalTasksTypes } from "../../../store/Goals/api";
 
 type ComponentProps = {
   inactive?: boolean;
@@ -13,13 +12,11 @@ type ComponentProps = {
 
 const allow: goalTaskActionTypes[] = [
   "complete",
+  "removeFromWeek",
+  "move",
   "unComplete",
   "edit",
   "addSubtasks",
-  "addToWeek",
-  "removeFromWeek",
-  "remove",
-  "schedule",
 ];
 
 export const Task = ({ inactive = false, data }: ComponentProps) => {
@@ -30,11 +27,6 @@ export const Task = ({ inactive = false, data }: ComponentProps) => {
 
     return data.status === StatusTypes.COMPLETED;
   };
-
-  const isInProgress =
-    data.assigned !== null &&
-    typeof data.assigned !== "undefined" &&
-    data.status !== StatusTypes.COMPLETED;
 
   const shouldShowReadOnly = () =>
     data && "isInactive" in data && data.isInactive;
@@ -62,7 +54,6 @@ export const Task = ({ inactive = false, data }: ComponentProps) => {
         isInactive={inactive}
         isCompleted={shouldShowCompleted()}
       />
-      {isInProgress && <TagInProgress />}
       {data.title && data && <Actions task={data} allow={allow} />}
     </div>
   );

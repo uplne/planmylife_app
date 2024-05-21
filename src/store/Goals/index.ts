@@ -9,6 +9,7 @@ import { idType } from "../../types/idtype";
 export interface GoalsStoreDefaultTypes {
   goals: GoalsAPITypes[];
   loadingGoals: DATA_FETCHING_STATUS;
+  loadingTasks: DATA_FETCHING_STATUS;
   tempGoal: GoalsAPITypes;
   tempTask: string;
   tasks: GoalTasksTypes[];
@@ -17,6 +18,7 @@ export interface GoalsStoreDefaultTypes {
 export interface GoalsStoreTypes extends GoalsStoreDefaultTypes {
   fillGoals: (goals: GoalsAPITypes[]) => Promise<void>;
   updateLoadingGoals: (value: DATA_FETCHING_STATUS) => void;
+  updateLoadingTasksGoals: (value: DATA_FETCHING_STATUS) => void;
   addNewGoal: (value: GoalsAPITypes) => void;
   removeGoal: (id: idType) => void;
   updateGoal: (goal: GoalsAPITypes) => void;
@@ -32,6 +34,7 @@ export interface GoalsStoreTypes extends GoalsStoreDefaultTypes {
 
 export const GoalsStoreDefault: GoalsStoreDefaultTypes = {
   loadingGoals: DATA_FETCHING_STATUS.NODATA,
+  loadingTasks: DATA_FETCHING_STATUS.NODATA,
   goals: [],
   tempGoal: {
     goalType: GoalType.SMART,
@@ -43,6 +46,7 @@ export const GoalsStoreDefault: GoalsStoreDefaultTypes = {
 
 export const useGoalsStore = create<GoalsStoreTypes>((set, get) => ({
   loadingGoals: GoalsStoreDefault.loadingGoals,
+  loadingTasks: GoalsStoreDefault.loadingTasks,
   tempGoal: GoalsStoreDefault.tempGoal,
   setTempGoal: async (value) => {
     const tempGoal = await get().tempGoal;
@@ -70,6 +74,9 @@ export const useGoalsStore = create<GoalsStoreTypes>((set, get) => ({
   },
   updateLoadingGoals: async (value) => {
     set({ loadingGoals: value });
+  },
+  updateLoadingTasksGoals: async (value) => {
+    set({ loadingTasks: value });
   },
   goals: GoalsStoreDefault.goals,
   fillGoals: async (goals: GoalsAPITypes[]) => {

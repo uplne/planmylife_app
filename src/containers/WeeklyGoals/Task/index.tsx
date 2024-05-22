@@ -4,6 +4,8 @@ import { EditableInput } from "../../../components/EditableInput";
 import { Actions } from "../../../components/Actions/GoalTasksActions";
 import type { goalTaskActionTypes } from "../../../components/Actions/types";
 import { GoalTasksTypes } from "../../../store/Goals/api";
+import { TagMoved } from "../../../components/TaskIndicator/TagMoved";
+import { TaskStatus } from "../../../components/Tasks/TaskStatus";
 
 type ComponentProps = {
   inactive?: boolean;
@@ -54,6 +56,7 @@ export const Task = ({ inactive = false, data }: ComponentProps) => {
         isInactive={inactive}
         isCompleted={shouldShowCompleted()}
       />
+      <TaskStatus task={data} />
       {data.title && data && <Actions task={data} allow={allow} />}
     </div>
   );

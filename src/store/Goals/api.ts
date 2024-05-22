@@ -41,6 +41,7 @@ export interface GoalTasksTypes {
   taskId?: idType;
   status?: StatusTypes;
   assignment?: GoalAssignmentTypes;
+  moved?: string[];
   title?: string;
   created?: string | null;
   updated?: string | null;

@@ -225,7 +225,7 @@ export const addToWeeklyTasks = async (id: idType) => {
     await updateTask(task);
     await updateGoalTaskAPI(task);
     await showSuccessNotification({
-      message: "Task added to the current week",
+      message: "Task added to current week",
       type: NOTIFICATION_TYPE.SUCCESS,
     });
 
@@ -249,7 +249,7 @@ export const removeFromWeeklyTasks = async (id: idType) => {
     await updateTask(task);
     await updateGoalTaskAPI(task);
     await showSuccessNotification({
-      message: "Task removed from the current week",
+      message: "Task removed from current week",
       type: NOTIFICATION_TYPE.SUCCESS,
     });
 
@@ -257,6 +257,36 @@ export const removeFromWeeklyTasks = async (id: idType) => {
   } catch (e) {
     await showSuccessNotification({
       message: `Task removing failed. ${e as Error}`,
+      type: NOTIFICATION_TYPE.FAIL,
+    });
+  }
+};
+
+export const moveToNextWeek = async (id: idType) => {
+  const updateTask = await useGoalsStore.getState().updateTask;
+  const task: GoalTasksTypes = await findTaskById(id);
+
+  task.updated = dayjs().format();
+  task.assigned = dayjs().add(1, "week").format();
+
+  if (task?.moved) {
+    task.moved = [...task.moved, dayjs().format()];
+  } else {
+    task.moved = [dayjs().format()];
+  }
+
+  try {
+    await updateTask(task);
+    await updateGoalTaskAPI(task);
+    await showSuccessNotification({
+      message: "Task moved to next week",
+      type: NOTIFICATION_TYPE.SUCCESS,
+    });
+
+    return task;
+  } catch (e) {
+    await showSuccessNotification({
+      message: `Task moving failed. ${e as Error}`,
       type: NOTIFICATION_TYPE.FAIL,
     });
   }

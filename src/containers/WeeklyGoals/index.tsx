@@ -14,7 +14,7 @@ export const WeeklyGoals = () => {
   const tasks = allDefaultTasksSelector();
   const completedTasks = allCompletedTasksSelector();
 
-  console.log("completedTasks: ", completedTasks);
+  console.log("tasks: ", tasks);
 
   const isLoading = useIsLoading();
 

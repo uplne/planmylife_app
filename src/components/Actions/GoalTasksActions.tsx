@@ -16,6 +16,7 @@ import {
   PlusCircleIcon,
   RocketIcon,
   ScheduleIcon,
+  ArrowCircleRight,
 } from "../Icons";
 import {
   completeTask as completeTaskAction,
@@ -24,6 +25,7 @@ import {
   addToWeeklyTasks,
   removeFromWeeklyTasks,
   updateEditedTask,
+  moveToNextWeek,
 } from "../../containers/Goals/goals.tasks.controller";
 
 import "./Actions.css";
@@ -50,7 +52,7 @@ export const Actions = ({ task, allow }: ComponentTypes) => {
   };
 
   const moveToNextWeekHandler = async () => {
-    // await moveToNextWeek(task.taskId);
+    await moveToNextWeek(task.taskId!);
   };
 
   const editTaskHandler = async () => {
@@ -202,9 +204,20 @@ export const Actions = ({ task, allow }: ComponentTypes) => {
   return (
     <div className="actions">
       {task.status !== StatusTypes.COMPLETED && allow.includes("complete") && (
-        <IconButton className="button__done" onClick={completeTask} primary>
-          <CheckIcon />
-        </IconButton>
+        <>
+          <IconButton className="button__done" onClick={completeTask} primary>
+            <CheckIcon />
+          </IconButton>
+          {allow.includes("move") && (
+            <IconButton
+              className="button__done"
+              onClick={moveToNextWeekHandler}
+              primary
+            >
+              <ArrowCircleRight />
+            </IconButton>
+          )}
+        </>
       )}
       <Dropdown overlay={getMenu()} trigger={["click"]}>
         <a onClick={(e) => e.preventDefault()}>

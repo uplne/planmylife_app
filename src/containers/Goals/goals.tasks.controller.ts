@@ -159,6 +159,33 @@ export const removeGoalTaskConfirmation = async (id: idType) => {
   });
 };
 
+export const updateEditedTask = async (id: idType) => {
+  const updateTask = await useGoalsStore.getState().updateTask;
+  const tempTask = await useGoalsStore.getState().tempTask;
+  const resetModal = useModalStore.getState().resetModal;
+  const task: GoalTasksTypes = await findTaskById(id);
+
+  task.title = tempTask;
+  task.updated = dayjs().format();
+
+  try {
+    await updateTask(task);
+    await updateGoalTaskAPI(task);
+    await showSuccessNotification({
+      message: "Task updated",
+      type: NOTIFICATION_TYPE.SUCCESS,
+    });
+    await resetModal();
+
+    return task;
+  } catch (e) {
+    await showSuccessNotification({
+      message: `Task updating failed. ${e as Error}`,
+      type: NOTIFICATION_TYPE.FAIL,
+    });
+  }
+};
+
 export const removeGoalTask = async (id: idType) => {
   const removeGoalTask = await useGoalsStore.getState().removeGoalTask;
 

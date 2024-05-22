@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { SimpleInput } from "../../SimpleInput";
-import { GoalsAPITypes } from "../../../store/Goals/api";
+import { GoalTasksTypes } from "../../../store/Goals/api";
 
 import { useGoalsStore } from "../../../store/Goals";
 
 type ComponentProps = {
   editMode?: boolean;
-  data: GoalsAPITypes;
+  data: GoalTasksTypes;
 };
 
 export const AddGoalTask = ({ data, editMode = false }: ComponentProps) => {
@@ -22,6 +22,15 @@ export const AddGoalTask = ({ data, editMode = false }: ComponentProps) => {
 
   useEffect(() => {
     setTempTask("");
+  }, []);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+    setTempTask((editMode && data && data.title) || "");
+
+    return () => {
+      setTempTask("");
+    };
   }, []);
 
   // const onSave = async () => {

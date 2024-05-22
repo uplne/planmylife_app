@@ -7,6 +7,7 @@ import type { goalTaskActionTypes } from "./types";
 import { useModalStore } from "../../store/Modal";
 import { useWeekStore } from "../../store/Week";
 import { IconButton } from "../Buttons/IconButton";
+import { AddGoalTask } from "../Goal/AddGoalTask";
 import {
   CheckIcon,
   BinIcon,
@@ -22,6 +23,7 @@ import {
   revertCompletedTask,
   addToWeeklyTasks,
   removeFromWeeklyTasks,
+  updateEditedTask,
 } from "../../containers/Goals/goals.tasks.controller";
 
 import "./Actions.css";
@@ -51,7 +53,16 @@ export const Actions = ({ task, allow }: ComponentTypes) => {
     // await moveToNextWeek(task.taskId);
   };
 
-  const editTaskHandler = async () => {};
+  const editTaskHandler = async () => {
+    await toggleModal({
+      isOpen: true,
+      content: <AddGoalTask data={task} editMode />,
+      title: "Add New Task",
+      onSave: () => updateEditedTask(task.taskId!),
+      saveDisabled: false,
+      disableAutoClose: true,
+    });
+  };
 
   const openAddSubtaskModal = async () => {};
 

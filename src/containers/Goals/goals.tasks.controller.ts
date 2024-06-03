@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 
 import { useGoalsStore, GoalsStoreDefaultTypes } from "../../store/Goals";
-import { GoalTasksTypes } from "../../store/Goals/api";
+import { GoalSubTasksTypes, GoalTasksTypes } from "../../store/Goals/api";
 import { DATA_FETCHING_STATUS } from "../../types/status";
 import { useAuthStore } from "../../store/Auth";
 import { NOTIFICATION_TYPE } from "../../store/Notification";
@@ -17,6 +17,7 @@ import {
   getGoalTasksAPI,
   getGoalTasksForWeekAPI,
 } from "./goals.tasks.service";
+import { completeAllSubtasks } from "../Goals/goals.subtasks.controller";
 import { showSuccessNotification } from "../../components/Notification/controller";
 
 export const findTaskById = async (id: idType): Promise<GoalTasksTypes> => {
@@ -38,6 +39,7 @@ export const saveNewGoalTask = async (goalId: idType) => {
     status: StatusTypes.ACTIVE,
     assignment: GoalAssignmentTypes.DEFAULT,
     title: tempTask,
+    subtasks: [],
     assigned: null,
     created: dayjs().format(),
     updated: null,
@@ -63,7 +65,7 @@ export const fetchGoalsTasks = async (goalId: idType) => {
     }
 
     // Create tasks array
-    let fetchedGoalTasks: GoalsStoreDefaultTypes["goals"] = [];
+    let fetchedGoalTasks: GoalsStoreDefaultTypes["tasks"] = [];
     fetchedGoalTasks = await getGoalTasksAPI(goalId);
 
     // Add tasks to the store
@@ -93,7 +95,7 @@ export const fetchGoalsTasksForWeek = async (selectedWeek: string) => {
     }
 
     // Create tasks array
-    let fetchedGoalTasks: GoalsStoreDefaultTypes["goals"] = [];
+    let fetchedGoalTasks: GoalsStoreDefaultTypes["tasks"] = [];
     fetchedGoalTasks = await getGoalTasksForWeekAPI(selectedWeek);
 
     // Add tasks to the store
@@ -108,10 +110,38 @@ export const fetchGoalsTasksForWeek = async (selectedWeek: string) => {
   }
 };
 
-export const completeTask = async (id: idType) => {
-  const updateTask = await useGoalsStore.getState().updateTask;
+export const checkForActiveSubtask = (subtasks: GoalSubTasksTypes[]) =>
+  subtasks.some((subtask) => subtask.status === StatusTypes.ACTIVE);
 
+export const completeTask = async (id: idType) => {
   const task: GoalTasksTypes = await findTaskById(id);
+  const hasActiveSubtasks = checkForActiveSubtask(task.subtasks);
+  const resetModal = useModalStore.getState().resetModal;
+
+  if (hasActiveSubtasks) {
+    const { openConfirm, resetConfirm } = useConfirmStore.getState();
+
+    await openConfirm({
+      title:
+        "Some subtasks are not completed. This action will mark them as completed. Would you like to proceed?",
+      onConfirm: async () => {
+        const subtasks: GoalSubTasksTypes[] = await completeAllSubtasks(task);
+        await completeTaskFinish({
+          ...task,
+          subtasks: [...subtasks],
+        });
+        await resetConfirm();
+      },
+      onCancel: async () => {
+        await resetModal();
+      },
+    });
+  }
+};
+
+export const completeTaskFinish = async (task: GoalTasksTypes) => {
+  const updateTask = await useGoalsStore.getState().updateTask;
+  const resetModal = useModalStore.getState().resetModal;
 
   task.status = StatusTypes.COMPLETED;
   task.assigned = null;
@@ -122,6 +152,23 @@ export const completeTask = async (id: idType) => {
   await updateGoalTaskAPI(task);
   await showSuccessNotification({
     message: "Task completed",
+    type: NOTIFICATION_TYPE.SUCCESS,
+  });
+  await resetModal();
+};
+
+export const updateTask = async (id: idType, newValue: string) => {
+  const updateTask = await useGoalsStore.getState().updateTask;
+
+  const task: GoalTasksTypes = await findTaskById(id);
+
+  task.title = newValue;
+  task.updated = dayjs().format();
+
+  await updateTask(task);
+  await updateGoalTaskAPI(task);
+  await showSuccessNotification({
+    message: "Task updated",
     type: NOTIFICATION_TYPE.SUCCESS,
   });
 

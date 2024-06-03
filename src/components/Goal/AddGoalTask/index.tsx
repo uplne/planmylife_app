@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { SimpleInput } from "../../SimpleInput";
 import { GoalTasksTypes } from "../../../store/Goals/api";
 
@@ -32,16 +32,6 @@ export const AddGoalTask = ({ data, editMode = false }: ComponentProps) => {
       setTempTask("");
     };
   }, []);
-
-  // const onSave = async () => {
-  //   await saveNewTask();
-  // };
-
-  // const onKeyPress = (e: any) => {
-  //   if (e.key === "Enter") {
-  //     onSave();
-  //   }
-  // };
 
   return (
     <div className="taskmodal">

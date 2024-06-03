@@ -1,10 +1,9 @@
 import { StatusTypes } from "../../../types/status";
 import { EditableInput } from "../../../components/EditableInput";
 // import { AddTask } from '../Tasks/TaskModal/AddTask';
-import { Actions } from "../../../components/Actions/GoalTasksActions";
+import { GoalTaskActions } from "../../../components/Actions/GoalTasksActions";
 import type { goalTaskActionTypes } from "../../../components/Actions/types";
 import { GoalTasksTypes } from "../../../store/Goals/api";
-import { TagMoved } from "../../../components/TaskIndicator/TagMoved";
 import { TaskStatus } from "../../../components/Tasks/TaskStatus";
 
 type ComponentProps = {
@@ -57,7 +56,7 @@ export const Task = ({ inactive = false, data }: ComponentProps) => {
         isCompleted={shouldShowCompleted()}
       />
       <TaskStatus task={data} />
-      {data.title && data && <Actions task={data} allow={allow} />}
+      {data.title && data && <GoalTaskActions task={data} allow={allow} />}
     </div>
   );
 };

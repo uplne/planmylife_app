@@ -9,7 +9,7 @@ import {
   moveToNextWeek,
 } from "../Tasks/tasks.controller";
 import { useModalStore } from "../../store/Modal";
-import { IconButton } from "../Buttons/IconButton";
+import { IconButton } from "../../components/Buttons/IconButton";
 import {
   CheckIcon,
   BinIcon,
@@ -19,7 +19,7 @@ import {
   PencilIcon,
   StopIcon,
   FolderDownloadIcon,
-} from "../Icons";
+} from "../../components/Icons";
 import { AddTask } from "../Tasks/TaskModal/AddTask";
 import {
   completeTask as completeTaskAction,
@@ -29,7 +29,6 @@ import {
 } from "../Tasks/tasks.controller";
 
 import "./Actions.css";
-import { useCallback } from "react";
 
 type ComponentTypes = {
   task: TaskType;
@@ -38,9 +37,9 @@ type ComponentTypes = {
 export const Actions = ({ task }: ComponentTypes) => {
   const { toggleModal } = useModalStore();
 
-  const completeTask = useCallback(() => {
+  const completeTask = () => {
     completeTaskAction(task.taskId);
-  }, []);
+  };
 
   const removeTask = async () => {
     await saveTask({

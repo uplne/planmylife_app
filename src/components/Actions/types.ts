@@ -8,3 +8,7 @@ export type goalTaskActionTypes =
   | "addToWeek"
   | "removeFromWeek"
   | "schedule";
+
+export type copyTypes = {
+  remove?: string;
+};

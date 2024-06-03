@@ -42,10 +42,24 @@ export interface GoalTasksTypes {
   status?: StatusTypes;
   assignment?: GoalAssignmentTypes;
   moved?: string[];
+  subtasks: GoalSubTasksTypes[];
   title?: string;
   created?: string | null;
   updated?: string | null;
   assigned?: string | null;
+  completed?: string | null;
+}
+
+export interface GoalSubTasksTypes {
+  id?: idType;
+  goalId?: idType;
+  userId?: string;
+  taskId?: idType;
+  subtaskId?: idType;
+  status?: StatusTypes;
+  title?: string;
+  created?: string | null;
+  updated?: string | null;
   completed?: string | null;
 }
 

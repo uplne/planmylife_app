@@ -14,8 +14,6 @@ export const WeeklyGoals = () => {
   const tasks = allDefaultTasksSelector();
   const completedTasks = allCompletedTasksSelector();
 
-  console.log("tasks: ", tasks);
-
   const isLoading = useIsLoading();
 
   useFetchGoalTasksDataForSelectedWeek(selectedWeek);

@@ -22,7 +22,6 @@ export const IconButton = ({
   hasBounce = false,
   ...otherProps
 }: PropTypes) => {
-  console.log("icon button renders");
   const classes = classnames("icon-button m-0 cursor-pointer", className, {
     "hover:translate-y-[-2px] transition-transform ease-in-out": hasBounce,
     "icon-button--withcta": withCTA,

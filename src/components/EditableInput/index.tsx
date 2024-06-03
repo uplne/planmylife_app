@@ -17,13 +17,14 @@ type ComponentProps = {
   className?: string | undefined;
   label?: string;
   title?: string;
-  onBlur: () => void;
+  onBlur?: (value: string) => void;
   status?: StatusTypes;
-  onFocus: () => void;
+  onFocus?: () => void;
   id: idType;
   onClick?: (e: React.MouseEvent<HTMLElement>) => void | null;
   isInactive?: boolean;
   isCompleted?: boolean;
+  hasSaveButton?: boolean;
 };
 
 export const EditableInput = forwardRef(
@@ -33,10 +34,12 @@ export const EditableInput = forwardRef(
       label = "Add task",
       title = "",
       status = StatusTypes.ACTIVE,
-      onFocus = () => {},
+      onBlur,
+      onFocus,
       onClick,
       isInactive = false,
       isCompleted = false,
+      hasSaveButton = true,
     }: ComponentProps,
     ref,
   ) => {
@@ -67,11 +70,11 @@ export const EditableInput = forwardRef(
     }));
 
     const onSave = () => {
-      // setIsEditable(false);
-      // onBlur({ id, title: taskContent });
-      // if (id === TASK_STATE.NEW) {
-      //   setTaskContent('');
-      // }
+      setIsEditable(false);
+      if (onBlur) {
+        onBlur(taskContent);
+      }
+      setTaskContent("");
     };
 
     const onKeyPress = (e: any) => {
@@ -122,13 +125,15 @@ export const EditableInput = forwardRef(
                 onKeyPress={onKeyPress}
                 onFocus={onFocus}
               />
-              <BasicButton
-                className="editable-input__button-save"
-                onClick={onSave}
-                small
-              >
-                Save
-              </BasicButton>
+              {hasSaveButton && (
+                <BasicButton
+                  className="editable-input__button-save"
+                  onClick={onSave}
+                  small
+                >
+                  Save
+                </BasicButton>
+              )}
             </div>
           )}
         </div>

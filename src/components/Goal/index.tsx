@@ -12,9 +12,12 @@ import { useCategoriesStore } from "../../store/Categories";
 import { useModalStore } from "../../store/Modal";
 import { CategoryAPITypes } from "../../store/Categories/api";
 import { GoalsAPITypes } from "../../store/Goals/api";
+import { useGoalsStore } from "../../store/Goals";
 import { AddGoalTask } from "./AddGoalTask";
 import { saveNewGoalTask } from "../../containers/Goals/goals.tasks.controller";
+import { updateGoal } from "../../containers/Goals/goals.controller";
 import { Tasks } from "./Tasks";
+import { StatusTypes } from "../../types/status";
 
 const LABEL = "Add goal";
 
@@ -26,45 +29,8 @@ type ComponentProps = {
 export const Goal = ({ className = undefined, data }: ComponentProps) => {
   const categories: CategoryAPITypes[] = useCategoriesStore().categories;
   const { toggleModal } = useModalStore();
+  const setTempGoal = useGoalsStore().setTempGoal;
   const [toggle, setToggle] = useState(false);
-  //   const shouldShowCompleted = () => {
-  //     if (!rawTaskData) {
-  //       return false;
-  //     }
-
-  //     if (
-  //       rawTaskData.type !== TasksTypes.RECURRING &&
-  //       rawTaskData.type !== TasksTypes.SCHEDULED_RECURRING
-  //     ) {
-  //       return rawTaskData.status === StatusTypes.COMPLETED;
-  //     } else {
-  //       if ("isInactive" in rawTaskData) {
-  //         return false;
-  //       } else if (isCompleted) {
-  //         return true;
-  //       } else {
-  //         return rawTaskData.status === StatusTypes.COMPLETED;
-  //       }
-  //     }
-  //   };
-
-  // const shouldShowReadOnly = () =>
-  //   rawTaskData &&
-  //   (rawTaskData.type === TasksTypes.RECURRING ||
-  //     rawTaskData.type === TasksTypes.SCHEDULED_RECURRING) &&
-  //   "isInactive" in rawTaskData &&
-  //   rawTaskData.isInactive;
-
-  // const taskClasses = classnames("goal", className, {
-  //   "task--hasTask": title,
-  //   "task--isCompleted": shouldShowCompleted(),
-  //   "task--isInactive": shouldShowReadOnly(),
-  //   "task--isPlaceholder": !title,
-  //   "mt-6":
-  //     rawTaskData?.type === TasksTypes.SCHEDULE ||
-  //     rawTaskData?.type === TasksTypes.SCHEDULED_RECURRING,
-  // });
-
   const toggleHandler = () => setToggle(!toggle);
 
   const classesContent = classnames(
@@ -94,22 +60,33 @@ export const Goal = ({ className = undefined, data }: ComponentProps) => {
     });
   };
 
+  const saveHandler = async (value: string) => {
+    await setTempGoal({
+      ...data,
+      objective: value,
+    });
+    await updateGoal(data.goalId!);
+  };
+
   return (
     <div className="mb-15 rounded-md relative shadow-[0px 0px 2px 0px rgba(0,0,0,0.15)] bg-white">
-      <div className="flex flex-row justify-between items-center p-5">
+      <div className="flex flex-row justify-between items-center p-5 pr-15">
         <EditableInput
           id={data.goalId!}
           title={data.objective}
           label={LABEL}
-          onBlur={() => {}} //onSave}
+          onBlur={(value) => saveHandler(value)}
           onFocus={() => {}} //onSave}
           status={data.status}
+          isCompleted={data.status === StatusTypes.COMPLETED}
         />
-        <Actions goal={data} />
-        <ToggleButton isOpen={toggle} onClick={toggleHandler} />
+        <div className="flex">
+          <Actions goal={data} />
+          <ToggleButton isOpen={toggle} onClick={toggleHandler} />
+        </div>
       </div>
       <div className={classesContent}>
-        <div className="m-15 border-[rgb(229,231,235)] border-t-[1px] border-0 border-solid">
+        <div className="m-15 mt-0 border-[rgb(229,231,235)] border-t-[1px] border-0 border-solid">
           <h3 className="text-base font-normal">Why</h3>
           <p className="text-sm font-light">{data.why}</p>
           <div className="grid grid-flow-row grid-cols-2 mb-40">

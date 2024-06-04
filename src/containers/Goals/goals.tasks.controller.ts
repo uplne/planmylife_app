@@ -113,10 +113,23 @@ export const fetchGoalsTasksForWeek = async (selectedWeek: string) => {
 export const checkForActiveSubtask = (subtasks: GoalSubTasksTypes[]) =>
   subtasks.some((subtask) => subtask.status === StatusTypes.ACTIVE);
 
-export const completeTask = async (id: idType) => {
+export const completeTask = async (
+  id: idType,
+  suspendConfirm: boolean = false,
+) => {
   const task: GoalTasksTypes = await findTaskById(id);
   const hasActiveSubtasks = checkForActiveSubtask(task.subtasks);
   const resetModal = useModalStore.getState().resetModal;
+
+  if (suspendConfirm) {
+    const subtasks: GoalSubTasksTypes[] = await completeAllSubtasks(task);
+    await completeTaskFinish({
+      ...task,
+      subtasks: [...subtasks],
+    });
+
+    return;
+  }
 
   if (hasActiveSubtasks) {
     const { openConfirm, resetConfirm } = useConfirmStore.getState();

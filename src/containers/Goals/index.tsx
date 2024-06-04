@@ -10,7 +10,11 @@ import { Goal } from "../../components/Goal";
 
 import { useModalStore } from "../../store/Modal";
 import { useGoalsStore } from "../../store/Goals";
-import { fetchActiveGoals, saveGoal } from "./goals.controller";
+import {
+  fetchActiveGoals,
+  fetchCompletedGoals,
+  saveGoal,
+} from "./goals.controller";
 import { useFetchCategories } from "../../components/Categories";
 
 export const useFetchActiveGoalsData = () =>
@@ -20,12 +24,20 @@ export const useFetchActiveGoalsData = () =>
     staleTime: 86400000, // set to 1 day
   });
 
+export const useFetchCompletedGoalsData = () =>
+  useQuery({
+    queryKey: ["goals", "completed"],
+    queryFn: fetchCompletedGoals,
+    staleTime: 86400000, // set to 1 day
+  });
+
 export const Goals = () => {
   const { toggleModal } = useModalStore();
   const resetTempGoal = useGoalsStore().resetTempGoal;
   const goals = useGoalsStore().goals;
 
   useFetchActiveGoalsData();
+  useFetchCompletedGoalsData();
   useFetchCategories();
 
   const openModal = async (e: React.MouseEvent<HTMLElement>) => {

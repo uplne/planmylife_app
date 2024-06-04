@@ -11,15 +11,13 @@ import { DATA_FETCHING_STATUS } from "../../types/status";
 import { useAuthStore } from "../../store/Auth";
 import { saveGoalAPI } from "./goals.service";
 import { NOTIFICATION_TYPE } from "../../store/Notification";
+import { useConfirmStore } from "../../store/Confirm";
 import { useModalStore } from "../../store/Modal";
 import { StatusTypes } from "../../types/status";
 import { idType } from "../../types/idtype";
-import {
-  getActiveGoalsAPI,
-  updateGoalAPI,
-  removeGoalAPI,
-} from "./goals.service";
+import { getGoalsAPI, updateGoalAPI, removeGoalAPI } from "./goals.service";
 import { showSuccessNotification } from "../../components/Notification/controller";
+import { completeTask } from "../Goals/goals.tasks.controller";
 
 export const findGoalById = async (id: idType): Promise<GoalsAPITypes> => {
   const storedGoals = await useGoalsStore.getState().goals;
@@ -44,7 +42,36 @@ export const fetchActiveGoals = async () => {
 
     // Create tasks array
     let fetchedGoals: GoalsStoreDefaultTypes["goals"] = [];
-    fetchedGoals = await getActiveGoalsAPI();
+    fetchedGoals = await getGoalsAPI(StatusTypes.ACTIVE);
+
+    // Add tasks to the store
+    await fillGoals(fetchedGoals);
+    await updateLoadingGoals(DATA_FETCHING_STATUS.LOADED);
+
+    return DATA_FETCHING_STATUS.LOADED;
+  } catch (e) {
+    console.warn("Fetching goals failed: ", e);
+    await updateLoadingGoals(DATA_FETCHING_STATUS.ERROR);
+    return DATA_FETCHING_STATUS.ERROR;
+  }
+};
+
+export const fetchCompletedGoals = async () => {
+  const userId = await useAuthStore.getState().currentUser?.user_id;
+  const updateLoadingGoals = await useGoalsStore.getState().updateLoadingGoals;
+  const fillGoals = await useGoalsStore.getState().fillGoals;
+
+  await updateLoadingGoals(DATA_FETCHING_STATUS.FETCHING);
+
+  // Load goals for the user from DB
+  try {
+    if (!userId) {
+      throw new Error("Loading completed goals: No user id");
+    }
+
+    // Create tasks array
+    let fetchedGoals: GoalsStoreDefaultTypes["goals"] = [];
+    fetchedGoals = await getGoalsAPI(StatusTypes.COMPLETED);
 
     // Add tasks to the store
     await fillGoals(fetchedGoals);
@@ -101,6 +128,39 @@ export const saveGoal = async () => {
 };
 
 export const completeGoal = async (goalId: idType) => {
+  const tasks = await useGoalsStore.getState().tasks;
+  const resetModal = useModalStore.getState().resetModal;
+
+  // Check if uncompleted task
+  const hasUncompleted = tasks.some(
+    (task) => task.goalId === goalId && task.status === StatusTypes.ACTIVE,
+  );
+
+  if (hasUncompleted) {
+    const { openConfirm, resetConfirm } = useConfirmStore.getState();
+
+    await openConfirm({
+      title:
+        "Some tasks are not completed. This action will mark them as completed. Would you like to proceed?",
+      onConfirm: async () => {
+        // Complete all tasks
+        for (const task of tasks) {
+          if (task.goalId === goalId && task.status === StatusTypes.ACTIVE) {
+            await completeTask(task.taskId!, true);
+          }
+        }
+
+        await completeGoalFinish(goalId);
+        await resetConfirm();
+      },
+      onCancel: async () => {
+        await resetModal();
+      },
+    });
+  }
+};
+
+export const completeGoalFinish = async (goalId: idType) => {
   const updateGoal = await useGoalsStore.getState().updateGoal;
 
   const goal: GoalsAPITypes = await findGoalById(goalId);
@@ -141,8 +201,10 @@ export const revertCompletedGoal = async (goalId: idType) => {};
 export const updateGoal = async (goalId: idType) => {
   const updateGoalStore = await useGoalsStore.getState().updateGoal;
   const tempGoal = await useGoalsStore.getState().tempGoal;
-  const resetTempGoal = await useGoalsStore().resetTempGoal;
+  const resetTempGoal = await useGoalsStore.getState().resetTempGoal;
   const { resetModal } = useModalStore.getState();
+
+  console.log("tempGoal: ", tempGoal);
 
   const goal: GoalsAPITypes = await findGoalById(goalId);
 

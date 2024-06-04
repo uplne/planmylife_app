@@ -5,10 +5,10 @@ import { StatusTypes } from "../../types/status";
 import { GoalsAPITypes } from "../../store/Goals/api";
 import { idType } from "../../types/idtype";
 
-export const getActiveGoalsAPI = async () => {
+export const getGoalsAPI = async (status: StatusTypes) => {
   try {
     const response = await axios.get(
-      `http://localhost:3001/api/v1/goals/${StatusTypes.ACTIVE}`,
+      `http://localhost:3001/api/v1/goals/${status}`,
     );
 
     if (response.data && response.data.length > 0) {
@@ -17,7 +17,7 @@ export const getActiveGoalsAPI = async () => {
 
     return [];
   } catch (e) {
-    throw new Error(`Get ${StatusTypes.ACTIVE} goals: ${e}`);
+    throw new Error(`Get ${status} goals: ${e}`);
   }
 };
 

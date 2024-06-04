@@ -1,4 +1,5 @@
 import { DatePicker } from "antd";
+import dayjs from "dayjs";
 
 import { SimpleInput } from "../../../../components/SimpleInput";
 import { ModalRow } from "../ModalRow";
@@ -41,7 +42,7 @@ export const SMARTGoal = () => {
               className="w-full py-[7px]"
               onChange={(date) => dataHandler("endDate", date)}
               placeholder="Success Date"
-              value={tempGoal?.endDate}
+              value={dayjs(tempGoal?.endDate)}
               format="DD/MM/YYYY"
             />
           </div>

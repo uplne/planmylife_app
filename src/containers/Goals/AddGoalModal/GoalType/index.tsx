@@ -11,6 +11,8 @@ type ComponentProps = {
 export const GoalType = ({ onChange, value }: ComponentProps) => (
   <Radio.Group onChange={onChange} value={value}>
     <Radio value={GoalTypeType.SMART}>S.M.A.R.T</Radio>
-    <Radio value={GoalTypeType.OKR}>OKRs</Radio>
+    <Radio disabled value={GoalTypeType.OKR}>
+      OKRs
+    </Radio>
   </Radio.Group>
 );

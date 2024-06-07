@@ -16,6 +16,7 @@ import {
   removeGoalTaskAPI,
   getGoalTasksAPI,
   getGoalTasksForWeekAPI,
+  getGoalForWeekAPI,
 } from "./goals.tasks.service";
 import { completeAllSubtasks } from "../Goals/goals.subtasks.controller";
 import { showSuccessNotification } from "../../components/Notification/controller";
@@ -100,6 +101,36 @@ export const fetchGoalsTasksForWeek = async (selectedWeek: string) => {
 
     // Add tasks to the store
     await fillTasks(fetchedGoalTasks);
+    await updateLoadingTasksGoals(DATA_FETCHING_STATUS.LOADED);
+
+    return DATA_FETCHING_STATUS.LOADED;
+  } catch (e) {
+    console.warn("Fetching goals failed: ", e);
+    await updateLoadingTasksGoals(DATA_FETCHING_STATUS.ERROR);
+    return DATA_FETCHING_STATUS.ERROR;
+  }
+};
+
+export const fetchGoalsForWeek = async (selectedWeek: string) => {
+  const userId = await useAuthStore.getState().currentUser?.user_id;
+  const updateLoadingTasksGoals =
+    await useGoalsStore.getState().updateLoadingTasksGoals;
+  const fillGoals = await useGoalsStore.getState().fillGoals;
+
+  await updateLoadingTasksGoals(DATA_FETCHING_STATUS.FETCHING);
+
+  // Load goal goals for the selected week
+  try {
+    if (!userId) {
+      throw new Error("Loading goals: No user id");
+    }
+
+    // Create goals array
+    let fetchedGoal: GoalsStoreDefaultTypes["goals"] = [];
+    fetchedGoal = await getGoalForWeekAPI(selectedWeek);
+
+    // Add tasks to the store
+    await fillGoals(fetchedGoal);
     await updateLoadingTasksGoals(DATA_FETCHING_STATUS.LOADED);
 
     return DATA_FETCHING_STATUS.LOADED;

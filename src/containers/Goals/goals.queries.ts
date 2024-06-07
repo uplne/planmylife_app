@@ -4,6 +4,7 @@ import { idType } from "../../types/idtype";
 import {
   fetchGoalsTasks,
   fetchGoalsTasksForWeek,
+  fetchGoalsForWeek,
 } from "./goals.tasks.controller";
 
 export const useFetchGoalTasksData = (goalId: idType) =>
@@ -17,5 +18,12 @@ export const useFetchGoalTasksDataForSelectedWeek = (selectedWeek: string) =>
   useQuery({
     queryKey: ["goal_tasks", selectedWeek],
     queryFn: () => fetchGoalsTasksForWeek(selectedWeek),
+    staleTime: 86400000, // set to 1 day
+  });
+
+export const useFetchGoalsDataForSelectedWeek = (selectedWeek: string) =>
+  useQuery({
+    queryKey: ["goals", selectedWeek],
+    queryFn: () => fetchGoalsForWeek(selectedWeek),
     staleTime: 86400000, // set to 1 day
   });

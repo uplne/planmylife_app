@@ -7,6 +7,7 @@ import { EditableInput } from "../EditableInput";
 import { Actions } from "./Actions";
 import { PlusIcon } from "../../components/Icons/PlusIcon";
 import { IconButton } from "../../components/Buttons/IconButton";
+import { TagInProgress } from "../../components/TaskIndicator/TagInProgress";
 import { ToggleButton } from "../Buttons/ToggleButton";
 import { useCategoriesStore } from "../../store/Categories";
 import { useModalStore } from "../../store/Modal";
@@ -18,6 +19,7 @@ import { saveNewGoalTask } from "../../containers/Goals/goals.tasks.controller";
 import { updateGoal } from "../../containers/Goals/goals.controller";
 import { Tasks } from "./Tasks";
 import { StatusTypes } from "../../types/status";
+import { goalActionTypes } from "../../components/Actions/types";
 
 const LABEL = "Add goal";
 
@@ -25,6 +27,15 @@ type ComponentProps = {
   className?: string | undefined;
   data: GoalsAPITypes;
 };
+
+const ALLOW: goalActionTypes[] = [
+  goalActionTypes.COMPLETE,
+  goalActionTypes.UNCOMPLETE,
+  goalActionTypes.EDIT,
+  goalActionTypes.ADDTOWEEK,
+  goalActionTypes.REMOVEFROMWEEK,
+  goalActionTypes.REMOVE,
+];
 
 export const Goal = ({ className = undefined, data }: ComponentProps) => {
   const categories: CategoryAPITypes[] = useCategoriesStore().categories;
@@ -40,6 +51,11 @@ export const Goal = ({ className = undefined, data }: ComponentProps) => {
       "h-auto": toggle,
     },
   );
+
+  const isInProgress =
+    data.assigned !== null &&
+    typeof data.assigned !== "undefined" &&
+    data.status !== StatusTypes.COMPLETED;
 
   const goalCategory = categories.find(
     (cat) => cat.categoryId === data.categoryId,
@@ -81,7 +97,8 @@ export const Goal = ({ className = undefined, data }: ComponentProps) => {
           isCompleted={data.status === StatusTypes.COMPLETED}
         />
         <div className="flex">
-          <Actions goal={data} />
+          {isInProgress && <TagInProgress date={dayjs(data.assigned).week()} />}
+          <Actions goal={data} allow={ALLOW} />
           <ToggleButton isOpen={toggle} onClick={toggleHandler} />
         </div>
       </div>
@@ -95,6 +112,7 @@ export const Goal = ({ className = undefined, data }: ComponentProps) => {
               <div className="flex flex-row items-center justify-start">
                 <div className="text-xs text-left z-10 flex flex-row justify-start items-center bg-tag px-10 py-5 rounded-sm">
                   {goalCategory && goalCategory.title}
+                  {!goalCategory && "No category"}
                 </div>
               </div>
             </div>
@@ -114,12 +132,16 @@ export const Goal = ({ className = undefined, data }: ComponentProps) => {
             </div>
           </div>
 
-          <h3 className="text-base font-normal">Tasks</h3>
-          <Tasks goalId={data.goalId!} />
-          <IconButton onClick={openTaskModal} secondary withCTA>
-            <PlusIcon />
-            Add task
-          </IconButton>
+          {!isInProgress && (
+            <>
+              <h3 className="text-base font-normal">Tasks</h3>
+              <Tasks goalId={data.goalId!} />
+              <IconButton onClick={openTaskModal} secondary withCTA>
+                <PlusIcon />
+                Add task
+              </IconButton>
+            </>
+          )}
         </div>
       </div>
     </div>

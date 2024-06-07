@@ -14,6 +14,8 @@ export const SMARTGoal = () => {
 
   const dataHandler = (key: string, value: any) => setTempGoalByKey(key, value);
 
+  const date = tempGoal?.endDate ? dayjs(tempGoal.endDate) : null;
+
   return (
     <>
       <ModalRow>
@@ -42,7 +44,7 @@ export const SMARTGoal = () => {
               className="w-full py-[7px]"
               onChange={(date) => dataHandler("endDate", date)}
               placeholder="Success Date"
-              value={dayjs(tempGoal?.endDate)}
+              value={date}
               format="DD/MM/YYYY"
             />
           </div>

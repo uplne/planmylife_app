@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 
-import { GoalTasksTypes } from "../api";
+import { GoalTasksTypes, GoalsAPITypes } from "../api";
 import { useWeekStore } from "../../Week";
 import { sortByAssigned } from "../../../services/sorting";
 import { StatusTypes } from "../../../types/status";
@@ -11,10 +11,13 @@ import { useGoalsStore } from "../index";
   All tasks that don't have any schedule.
 */
 export const allDefaultTasksSelector = () => {
-  const [tempTasks, setTempTasks] = useState<GoalTasksTypes[]>([]);
+  const [tempTasks, setTempTasks] = useState<
+    GoalTasksTypes[] | GoalsAPITypes[]
+  >([]);
 
   const selectedWeek = useWeekStore().selectedWeek;
   const tasks: GoalTasksTypes[] = useGoalsStore().tasks;
+  const goals: GoalsAPITypes[] = useGoalsStore().goals;
 
   useEffect(() => {
     const newTasks = tasks
@@ -25,8 +28,16 @@ export const allDefaultTasksSelector = () => {
       )
       .sort(sortByAssigned);
 
-    setTempTasks(newTasks);
-  }, [selectedWeek, tasks]);
+    const newGoals = goals
+      .filter(
+        (goal: GoalsAPITypes) =>
+          goal.status === StatusTypes.ACTIVE &&
+          dayjs(goal.assigned).isSame(dayjs(selectedWeek), "week"),
+      )
+      .sort(sortByAssigned);
+
+    setTempTasks([...newTasks, ...newGoals]);
+  }, [selectedWeek, tasks, goals]);
 
   return tempTasks;
 };

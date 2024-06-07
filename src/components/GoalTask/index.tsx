@@ -25,13 +25,6 @@ const allowTasks: goalTaskActionTypes[] = [
   "schedule",
 ];
 
-const allowSubtasks: goalTaskActionTypes[] = [
-  "complete",
-  "unComplete",
-  "edit",
-  "schedule",
-];
-
 export const Task = ({ inactive = false, data }: ComponentProps) => {
   const shouldShowCompleted = () => {
     if (!data) {
@@ -45,9 +38,6 @@ export const Task = ({ inactive = false, data }: ComponentProps) => {
     data.assigned !== null &&
     typeof data.assigned !== "undefined" &&
     data.status !== StatusTypes.COMPLETED;
-
-  const shouldShowReadOnly = () =>
-    data && "isInactive" in data && data.isInactive;
 
   return (
     <div className="flex flex-col">

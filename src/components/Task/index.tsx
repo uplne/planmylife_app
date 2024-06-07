@@ -71,18 +71,6 @@ export const Task = ({
       rawTaskData?.type === TasksTypes.SCHEDULED_RECURRING,
   });
 
-  // type OnSaveTypes = {
-  //   id: idType,
-  //   title: string,
-  // };
-
-  // const onSave = ({ id, title }: OnSaveTypes) => {
-  //   // dispatch({ type: 'tasks/saveTasks', payload: {
-  //   //   id,
-  //   //   title,
-  //   // }});
-  // };
-
   return (
     <div className={taskClasses}>
       <EditableInput

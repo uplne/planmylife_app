@@ -3,12 +3,12 @@ import dayjs from "dayjs";
 import { TagMoved } from "../../TaskIndicator/TagMoved";
 import { TagRecurring } from "../../TaskIndicator/TagRecurring";
 import { TaskType } from "../../../store/Tasks";
-import type { GoalTasksTypes } from "../../../store/Goals/api";
+import type { GoalTasksTypes, GoalsAPITypes } from "../../../store/Goals/api";
 import { useWeekStore } from "../../../store/Week";
 import { isRecurringTask, getRecurring } from "../../../services/recurring";
 
 type ComponentProps = {
-  task: TaskType | GoalTasksTypes;
+  task: TaskType | GoalTasksTypes | GoalsAPITypes;
 };
 
 const weekIsInArray = (movedWeeks: string[], selectedWeek: string) =>

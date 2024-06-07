@@ -7,7 +7,7 @@ import {
   ProgressType,
   GoalTasksTypes,
 } from "../../store/Goals/api";
-import { DATA_FETCHING_STATUS } from "../../types/status";
+import { DATA_FETCHING_STATUS, GoalAssignmentTypes } from "../../types/status";
 import { useAuthStore } from "../../store/Auth";
 import { saveGoalAPI } from "./goals.service";
 import { NOTIFICATION_TYPE } from "../../store/Notification";
@@ -162,7 +162,6 @@ export const completeGoal = async (goalId: idType) => {
 
 export const completeGoalFinish = async (goalId: idType) => {
   const updateGoal = await useGoalsStore.getState().updateGoal;
-
   const goal: GoalsAPITypes = await findGoalById(goalId);
 
   goal.status = StatusTypes.COMPLETED;
@@ -191,6 +190,88 @@ export const removeGoal = async (goalId: idType) => {
   } catch (e) {
     await showSuccessNotification({
       message: `Goal removing failed. ${e as Error}`,
+      type: NOTIFICATION_TYPE.FAIL,
+    });
+  }
+};
+
+export const addToWeeklyTasks = async (goalId: idType) => {
+  const updateGoal = await useGoalsStore.getState().updateGoal;
+  const goal: GoalsAPITypes = await findGoalById(goalId);
+
+  goal.status = StatusTypes.ACTIVE;
+  goal.updated = dayjs().format();
+  goal.assigned = dayjs().format();
+  goal.assignment = GoalAssignmentTypes.DEFAULT;
+
+  try {
+    await updateGoal(goal);
+    await updateGoalAPI(goal);
+    await showSuccessNotification({
+      message: "Goal added to current week",
+      type: NOTIFICATION_TYPE.SUCCESS,
+    });
+
+    return goal;
+  } catch (e) {
+    await showSuccessNotification({
+      message: `Adding goal to weekly tasks failed. ${e as Error}`,
+      type: NOTIFICATION_TYPE.FAIL,
+    });
+  }
+};
+
+export const removeFromWeeklyTasks = async (goalId: idType) => {
+  const updateGoal = await useGoalsStore.getState().updateGoal;
+  const goal: GoalsAPITypes = await findGoalById(goalId);
+
+  goal.status = StatusTypes.ACTIVE;
+  goal.updated = dayjs().format();
+  goal.assigned = null;
+  goal.assignment = GoalAssignmentTypes.DEFAULT;
+
+  try {
+    await updateGoal(goal);
+    await updateGoalAPI(goal);
+    await showSuccessNotification({
+      message: "Goal removed from current week",
+      type: NOTIFICATION_TYPE.SUCCESS,
+    });
+
+    return goal;
+  } catch (e) {
+    await showSuccessNotification({
+      message: `Removing goal from weekly tasks failed. ${e as Error}`,
+      type: NOTIFICATION_TYPE.FAIL,
+    });
+  }
+};
+
+export const moveToNextWeek = async (goalId: idType) => {
+  const updateGoal = await useGoalsStore.getState().updateGoal;
+  const goal: GoalsAPITypes = await findGoalById(goalId);
+
+  goal.updated = dayjs().format();
+  goal.assigned = dayjs().add(1, "week").format();
+
+  if (goal?.moved) {
+    goal.moved = [...goal.moved, dayjs().format()];
+  } else {
+    goal.moved = [dayjs().format()];
+  }
+
+  try {
+    await updateGoal(goal);
+    await updateGoalAPI(goal);
+    await showSuccessNotification({
+      message: "Goal moved to next week",
+      type: NOTIFICATION_TYPE.SUCCESS,
+    });
+
+    return goal;
+  } catch (e) {
+    await showSuccessNotification({
+      message: `Removing goal from weekly tasks failed. ${e as Error}`,
       type: NOTIFICATION_TYPE.FAIL,
     });
   }

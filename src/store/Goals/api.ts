@@ -20,9 +20,11 @@ export interface GoalsAPITypes {
   goalType?: GoalType;
   status?: StatusTypes;
   objective?: string;
+  moved?: string[];
   created?: string | null;
   updated?: string | null;
   assigned?: string | null;
+  assignment?: GoalAssignmentTypes;
   completed?: string | null;
   why?: string;
 

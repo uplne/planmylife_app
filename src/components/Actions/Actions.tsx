@@ -35,7 +35,7 @@ type ComponentTypes = {
   removeRecurringFromThisWeek?: () => void;
 };
 
-const defaultCopy = {
+export const defaultCopy = {
   remove: "Remove task",
   unComplete: "Uncheck",
   edit: "Edit task",

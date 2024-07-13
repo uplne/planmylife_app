@@ -1,4 +1,4 @@
-import { goalTasksSelector } from "../../../store/Goals/selectors/goalTasksSelector";
+import { goalTasksSelector } from "../../../store/Goals/selectors/goalTasks.selector";
 import { GoalTasksTypes } from "../../../store/Goals/api";
 import { idType } from "../../../types/idtype";
 import { Task as TaskComponent } from "../../GoalTask";

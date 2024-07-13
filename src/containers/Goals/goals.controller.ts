@@ -2,11 +2,8 @@ import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 
 import { useGoalsStore, GoalsStoreDefaultTypes } from "../../store/Goals";
-import {
-  GoalsAPITypes,
-  ProgressType,
-  GoalTasksTypes,
-} from "../../store/Goals/api";
+import { useHabitSchedulerStore } from "../../store/HabitScheduler";
+import { GoalsAPITypes, ProgressType } from "../../store/Goals/api";
 import { DATA_FETCHING_STATUS, GoalAssignmentTypes } from "../../types/status";
 import { useAuthStore } from "../../store/Auth";
 import { saveGoalAPI } from "./goals.service";
@@ -88,6 +85,11 @@ export const fetchCompletedGoals = async () => {
 export const saveGoal = async () => {
   const tempGoal = await useGoalsStore.getState().tempGoal;
   const addNewGoal = await useGoalsStore.getState().addNewGoal;
+  const habitRepeatType = useHabitSchedulerStore.getState().habitRepeatType;
+  const habitRepeatPeriod = useHabitSchedulerStore.getState().habitRepeatPeriod;
+  const habitRepeatTimes = useHabitSchedulerStore.getState().habitRepeatTimes;
+  const habitRepeatDays = useHabitSchedulerStore.getState().habitRepeatDays;
+  const resetScheduler = useHabitSchedulerStore.getState().resetScheduler;
   const { resetModal } = useModalStore.getState();
 
   let newGoalData: GoalsAPITypes = {
@@ -98,7 +100,8 @@ export const saveGoal = async () => {
     status: StatusTypes.ACTIVE,
     objective: tempGoal.objective!,
     why: tempGoal.why!,
-    assigned: null,
+    assigned: tempGoal.assigned || null,
+    assignment: tempGoal.assignment,
     created: dayjs().format(),
     updated: null,
     completed: null,
@@ -108,6 +111,11 @@ export const saveGoal = async () => {
     progressPercent: 0,
     progressOwnValue: null,
     progressOwnUnits: null,
+    habitRepeatType: habitRepeatType ?? null,
+    habitRepeatPeriod: habitRepeatPeriod ?? null,
+    habitRepeatTimes: habitRepeatTimes ?? null,
+    habitRepeatDays: [...habitRepeatDays] || null,
+    habitCompletedDays: [],
   };
 
   if (tempGoal.startDate) {
@@ -122,8 +130,17 @@ export const saveGoal = async () => {
     newGoalData.progressOwnUnits = tempGoal.progressOwnUnits || null;
   }
 
+  if (tempGoal.assignment === GoalAssignmentTypes.DEFAULT) {
+    newGoalData.habitRepeatType = null;
+    newGoalData.habitRepeatPeriod = null;
+    newGoalData.habitRepeatTimes = null;
+    newGoalData.habitRepeatDays = null;
+    newGoalData.habitCompletedDays = [];
+  }
+
   await addNewGoal(newGoalData);
   await saveGoalAPI(newGoalData);
+  await resetScheduler();
   await resetModal();
 };
 
@@ -157,6 +174,8 @@ export const completeGoal = async (goalId: idType) => {
         await resetModal();
       },
     });
+  } else {
+    await completeGoalFinish(goalId);
   }
 };
 
@@ -178,6 +197,22 @@ export const completeGoalFinish = async (goalId: idType) => {
 };
 
 export const removeGoal = async (goalId: idType) => {
+  const { openConfirm, resetConfirm } = useConfirmStore.getState();
+  const resetModal = useModalStore.getState().resetModal;
+
+  await openConfirm({
+    title: "Are you sure you want to delete this goal?",
+    onConfirm: async () => {
+      await removeGoalFinish(goalId);
+      await resetConfirm();
+    },
+    onCancel: async () => {
+      await resetModal();
+    },
+  });
+};
+
+export const removeGoalFinish = async (goalId: idType) => {
   const removeGoal = await useGoalsStore.getState().removeGoal;
 
   try {
@@ -202,7 +237,6 @@ export const addToWeeklyTasks = async (goalId: idType) => {
   goal.status = StatusTypes.ACTIVE;
   goal.updated = dayjs().format();
   goal.assigned = dayjs().format();
-  goal.assignment = GoalAssignmentTypes.DEFAULT;
 
   try {
     await updateGoal(goal);
@@ -252,7 +286,7 @@ export const moveToNextWeek = async (goalId: idType) => {
   const goal: GoalsAPITypes = await findGoalById(goalId);
 
   goal.updated = dayjs().format();
-  goal.assigned = dayjs().add(1, "week").format();
+  goal.assigned = dayjs(goal.assigned).add(1, "week").format();
 
   if (goal?.moved) {
     goal.moved = [...goal.moved, dayjs().format()];
@@ -277,15 +311,30 @@ export const moveToNextWeek = async (goalId: idType) => {
   }
 };
 
-export const revertCompletedGoal = async (goalId: idType) => {};
+export const revertCompletedGoal = async (goalId: idType) => {
+  const updateGoalStore = await useGoalsStore.getState().updateGoal;
+  const goal: GoalsAPITypes = await findGoalById(goalId);
+
+  const updateGoal = {
+    ...goal,
+    status: StatusTypes.ACTIVE,
+    updated: dayjs().format(),
+    completed: null,
+  };
+
+  await updateGoalStore(updateGoal);
+  await updateGoalAPI(updateGoal);
+  await showSuccessNotification({
+    message: "Goal set to active",
+    type: NOTIFICATION_TYPE.SUCCESS,
+  });
+};
 
 export const updateGoal = async (goalId: idType) => {
   const updateGoalStore = await useGoalsStore.getState().updateGoal;
   const tempGoal = await useGoalsStore.getState().tempGoal;
   const resetTempGoal = await useGoalsStore.getState().resetTempGoal;
   const { resetModal } = useModalStore.getState();
-
-  console.log("tempGoal: ", tempGoal);
 
   const goal: GoalsAPITypes = await findGoalById(goalId);
 
@@ -305,4 +354,36 @@ export const updateGoal = async (goalId: idType) => {
   await resetModal();
 
   return goal;
+};
+
+export const changeToHabit = async (goalId: idType) => {
+  const updateGoal = await useGoalsStore.getState().updateGoal;
+  const { resetModal } = useModalStore.getState();
+  const habitRepeatType = useHabitSchedulerStore.getState().habitRepeatType;
+  const habitRepeatPeriod = useHabitSchedulerStore.getState().habitRepeatPeriod;
+  const habitRepeatTimes = useHabitSchedulerStore.getState().habitRepeatTimes;
+  const habitRepeatDays = useHabitSchedulerStore.getState().habitRepeatDays;
+  const resetScheduler = useHabitSchedulerStore.getState().resetScheduler;
+
+  const goal: GoalsAPITypes = await findGoalById(goalId);
+
+  const updatedGoal = {
+    ...goal,
+    assignment: GoalAssignmentTypes.HABIT,
+    habitRepeatType,
+    habitRepeatPeriod,
+    habitRepeatTimes,
+    habitRepeatDays: Array.from(habitRepeatDays),
+    updated: dayjs().format(),
+    assigned: dayjs().format(),
+  };
+
+  await updateGoal(updatedGoal);
+  await updateGoalAPI(updatedGoal);
+  await showSuccessNotification({
+    message: "Goal changed to habit",
+    type: NOTIFICATION_TYPE.SUCCESS,
+  });
+  await resetScheduler();
+  await resetModal();
 };

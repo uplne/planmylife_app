@@ -13,8 +13,8 @@ export enum TasksTypes {
 }
 
 export enum GoalAssignmentTypes {
-  "DEFAULT" = "DEFAULT",
-  "HABIT" = "HABIT",
+  "DEFAULT",
+  "HABIT",
 }
 
 export enum DATA_FETCHING_STATUS {

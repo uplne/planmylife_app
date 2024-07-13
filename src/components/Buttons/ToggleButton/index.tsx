@@ -21,7 +21,7 @@ export const ToggleButton = ({
 
   return (
     <IconButton
-      className="bg-main-background p-5 ml-10 rounded"
+      className="flex flex-row box-content align-center h-[16px] bg-main-background m-10 mr-0 rounded"
       onClick={onClick}
       primary
       hasBounce

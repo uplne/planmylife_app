@@ -9,7 +9,7 @@ import {
   GoalTasksTypes,
   GoalSubTasksTypes,
 } from "./api";
-import { DATA_FETCHING_STATUS } from "../../types/status";
+import { DATA_FETCHING_STATUS, GoalAssignmentTypes } from "../../types/status";
 import { idType } from "../../types/idtype";
 import { uuidv4 } from "@firebase/util";
 
@@ -34,6 +34,7 @@ export interface GoalsStoreTypes extends GoalsStoreDefaultTypes {
   setTempGoal: (value: GoalsAPITypes | null) => void;
   setTempGoalByKey: (key: string, value: string | number | null) => void;
   resetTempGoal: () => void;
+  resetHabit: () => void;
 
   // Tasks
   setTempTask: (value: string) => void;
@@ -60,6 +61,11 @@ export const GoalsStoreDefault: GoalsStoreDefaultTypes = {
   tempGoal: {
     goalType: GoalType.SMART,
     progressType: ProgressType.TASKS_FINISHED,
+    assignment: GoalAssignmentTypes.DEFAULT,
+    habitRepeatType: null,
+    habitRepeatPeriod: null,
+    habitRepeatTimes: null,
+    habitRepeatDays: null,
   },
   tempTask: "",
   tempSubTasks: new Map(),
@@ -82,7 +88,6 @@ export const useGoalsStore = create<GoalsStoreTypes>((set, get) => ({
   },
   setTempGoalByKey: async (key, value) => {
     const tempGoal = await get().tempGoal;
-
     await set({
       tempGoal: {
         ...tempGoal,
@@ -306,5 +311,17 @@ export const useGoalsStore = create<GoalsStoreTypes>((set, get) => ({
     };
 
     await set({ tasks: [...storedTasks] });
+  },
+  resetHabit: async () => {
+    const tempGoal = await get().tempGoal;
+    await set({
+      tempGoal: {
+        ...tempGoal,
+        habitRepeatType: null,
+        habitRepeatPeriod: null,
+        habitRepeatTimes: null,
+        habitRepeatDays: null,
+      },
+    });
   },
 }));

@@ -43,6 +43,8 @@ export const defaultCopy = {
   addToWeek: "Add to current week",
   schedule: "Schedule",
   removeFromWeek: "Remove task from week",
+  convertToHabit: "Convert to habit",
+  removeHabit: "Remove habit",
 };
 
 export const Actions = ({

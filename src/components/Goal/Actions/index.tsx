@@ -13,8 +13,10 @@ import {
   PencilIcon,
   RocketIcon,
   ArrowCircleRight,
+  ShieldIcon,
 } from "../../Icons";
 import { AddGoalModal } from "../../../containers/Goals/AddGoalModal";
+import { AddHabit } from "../AddHabit";
 import {
   completeGoal,
   removeGoal,
@@ -23,10 +25,12 @@ import {
   addToWeeklyTasks,
   removeFromWeeklyTasks,
   moveToNextWeek,
+  changeToHabit,
 } from "../../../containers/Goals/goals.controller";
 import { GoalsAPITypes } from "../../../store/Goals/api";
 import { defaultCopy } from "../../Actions/Actions";
 import { goalActionTypes } from "../../Actions/types";
+import { GoalAssignmentTypes } from "../../../types/status";
 
 type ComponentTypes = {
   goal: GoalsAPITypes;
@@ -87,10 +91,23 @@ export const Actions = ({ goal, allow }: ComponentTypes) => {
     removeFromWeeklyTasks(goal.goalId!);
   };
 
+  const makeItHabit = async () => {
+    await toggleModal({
+      isOpen: true,
+      saveDisabled: false,
+      content: <AddHabit />,
+      title: "Create recurring goal/habit",
+      onSave: () => changeToHabit(goal.goalId!),
+      disableAutoClose: true,
+    });
+  };
+
   const shouldShowRemoveFromTheWeek = (): boolean =>
     Boolean(
       goal?.assigned &&
-        dayjs(goal.assigned).isSame(dayjs(selectedWeek), "week"),
+        dayjs(goal.assigned).isSame(dayjs(selectedWeek), "week") &&
+        goal.status !== StatusTypes.COMPLETED &&
+        goal.assignment !== GoalAssignmentTypes.HABIT,
     );
 
   const getMenu = () => {
@@ -147,6 +164,25 @@ export const Actions = ({ goal, allow }: ComponentTypes) => {
           </IconButton>
         ),
         key: "add_to_current_week",
+      });
+    }
+
+    if (
+      allow.includes(goalActionTypes.HABIT) &&
+      goal.assignment !== GoalAssignmentTypes.HABIT
+    ) {
+      items.push({
+        label: (
+          <IconButton
+            className="task__button"
+            onClick={() => makeItHabit()}
+            primary
+            withCTA
+          >
+            <ShieldIcon /> {COPY.convertToHabit}
+          </IconButton>
+        ),
+        key: "make_it_habit",
       });
     }
 

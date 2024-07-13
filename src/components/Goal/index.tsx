@@ -8,6 +8,7 @@ import { Actions } from "./Actions";
 import { PlusIcon } from "../../components/Icons/PlusIcon";
 import { IconButton } from "../../components/Buttons/IconButton";
 import { TagInProgress } from "../../components/TaskIndicator/TagInProgress";
+import { TagHabit } from "../../components/TaskIndicator/TagHabit";
 import { ToggleButton } from "../Buttons/ToggleButton";
 import { useCategoriesStore } from "../../store/Categories";
 import { useModalStore } from "../../store/Modal";
@@ -18,7 +19,7 @@ import { AddGoalTask } from "./AddGoalTask";
 import { saveNewGoalTask } from "../../containers/Goals/goals.tasks.controller";
 import { updateGoal } from "../../containers/Goals/goals.controller";
 import { Tasks } from "./Tasks";
-import { StatusTypes } from "../../types/status";
+import { StatusTypes, GoalAssignmentTypes } from "../../types/status";
 import { goalActionTypes } from "../../components/Actions/types";
 
 const LABEL = "Add goal";
@@ -35,9 +36,11 @@ const ALLOW: goalActionTypes[] = [
   goalActionTypes.ADDTOWEEK,
   goalActionTypes.REMOVEFROMWEEK,
   goalActionTypes.REMOVE,
+  goalActionTypes.HABIT,
+  goalActionTypes.REMOVEHABIT,
 ];
 
-export const Goal = ({ className = undefined, data }: ComponentProps) => {
+export const Goal = ({ data }: ComponentProps) => {
   const categories: CategoryAPITypes[] = useCategoriesStore().categories;
   const { toggleModal } = useModalStore();
   const setTempGoal = useGoalsStore().setTempGoal;
@@ -84,28 +87,45 @@ export const Goal = ({ className = undefined, data }: ComponentProps) => {
     await updateGoal(data.goalId!);
   };
 
+  const isHabit = data.assignment === GoalAssignmentTypes.HABIT;
+
   return (
     <div className="mb-15 rounded-md relative shadow-[0px 0px 2px 0px rgba(0,0,0,0.15)] bg-white">
-      <div className="flex flex-row justify-between items-center p-5 pr-15">
-        <EditableInput
-          id={data.goalId!}
-          title={data.objective}
-          label={LABEL}
-          onBlur={(value) => saveHandler(value)}
-          onFocus={() => {}} //onSave}
-          status={data.status}
-          isCompleted={data.status === StatusTypes.COMPLETED}
-        />
-        <div className="flex">
+      <div className="flex flex-col justify-between p-5 pr-15">
+        <div className="flex flex-row justify-between">
+          <EditableInput
+            id={data.goalId!}
+            title={data.objective}
+            label={LABEL}
+            onBlur={(value) => saveHandler(value)}
+            onFocus={() => {}} //onSave}
+            status={data.status}
+            isCompleted={data.status === StatusTypes.COMPLETED}
+          />
+          <div className="flex flex-row">
+            <div className="hidden lg:flex">
+              {isHabit && <TagHabit />}
+              {isInProgress && (
+                <TagInProgress date={dayjs(data.assigned).week()} />
+              )}
+            </div>
+            <div className="flex flex-row items-center">
+              <Actions goal={data} allow={ALLOW} />
+              <ToggleButton isOpen={toggle} onClick={toggleHandler} />
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-row ml-5 mb-5 lg:hidden">
+          {isHabit && <TagHabit />}
           {isInProgress && <TagInProgress date={dayjs(data.assigned).week()} />}
-          <Actions goal={data} allow={ALLOW} />
-          <ToggleButton isOpen={toggle} onClick={toggleHandler} />
         </div>
       </div>
       <div className={classesContent}>
         <div className="m-15 mt-0 border-[rgb(229,231,235)] border-t-[1px] border-0 border-solid">
           <h3 className="text-base font-normal">Why</h3>
-          <p className="text-sm font-light">{data.why}</p>
+          <p className="text-sm font-light">
+            {data.why || "What is your why?"}
+          </p>
           <div className="grid grid-flow-row grid-cols-2 mb-40">
             <div>
               <h3 className="text-base font-normal">Category</h3>
@@ -126,7 +146,12 @@ export const Goal = ({ className = undefined, data }: ComponentProps) => {
                   {data && data.endDate && (
                     <span>{dayjs(data.endDate).format("DD.MM.YYYY")}</span>
                   )}
-                  {data && !data.endDate && <span>No date set.</span>}
+                  {data && !data.endDate && (
+                    <span>
+                      A goal is a dream with a deadline. So without a deadline,
+                      it's only a dream.
+                    </span>
+                  )}
                 </div>
               </div>
             </div>

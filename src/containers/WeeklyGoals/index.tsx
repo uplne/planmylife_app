@@ -12,11 +12,13 @@ import { Task as TaskComponent } from "./Task";
 import { Goal as GoalComponent } from "./Goal";
 import { allDefaultTasksSelector } from "../../store/Goals/selectors/default.selector";
 import { allCompletedTasksSelector } from "../../store/Goals/selectors/completed.selector";
+import { habitGoalSelector } from "../../store/Goals/selectors/habitGoal.selector";
 
 export const WeeklyGoals = () => {
   const selectedWeek = useWeekStore().selectedWeek;
   const tasks = allDefaultTasksSelector();
   const completedTasks = allCompletedTasksSelector();
+  const habits = habitGoalSelector();
 
   const isLoading = useIsLoading();
 
@@ -48,6 +50,20 @@ export const WeeklyGoals = () => {
                     );
                   }
                 })}
+              </>
+            )}
+            {habits.length > 0 && (
+              <>
+                <h3 className="tasks__subtitle">Recurring goals</h3>
+                {habits.map((task) => (
+                  <div className="tasks__container">
+                    <GoalComponent
+                      isHabit
+                      key={String(task.goalId)}
+                      data={task}
+                    />
+                  </div>
+                ))}
               </>
             )}
             {completedTasks.length > 0 && (

@@ -1,7 +1,6 @@
 import { useRef, useEffect } from "react";
 
 import { BasicButton } from "../Buttons/BasicButton";
-
 import { useModalStore } from "../../store/Modal";
 
 import "./Modal.css";
@@ -26,6 +25,10 @@ export const Modal = () => {
   useEffect(() => {
     setIsLoading(false);
   }, []);
+
+  useEffect(() => {
+    document.body.style.position = isOpen ? "fixed" : "relative";
+  }, [isOpen]);
 
   const closeModal = () => {
     resetModal();
@@ -60,7 +63,9 @@ export const Modal = () => {
     <div className="modal" onClick={onClose}>
       <div ref={modalRef} className="modal__wrapper">
         <h2 className="modal__header font-bold">{title}</h2>
-        <div className="modal__content">{content}</div>
+        <div className="modal__content overflow-x-auto overflow-y-scroll p-20">
+          <div className="h-[80%]">{content}</div>
+        </div>
         <div className="modal__actions">
           <BasicButton className="modal__button" ternary onClick={closeModal}>
             {cancelLabel}

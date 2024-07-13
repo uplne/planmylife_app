@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { GoalTasksTypes, GoalsAPITypes } from "../api";
 import { useWeekStore } from "../../Week";
 import { sortByAssigned } from "../../../services/sorting";
-import { StatusTypes } from "../../../types/status";
+import { GoalAssignmentTypes, StatusTypes } from "../../../types/status";
 import { useGoalsStore } from "../index";
 
 /*
@@ -32,6 +32,7 @@ export const allDefaultTasksSelector = () => {
       .filter(
         (goal: GoalsAPITypes) =>
           goal.status === StatusTypes.ACTIVE &&
+          goal.assignment === GoalAssignmentTypes.DEFAULT &&
           dayjs(goal.assigned).isSame(dayjs(selectedWeek), "week"),
       )
       .sort(sortByAssigned);

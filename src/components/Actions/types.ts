@@ -19,6 +19,8 @@ export enum goalActionTypes {
   ADDTOWEEK = "addToWeek",
   REMOVEFROMWEEK = "removeFromWeek",
   SCHEDULE = "schedule",
+  HABIT = "habit",
+  REMOVEHABIT = "removeHabit",
 }
 
 export type copyTypes = {

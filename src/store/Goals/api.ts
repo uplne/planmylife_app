@@ -1,5 +1,6 @@
 import { idType } from "../../types/idtype";
 import { StatusTypes, GoalAssignmentTypes } from "../../types/status";
+import { SchedulerTypeKey, SchedulerPeriodKey } from "../HabitScheduler";
 
 export enum ProgressType {
   "TASKS_FINISHED",
@@ -27,6 +28,16 @@ export interface GoalsAPITypes {
   assignment?: GoalAssignmentTypes;
   completed?: string | null;
   why?: string;
+  // Type of habit - every | at least
+  habitRepeatType?: SchedulerTypeKey | null;
+  // How often - day | working days | selected days
+  habitRepeatPeriod?: SchedulerPeriodKey | null;
+  // How often for at least - at least x days
+  habitRepeatTimes?: number | null;
+  // Actual days when we want it for every - for days [0,1,2,3,4,5,6], for working days [0,1,2,3,4] etc
+  habitRepeatDays?: number[] | null;
+  // Dates of completed habit
+  habitCompletedDays?: string[] | null;
 
   startDate?: string | null;
   endDate?: string | null;

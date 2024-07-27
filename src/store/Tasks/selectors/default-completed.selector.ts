@@ -17,7 +17,7 @@ export const defaultCompletedTasksSelector = () => {
       .filter(
         (task: TasksAPITypes) =>
           (task.type === TasksTypes.DEFAULT ||
-            task.type === TasksTypes.SCHEDULE) &&
+            task.type === TasksTypes.SCHEDULED) &&
           task.status === StatusTypes.COMPLETED &&
           dayjs(task.assigned).isSame(dayjs(selectedWeek), "week"),
       )

@@ -5,6 +5,7 @@ import {
   GoogleAuthProvider,
   signInWithRedirect,
   getRedirectResult,
+  signInWithPopup,
 } from "firebase/auth";
 import { getFirestore, Timestamp } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
@@ -40,4 +41,10 @@ export const GoogleAuth = new GoogleAuthProvider();
 
 export type CollectionType = "default" | "recurring";
 
-export { GoogleAuthProvider, signInWithRedirect, getRedirectResult, Timestamp };
+export {
+  GoogleAuthProvider,
+  signInWithRedirect,
+  signInWithPopup,
+  getRedirectResult,
+  Timestamp,
+};

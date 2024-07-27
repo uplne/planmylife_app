@@ -1,7 +1,7 @@
-import { create } from "zustand";
 import uniqBy from "lodash/fp/uniqBy";
 import remove from "lodash/remove";
 
+import { createClearable } from "../../services/createClearable";
 import { CategoryAPITypes } from "./api";
 import { DATA_FETCHING_STATUS } from "../../types/status";
 import { idType } from "../../types/idtype";
@@ -23,36 +23,38 @@ export const CategoriesStoreDefault: CategoriesStoreDefaultTypes = {
   categories: [],
 };
 
-export const useCategoriesStore = create<CategoriesStoreTypes>((set, get) => ({
-  loadingCategories: CategoriesStoreDefault.loadingCategories,
-  updateLoadingCategories: async (value) => {
-    set({ loadingCategories: value });
-  },
-  categories: CategoriesStoreDefault.categories,
-  fillCategories: async (categories: CategoryAPITypes[]) => {
-    const storedCategories = await get().categories;
-    const newCategory = uniqBy(
-      (item) => item.categoryId,
-      storedCategories.concat(categories),
-    );
+export const useCategoriesStore = createClearable<CategoriesStoreTypes>(
+  (set, get) => ({
+    loadingCategories: CategoriesStoreDefault.loadingCategories,
+    updateLoadingCategories: async (value) => {
+      set({ loadingCategories: value });
+    },
+    categories: CategoriesStoreDefault.categories,
+    fillCategories: async (categories: CategoryAPITypes[]) => {
+      const storedCategories = await get().categories;
+      const newCategory = uniqBy(
+        (item) => item.categoryId,
+        storedCategories.concat(categories),
+      );
 
-    await set({
-      categories: newCategory,
-    });
-  },
-  addNewCategory: async (value: CategoryAPITypes) => {
-    const storedCategories = await get().categories;
-    await set({
-      categories: storedCategories.concat([
-        {
-          ...value,
-        },
-      ]),
-    });
-  },
-  removeCategory: async (id: idType) => {
-    const storedCategories = [...get().categories];
-    remove(storedCategories, (category) => category.categoryId === id);
-    await set({ categories: [...storedCategories] });
-  },
-}));
+      await set({
+        categories: newCategory,
+      });
+    },
+    addNewCategory: async (value: CategoryAPITypes) => {
+      const storedCategories = await get().categories;
+      await set({
+        categories: storedCategories.concat([
+          {
+            ...value,
+          },
+        ]),
+      });
+    },
+    removeCategory: async (id: idType) => {
+      const storedCategories = [...get().categories];
+      remove(storedCategories, (category) => category.categoryId === id);
+      await set({ categories: [...storedCategories] });
+    },
+  }),
+);

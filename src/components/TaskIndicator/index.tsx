@@ -6,7 +6,10 @@ type ComponentProps = {
 };
 
 export const TaskIndicator = ({ children, className }: ComponentProps) => {
-  const classes = classnames("text-xss px-xs rounded-sm ml-5", className);
+  const classes = classnames(
+    "text-[9px] text-left font-bold z-10 flex flex-row justify-start items-center px-10 py-[5px] uppercase rounded mr-5",
+    className,
+  );
 
   return <div className={classes}>{children}</div>;
 };

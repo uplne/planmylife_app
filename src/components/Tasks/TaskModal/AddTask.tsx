@@ -90,7 +90,7 @@ export const AddTask = ({ task = null, editMode = false }: ComponentTypes) => {
 
     if (
       editMode &&
-      (task.type === TasksTypes.SCHEDULE ||
+      (task.type === TasksTypes.SCHEDULED ||
         task.type === TasksTypes.SCHEDULED_RECURRING)
     ) {
       defaultValue = dayjs(task.assigned);

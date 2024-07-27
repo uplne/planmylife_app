@@ -1,5 +1,4 @@
-import { create } from "zustand";
-
+import { createClearable } from "../../services/createClearable";
 import { UserTypes } from "./api";
 
 type AuthTypes = {
@@ -24,7 +23,7 @@ export const AuthDefault: AuthTypes = {
   updateUID: () => null,
 };
 
-export const useAuthStore = create<AuthTypes>((set) => ({
+export const useAuthStore = createClearable<AuthTypes>((set) => ({
   currentUser: AuthDefault.currentUser,
   updateCurrentUser: (values: UserTypes) => {
     set({ currentUser: values });

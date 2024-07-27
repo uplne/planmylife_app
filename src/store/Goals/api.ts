@@ -57,6 +57,7 @@ export interface GoalTasksTypes {
   moved?: string[];
   subtasks: GoalSubTasksTypes[];
   title?: string;
+  schedule?: string | null;
   created?: string | null;
   updated?: string | null;
   assigned?: string | null;
@@ -75,6 +76,11 @@ export interface GoalSubTasksTypes {
   updated?: string | null;
   completed?: string | null;
 }
+
+export type TempTaskType = {
+  task: string;
+  schedule?: string | null;
+};
 
 /*
   CREATE TABLE goals (

@@ -20,7 +20,7 @@ export const allDefaultScheduledTasksSelector = (): TasksAPITypes[] => {
     const newTasks = [...tasks]
       .filter(
         (task: TasksAPITypes) =>
-          task.type === TasksTypes.SCHEDULE &&
+          task.type === TasksTypes.SCHEDULED &&
           dayjs(task.assigned).isSame(dayjs(selectedWeek), "week") &&
           task.status === StatusTypes.ACTIVE,
       )

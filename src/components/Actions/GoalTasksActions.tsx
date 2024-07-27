@@ -58,7 +58,7 @@ export const GoalTaskActions = ({ task, allow }: ComponentTypes) => {
     await toggleModal({
       isOpen: true,
       content: <AddSubTask data={task} />,
-      title: "Add New SubTask",
+      title: "Add New SubTask(s)",
       onSave: () => saveNewGoalSubTasks(task.taskId!),
       saveDisabled: false,
       disableAutoClose: true,

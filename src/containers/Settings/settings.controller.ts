@@ -1,6 +1,7 @@
 import { useSettingsStateStore, LOADING } from "../../store/Settings";
 import { saveSettings, getSettings } from "./api";
-import { updateSettingsAPI } from "./settings.service";
+import { updateSettingsAPI, settingsEraseAllDataAPI } from "./settings.service";
+import { useConfirmStore } from "../../store/Confirm";
 
 export const createSettings = async () => {
   const weekly_email_reminder =
@@ -34,7 +35,6 @@ export const fetchSettings = async (): Promise<boolean> => {
 
   // Load settings for the user from DB
   try {
-    console.log("get settings");
     const result = await getSettings();
 
     if (result) {
@@ -70,4 +70,21 @@ export const updateFirstLogin = async () => {
     tier,
     day_of_week,
   });
+};
+
+export const eraseAllData = async () => {
+  const { openConfirm, resetConfirm } = useConfirmStore.getState();
+
+  await openConfirm({
+    title: "Are you sure you want to erase all data?",
+    subtitle: "This change is irreversible.",
+    onConfirm: async () => {
+      await eraseAllDataConfirmed();
+      await resetConfirm();
+    },
+  });
+};
+
+export const eraseAllDataConfirmed = async () => {
+  await settingsEraseAllDataAPI();
 };

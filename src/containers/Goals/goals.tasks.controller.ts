@@ -2,7 +2,11 @@ import dayjs from "dayjs";
 import { v4 as uuidv4 } from "uuid";
 
 import { useGoalsStore, GoalsStoreDefaultTypes } from "../../store/Goals";
-import { GoalSubTasksTypes, GoalTasksTypes } from "../../store/Goals/api";
+import type {
+  GoalSubTasksTypes,
+  GoalTasksTypes,
+  TempTaskType,
+} from "../../store/Goals/api";
 import { DATA_FETCHING_STATUS } from "../../types/status";
 import { useAuthStore } from "../../store/Auth";
 import { NOTIFICATION_TYPE } from "../../store/Notification";
@@ -30,7 +34,7 @@ export const findTaskById = async (id: idType): Promise<GoalTasksTypes> => {
 };
 
 export const saveNewGoalTask = async (goalId: idType) => {
-  const tempTask = await useGoalsStore.getState().tempTask;
+  const tempTask: TempTaskType = await useGoalsStore.getState().tempTask;
   const addNewGoalTask = await useGoalsStore.getState().addNewGoalTask;
   const { resetModal } = useModalStore.getState();
 
@@ -39,9 +43,10 @@ export const saveNewGoalTask = async (goalId: idType) => {
     taskId: uuidv4(),
     status: StatusTypes.ACTIVE,
     assignment: GoalAssignmentTypes.DEFAULT,
-    title: tempTask,
+    title: tempTask.task,
+    schedule: tempTask.schedule ?? null,
     subtasks: [],
-    assigned: null,
+    assigned: tempTask.schedule ?? null,
     created: dayjs().format(),
     updated: null,
     completed: null,
@@ -252,12 +257,18 @@ export const removeGoalTaskConfirmation = async (id: idType) => {
 
 export const updateEditedTask = async (id: idType) => {
   const updateTask = await useGoalsStore.getState().updateTask;
-  const tempTask = await useGoalsStore.getState().tempTask;
+  const tempTask: TempTaskType = await useGoalsStore.getState().tempTask;
   const resetModal = useModalStore.getState().resetModal;
   const task: GoalTasksTypes = await findTaskById(id);
 
-  task.title = tempTask;
+  console.log(tempTask);
+
+  task.title = tempTask.task;
+  task.schedule = tempTask.schedule;
+  task.assigned = tempTask.schedule;
   task.updated = dayjs().format();
+
+  console.log("edited task: ", task);
 
   try {
     await updateTask(task);

@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
 import weekOfYear from "dayjs/plugin/weekOfYear";
-import { create } from "zustand";
 dayjs.extend(weekOfYear);
+
+import { createClearable } from "../../services/createClearable";
 
 export const WEEK_ID_FORMAT = "YYYY-MM-DD";
 
@@ -47,7 +48,7 @@ export const WeekDefault: WeekTypes = {
   reset: () => null,
 };
 
-export const useWeekStore = create<WeekTypes>((set, get) => ({
+export const useWeekStore = createClearable<WeekTypes>((set, get) => ({
   selectedWeek: WeekDefault.selectedWeek,
   selectedWeekId: WeekDefault.selectedWeekId,
   selectedWeekNumber: WeekDefault.selectedWeekNumber,

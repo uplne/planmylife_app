@@ -17,13 +17,11 @@ export const Tasks = ({ goalId }: ComponentProps) => {
 
   return (
     <TaskList>
-      {tasks.map((task: GoalTasksTypes) => {
-        return (
-          <TaskListItem length={tasks.length}>
-            <TaskComponent data={task} />
-          </TaskListItem>
-        );
-      })}
+      {tasks.map((task: GoalTasksTypes) => (
+        <TaskListItem length={tasks.length}>
+          <TaskComponent data={task} />
+        </TaskListItem>
+      ))}
     </TaskList>
   );
 };

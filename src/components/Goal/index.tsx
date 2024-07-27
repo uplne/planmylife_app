@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 import classnames from "classnames";
 import dayjs from "dayjs";
@@ -9,6 +9,7 @@ import { PlusIcon } from "../../components/Icons/PlusIcon";
 import { IconButton } from "../../components/Buttons/IconButton";
 import { TagInProgress } from "../../components/TaskIndicator/TagInProgress";
 import { TagHabit } from "../../components/TaskIndicator/TagHabit";
+import { H3 } from "../../components/Headlines/H3";
 import { ToggleButton } from "../Buttons/ToggleButton";
 import { useCategoriesStore } from "../../store/Categories";
 import { useModalStore } from "../../store/Modal";
@@ -55,10 +56,17 @@ export const Goal = ({ data }: ComponentProps) => {
     },
   );
 
-  const isInProgress =
-    data.assigned !== null &&
-    typeof data.assigned !== "undefined" &&
-    data.status !== StatusTypes.COMPLETED;
+  const isInProgress = useMemo(() => {
+    return (
+      data.assigned !== null &&
+      typeof data.assigned !== "undefined" &&
+      data.status !== StatusTypes.COMPLETED
+    );
+  }, [data]);
+
+  const isHabit = useMemo(() => {
+    return data.assignment === GoalAssignmentTypes.HABIT;
+  }, [data]);
 
   const goalCategory = categories.find(
     (cat) => cat.categoryId === data.categoryId,
@@ -87,10 +95,8 @@ export const Goal = ({ data }: ComponentProps) => {
     await updateGoal(data.goalId!);
   };
 
-  const isHabit = data.assignment === GoalAssignmentTypes.HABIT;
-
   return (
-    <div className="mb-15 rounded-md relative shadow-[0px 0px 2px 0px rgba(0,0,0,0.15)] bg-white">
+    <div className="mb-15 last-of-type:mb-0 rounded-md relative shadow-[0px_0px_2px_0px_rgba(0,0,0,0.15)] bg-white">
       <div className="flex flex-col justify-between p-5 pr-15">
         <div className="flex flex-row justify-between">
           <EditableInput
@@ -103,32 +109,26 @@ export const Goal = ({ data }: ComponentProps) => {
             isCompleted={data.status === StatusTypes.COMPLETED}
           />
           <div className="flex flex-row">
-            <div className="hidden lg:flex">
-              {isHabit && <TagHabit />}
-              {isInProgress && (
-                <TagInProgress date={dayjs(data.assigned).week()} />
-              )}
-            </div>
             <div className="flex flex-row items-center">
               <Actions goal={data} allow={ALLOW} />
               <ToggleButton isOpen={toggle} onClick={toggleHandler} />
             </div>
           </div>
         </div>
-        <div className="flex flex-row ml-5 mb-5 lg:hidden">
+        <div className="flex flex-row ml-5 mb-5">
           {isHabit && <TagHabit />}
           {isInProgress && <TagInProgress date={dayjs(data.assigned).week()} />}
         </div>
       </div>
       <div className={classesContent}>
         <div className="m-15 mt-0 border-[rgb(229,231,235)] border-t-[1px] border-0 border-solid">
-          <h3 className="text-base font-normal">Why</h3>
+          <H3 className="mt-15">Why</H3>
           <p className="text-sm font-light">
             {data.why || "What is your why?"}
           </p>
           <div className="grid grid-flow-row grid-cols-2 mb-40">
             <div>
-              <h3 className="text-base font-normal">Category</h3>
+              <H3>Category</H3>
               <div className="flex flex-row items-center justify-start">
                 <div className="text-xs text-left z-10 flex flex-row justify-start items-center bg-tag px-10 py-5 rounded-sm">
                   {goalCategory && goalCategory.title}
@@ -138,16 +138,14 @@ export const Goal = ({ data }: ComponentProps) => {
             </div>
 
             <div>
-              <h3 className="text-base font-normal">
-                I will achieve this goal by
-              </h3>
+              <H3>I will achieve this goal by</H3>
               <div className="flex flex-row items-center justify-start">
                 <div className="text-xs text-left z-10 flex flex-row justify-start items-center">
                   {data && data.endDate && (
                     <span>{dayjs(data.endDate).format("DD.MM.YYYY")}</span>
                   )}
                   {data && !data.endDate && (
-                    <span>
+                    <span className="text-text">
                       A goal is a dream with a deadline. So without a deadline,
                       it's only a dream.
                     </span>
@@ -157,9 +155,9 @@ export const Goal = ({ data }: ComponentProps) => {
             </div>
           </div>
 
-          {!isInProgress && (
+          {!isInProgress && !isHabit && (
             <>
-              <h3 className="text-base font-normal">Tasks</h3>
+              <H3>Tasks</H3>
               <Tasks goalId={data.goalId!} />
               <IconButton onClick={openTaskModal} secondary withCTA>
                 <PlusIcon />

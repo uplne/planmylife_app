@@ -110,15 +110,10 @@ export const saveNewTask = async () => {
     removedForWeek: [],
   };
 
-  if (schedule) {
-    newTaskData.type = TasksTypes.SCHEDULE;
-    newTaskData.assigned = dayjs(schedule).format();
-  }
-
   // It's recurring task
   if (repeatType === SchedulerType.every) {
     const type =
-      newTaskData.type === TasksTypes.SCHEDULE
+      schedule && dayjs(schedule).isValid()
         ? TasksTypes.SCHEDULED_RECURRING
         : TasksTypes.RECURRING;
 
@@ -129,6 +124,12 @@ export const saveNewTask = async () => {
       repeatPeriod,
       type,
     };
+  }
+
+  if (schedule && dayjs(schedule).isValid() && !repeatType) {
+    newTaskData.type = TasksTypes.SCHEDULED;
+    newTaskData.schedule = dayjs(schedule).format();
+    newTaskData.assigned = dayjs(schedule).format();
   }
 
   await saveTask(newTaskData);
@@ -332,7 +333,7 @@ export const saveEditedTask = async (id: idType) => {
       newTask.type =
         repeatType !== SchedulerType.no
           ? TasksTypes.SCHEDULED_RECURRING
-          : TasksTypes.SCHEDULE;
+          : TasksTypes.SCHEDULED;
     }
 
     if (repeatType !== SchedulerType.no) {
@@ -355,7 +356,7 @@ export const saveEditedTask = async (id: idType) => {
       newTask.type =
         repeatType !== SchedulerType.no
           ? TasksTypes.SCHEDULED_RECURRING
-          : TasksTypes.SCHEDULE;
+          : TasksTypes.SCHEDULED;
     }
 
     // It's recurring task

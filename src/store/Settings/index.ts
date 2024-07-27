@@ -1,10 +1,10 @@
-import { create } from "zustand";
 import dayjs from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
 
 import { useWeekStore } from "../Week";
 import { useAuthStore } from "../Auth";
 import { SettingsAPITypes, TIER, DOW } from "./api";
+import { createClearable } from "../../services/createClearable";
 
 export enum LOADING {
   "NODATA" = "NODATA",
@@ -33,7 +33,7 @@ export const SettingsDefault = {
   isLoading: LOADING.NODATA,
 };
 
-export const useSettingsStateStore = create<SettingsTypes>((set) => ({
+export const useSettingsStateStore = createClearable<SettingsTypes>((set) => ({
   weekly_email_reminder: SettingsDefault.weekly_email_reminder,
   updateWeeklyEmailReminder: async (value) => {
     const userId = useAuthStore.getState().currentUser?.id;

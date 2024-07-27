@@ -23,29 +23,38 @@ const copyOverride = {
   remove: "Remove subtask",
 };
 
-export const SubTasks = ({ data }: ComponentProps) => (
-  <>
-    {data.subtasks.length > 0 && (
-      <TaskList isSub>
-        {data.subtasks.map((subtask: GoalSubTasksTypes) => (
-          <TaskListItem isSub length={data.subtasks.length}>
-            <div className="flex flex-row justify-between items-center p-5">
-              <EditableInput
-                id={subtask.subtaskId!}
-                title={subtask.title}
-                onBlur={(value) => updateSubTask(subtask, value)}
-                onFocus={() => {}} //onSave}
-                isCompleted={subtask.status === StatusTypes.COMPLETED}
-              />
-              <GoalSubtasksActions
-                task={subtask}
-                allow={allowSubtasks}
-                copy={copyOverride}
-              />
-            </div>
-          </TaskListItem>
-        ))}
-      </TaskList>
-    )}
-  </>
-);
+export const SubTasks = ({ data }: ComponentProps) => {
+  if (
+    !data?.subtasks ||
+    (data?.subtasks && !(data.subtasks instanceof Array))
+  ) {
+    return null;
+  }
+
+  return (
+    <>
+      {data.subtasks.length > 0 && (
+        <TaskList isSub>
+          {data.subtasks.map((subtask: GoalSubTasksTypes) => (
+            <TaskListItem isSub length={data.subtasks.length}>
+              <div className="flex flex-row justify-between items-center p-5">
+                <EditableInput
+                  id={subtask.subtaskId!}
+                  title={subtask.title}
+                  onBlur={(value) => updateSubTask(subtask, value)}
+                  onFocus={() => {}} //onSave}
+                  isCompleted={subtask.status === StatusTypes.COMPLETED}
+                />
+                <GoalSubtasksActions
+                  task={subtask}
+                  allow={allowSubtasks}
+                  copy={copyOverride}
+                />
+              </div>
+            </TaskListItem>
+          ))}
+        </TaskList>
+      )}
+    </>
+  );
+};

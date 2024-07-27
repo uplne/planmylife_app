@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { createClearable } from "../../services/createClearable";
 
 type AppTypes = {
   isLoading: boolean;
@@ -10,7 +10,7 @@ const AppDefault: AppTypes = {
   setIsLoading: () => null,
 };
 
-export const useAppStore = create<AppTypes>((set) => ({
+export const useAppStore = createClearable<AppTypes>((set) => ({
   isLoading: AppDefault.isLoading,
   setIsLoading: async (value) => {
     set({ isLoading: value });

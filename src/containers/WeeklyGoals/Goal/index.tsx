@@ -43,9 +43,11 @@ export const Goal = ({
 }: ComponentProps) => {
   const setTempGoal = useGoalsStore().setTempGoal;
 
+  console.log(data);
+
   const shouldShowCompleted = () => {
     if (!data) {
-      return false;
+      return;
     }
 
     return data.status === StatusTypes.COMPLETED;
@@ -85,7 +87,7 @@ export const Goal = ({
 
   return (
     <>
-      <div className="flex flex-row justify-between items-center p-5">
+      <div className="flex flex-row justify-between items-center p-5 mt-6">
         <EditableInput
           id={String(data.goalId)}
           title={data.objective}
@@ -95,11 +97,11 @@ export const Goal = ({
           isInactive={inactive}
           isCompleted={shouldShowCompleted()}
         />
-        <div className="absolute top-[-9px] right-[10px] flex flex-row">
-          <TagHabit />
-          {renderTag()}
-        </div>
         <Actions goal={data} allow={ALLOW} />
+      </div>
+      <div className="absolute top-[-9px] right-[10px] flex flex-row">
+        {isHabit && <TagHabit />}
+        {renderTag()}
       </div>
       {isHabit && <Habit data={data} />}
     </>

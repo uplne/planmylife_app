@@ -21,7 +21,7 @@ import "./Actions.css";
 type ComponentTypes = {
   task: GoalTasksTypes | GoalSubTasksTypes;
   allow: goalTaskActionTypes[];
-  copy: copyTypes;
+  copy?: copyTypes;
   complete?: () => void;
   unComplete?: () => void;
   remove?: () => void;

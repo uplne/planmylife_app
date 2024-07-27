@@ -67,7 +67,7 @@ export const Task = ({
     "task--isInactive": shouldShowReadOnly(),
     "task--isPlaceholder": !title,
     "mt-6":
-      rawTaskData?.type === TasksTypes.SCHEDULE ||
+      rawTaskData?.type === TasksTypes.SCHEDULED ||
       rawTaskData?.type === TasksTypes.SCHEDULED_RECURRING,
   });
 

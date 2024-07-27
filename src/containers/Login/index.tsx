@@ -33,7 +33,6 @@ export const Login = () => {
       await setIsLoading(true);
 
       await auth.onAuthStateChanged(async (user) => {
-        const pathname = parseUrlPathname();
         const urlParam = parseUrlParameters();
         let redirectPath = "/myweek";
 
@@ -62,19 +61,25 @@ export const Login = () => {
     })();
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      await setIsLoading(true);
+  // useEffect(() => {
+  //   (async () => {
+  //     await setIsLoading(true);
 
-      const result = await getRedirectResult(auth);
+  //     try {
+  //       const result = await getRedirectResult(auth);
 
-      if (result) {
-        await ProcessGoogleRedirect(result);
-      } else {
-        await setIsLoading(false);
-      }
-    })();
-  }, []);
+  //       if (result) {
+  //         await ProcessGoogleRedirect(result);
+  //       } else {
+  //         await setIsLoading(false);
+  //       }
+  //     } catch (e: unknown) {
+  //       if (e instanceof Error) {
+  //         throw new Error('Auth failed');
+  //       }
+  //     }
+  //   })();
+  // }, []);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -94,7 +99,10 @@ export const Login = () => {
         </h1>
 
         <div className="login__wrapper">
-          <IconButton className="icon-button--login" onClick={onClickGoogle}>
+          <IconButton
+            className="icon-button--login px-10 py-10 bg-white rounded"
+            onClick={onClickGoogle}
+          >
             <GoogleIcon />
             Continue with Google
           </IconButton>

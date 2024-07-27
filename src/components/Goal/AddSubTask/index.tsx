@@ -13,10 +13,15 @@ type ComponentProps = {
 export const AddSubTask = ({ data }: ComponentProps) => {
   const setTempSubTask = useGoalsStore().setTempSubTask;
   const fillTempSubTask = useGoalsStore().fillTempSubTask;
+  const resetTempSubTasks = useGoalsStore().resetTempSubTasks;
   const tempSubTasks = useGoalsStore().tempSubTasks;
 
   useEffect(() => {
     fillTempSubTask(data.subtasks);
+
+    return () => {
+      resetTempSubTasks();
+    };
   }, []);
 
   return (
@@ -25,7 +30,7 @@ export const AddSubTask = ({ data }: ComponentProps) => {
       <p>{data.title}</p>
       <TaskList>
         {Array.from(tempSubTasks).map(([key, subtask]) => (
-          <TaskListItem length={Array.from(tempSubTasks).length}>
+          <TaskListItem length={Array.from(tempSubTasks).length} isSub>
             <div className="flex flex-row justify-between items-center p-5">
               <EditableInput
                 id={key}
@@ -39,7 +44,7 @@ export const AddSubTask = ({ data }: ComponentProps) => {
       </TaskList>
       <EditableInput
         id={String(data.taskId)}
-        title=""
+        title="Add new subtask"
         onBlur={(value) => setTempSubTask("", value)}
         onFocus={() => {}} //onSave}
         status={data.status}

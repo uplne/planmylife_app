@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { createClearable } from "../../services/createClearable";
 
 export enum SchedulerPeriod {
   Day = "day",
@@ -97,7 +97,7 @@ export const HabitSchedulerStoreDefault: HabitSchedulerStoreDefaultTypes = {
   habitRepeatDays: new Set([]),
 };
 
-export const useHabitSchedulerStore = create<HabitSchedulerStoreTypes>(
+export const useHabitSchedulerStore = createClearable<HabitSchedulerStoreTypes>(
   (set) => ({
     habitRepeatType: HabitSchedulerStoreDefault.habitRepeatType,
     habitRepeatPeriod: HabitSchedulerStoreDefault.habitRepeatPeriod,

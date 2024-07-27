@@ -1,4 +1,3 @@
-import { create } from "zustand";
 import uniqBy from "lodash/fp/uniqBy";
 import remove from "lodash/remove";
 
@@ -8,17 +7,19 @@ import {
   ProgressType,
   GoalTasksTypes,
   GoalSubTasksTypes,
+  TempTaskType,
 } from "./api";
 import { DATA_FETCHING_STATUS, GoalAssignmentTypes } from "../../types/status";
 import { idType } from "../../types/idtype";
 import { uuidv4 } from "@firebase/util";
+import { createClearable } from "../../services/createClearable";
 
 export interface GoalsStoreDefaultTypes {
   goals: GoalsAPITypes[];
   loadingGoals: DATA_FETCHING_STATUS;
   loadingTasks: DATA_FETCHING_STATUS;
   tempGoal: GoalsAPITypes;
-  tempTask: string;
+  tempTask: TempTaskType;
   tasks: GoalTasksTypes[];
   subtasks: GoalSubTasksTypes[];
   tempSubTasks: Map<idType, GoalSubTasksTypes>;
@@ -37,10 +38,11 @@ export interface GoalsStoreTypes extends GoalsStoreDefaultTypes {
   resetHabit: () => void;
 
   // Tasks
-  setTempTask: (value: string) => void;
+  setTempTask: (valueObj: Partial<TempTaskType>) => void;
   addNewGoalTask: (value: GoalTasksTypes) => void;
   fillTasks: (tasks: GoalTasksTypes[]) => Promise<void>;
   updateTask: (task: GoalTasksTypes) => void;
+  resetTempTask: () => void;
   removeGoalTask: (id: idType) => void;
 
   // Subtasks
@@ -48,6 +50,7 @@ export interface GoalsStoreTypes extends GoalsStoreDefaultTypes {
   updateTempSubTask: (id: idType, value: string) => void;
   eraseTempSubTask: () => void;
   fillTempSubTask: (tasks: GoalSubTasksTypes[]) => void;
+  resetTempSubTasks: () => void;
   addNewGoalSubTask: (value: GoalSubTasksTypes) => void;
   fillSubTasks: (tasks: GoalSubTasksTypes[]) => Promise<void>;
   updateSubTask: (task: GoalSubTasksTypes) => void;
@@ -67,13 +70,16 @@ export const GoalsStoreDefault: GoalsStoreDefaultTypes = {
     habitRepeatTimes: null,
     habitRepeatDays: null,
   },
-  tempTask: "",
+  tempTask: {
+    task: "",
+    schedule: null,
+  },
   tempSubTasks: new Map(),
   tasks: [],
   subtasks: [],
 };
 
-export const useGoalsStore = create<GoalsStoreTypes>((set, get) => ({
+export const useGoalsStore = createClearable<GoalsStoreTypes>((set, get) => ({
   loadingGoals: GoalsStoreDefault.loadingGoals,
   loadingTasks: GoalsStoreDefault.loadingTasks,
   tempGoal: GoalsStoreDefault.tempGoal,
@@ -147,9 +153,21 @@ export const useGoalsStore = create<GoalsStoreTypes>((set, get) => ({
   },
 
   tempTask: GoalsStoreDefault.tempTask,
-  setTempTask: async (value) => {
+  setTempTask: async (valueObj) => {
+    const tempTask = await get().tempTask;
     await set({
-      tempTask: value,
+      tempTask: {
+        ...tempTask,
+        ...valueObj,
+      },
+    });
+  },
+
+  resetTempTask: async () => {
+    await set({
+      tempTask: {
+        ...GoalsStoreDefault.tempTask,
+      },
     });
   },
 
@@ -239,6 +257,8 @@ export const useGoalsStore = create<GoalsStoreTypes>((set, get) => ({
       }
     });
 
+    console.log(storedSubTasks);
+
     await set({
       tempSubTasks: storedSubTasks,
     });
@@ -249,6 +269,11 @@ export const useGoalsStore = create<GoalsStoreTypes>((set, get) => ({
     storedSubTasks.clear();
     await set({
       tempSubTasks: storedSubTasks,
+    });
+  },
+  resetTempSubTasks: async () => {
+    await set({
+      tempSubTasks: new Map(),
     });
   },
   addNewGoalSubTask: async (value: GoalSubTasksTypes) => {

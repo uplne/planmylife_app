@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import dayjs from "dayjs";
 
 import { TagMoved } from "../../TaskIndicator/TagMoved";
@@ -21,17 +22,27 @@ const weekIsInArray = (movedWeeks: string[], selectedWeek: string) =>
 export const TaskStatus = ({ task }: ComponentProps) => {
   const { selectedWeek } = useWeekStore();
 
-  const showMoved = () =>
-    task?.moved &&
-    task.moved.length > 0 &&
-    weekIsInArray(task.moved, selectedWeek);
+  const showMoved = useMemo(
+    () =>
+      task?.moved &&
+      task.moved.length > 0 &&
+      weekIsInArray(task.moved, selectedWeek),
+    [task],
+  );
+
+  const showRecurring = useMemo(
+    () => "type" in task && isRecurringTask(task.type),
+    [task],
+  );
 
   return (
-    <div className="absolute top-[-9px] right-[10px] flex flex-row">
-      {showMoved() && <TagMoved />}
-      {"type" in task && isRecurringTask(task.type) && (
-        <TagRecurring recurring={getRecurring(task)} />
+    <>
+      {(showRecurring || showMoved) && (
+        <div className="absolute top-[-9px] right-[10px] flex flex-row">
+          {showMoved && <TagMoved />}
+          {showRecurring && <TagRecurring recurring={getRecurring(task)} />}
+        </div>
       )}
-    </div>
+    </>
   );
 };

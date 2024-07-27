@@ -1,21 +1,12 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
 import { Container } from "../../components/Container";
 import { ContainerContent } from "../../components/ContainerContent";
 import { WeekSelector } from "../../components/WeekSelector";
 import { DailyQuote } from "../../components/DailyQuote";
 import { Tasks } from "../../components/Tasks";
 import { WeeklyGoals } from "../../containers/WeeklyGoals";
-import { Split } from "./Split";
+import { Split } from "../../components/Split";
 
 export const Overview = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    // navigate("/login");
-  }, []);
-
   return (
     <>
       <Container>

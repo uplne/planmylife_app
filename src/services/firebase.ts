@@ -5,6 +5,7 @@ import {
   GoogleAuthProvider,
   signInWithRedirect,
   getRedirectResult,
+  signInWithPopup,
 } from "firebase/auth";
 import { getFirestore, Timestamp } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
@@ -14,7 +15,7 @@ import { getFunctions } from "firebase/functions";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  // put back API key
+  apiKey: "AIzaSyDIt5QgV5lsEQBh0TTCtdMhudiyPudXKBU",
   authDomain: "planmylife-1c7fd.firebaseapp.com",
   databaseURL: "https://planmylife-1c7fd.firebaseio.com",
   projectId: "planmylife-1c7fd",
@@ -40,4 +41,10 @@ export const GoogleAuth = new GoogleAuthProvider();
 
 export type CollectionType = "default" | "recurring";
 
-export { GoogleAuthProvider, signInWithRedirect, getRedirectResult, Timestamp };
+export {
+  GoogleAuthProvider,
+  signInWithRedirect,
+  signInWithPopup,
+  getRedirectResult,
+  Timestamp,
+};

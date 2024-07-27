@@ -3,7 +3,7 @@ import classnames from "classnames";
 import { TasksTypes, StatusTypes } from "../../types/status";
 import { EditableInput } from "../../components/EditableInput";
 // import { AddTask } from '../Tasks/TaskModal/AddTask';
-import { Actions } from "../Actions";
+import { Actions } from "../Actions/TaskActions";
 
 import { idType } from "../../types/idtype";
 import { TaskType } from "../../store/Tasks/index";
@@ -67,21 +67,9 @@ export const Task = ({
     "task--isInactive": shouldShowReadOnly(),
     "task--isPlaceholder": !title,
     "mt-6":
-      rawTaskData?.type === TasksTypes.SCHEDULE ||
+      rawTaskData?.type === TasksTypes.SCHEDULED ||
       rawTaskData?.type === TasksTypes.SCHEDULED_RECURRING,
   });
-
-  // type OnSaveTypes = {
-  //   id: idType,
-  //   title: string,
-  // };
-
-  // const onSave = ({ id, title }: OnSaveTypes) => {
-  //   // dispatch({ type: 'tasks/saveTasks', payload: {
-  //   //   id,
-  //   //   title,
-  //   // }});
-  // };
 
   return (
     <div className={taskClasses}>

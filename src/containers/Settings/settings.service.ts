@@ -57,3 +57,25 @@ export const updateSettingsAPI = async ({ ...settings }: SettingsAPITypes) => {
     }
   }
 };
+
+export const settingsEraseAllDataAPI = async () => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3001/api/v1/settings/eraseall`,
+    );
+
+    return response.status;
+  } catch (error: any | AxiosError) {
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        throw new Error(
+          `Failed to erase all data - response: ${error.response.status} ${error.response.data}`,
+        );
+      } else if (error.request) {
+        throw new Error(`Failed to erase all data - request: ${error.request}`);
+      }
+    } else {
+      throw new Error(`Failed to erase all data: ${error.message}`);
+    }
+  }
+};

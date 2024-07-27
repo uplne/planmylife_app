@@ -24,6 +24,9 @@ module.exports = {
       tagActive: "#F2CB3D",
       tagInactive: "#d1cdcb",
       white: "#ffffff",
+
+      progress: "#B0BF60",
+      habit: "#a9d5de",
     },
     fontFamily: {
       rubik: ["Rubik", "sans-serif"],

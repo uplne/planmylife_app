@@ -1,10 +1,9 @@
-
-import { BasicButton } from '../Buttons/BasicButton';
+import { BasicButton } from "../Buttons/BasicButton";
 // import DeleteAccount from './DeleteAccount';
 
-import { useConfirmStore } from '../../store/Confirm';
+import { useConfirmStore } from "../../store/Confirm";
 
-import './Confirm.css';
+import "./Confirm.css";
 
 export const Confirm = () => {
   const {
@@ -46,17 +45,18 @@ export const Confirm = () => {
         <h2 className="confirm__title">{title}</h2>
         {subtitle && <p className="confirm__subtitle">{subtitle}</p>}
         <div className="confirm__actions">
+          <BasicButton className="modal__button" ternary onClick={cancel}>
+            {cancelLabel}
+          </BasicButton>
           <BasicButton
-            className="modal__button"
-            ternary
-            onClick={cancel}
-          >{cancelLabel}</BasicButton>
-          <BasicButton
+            primary
             className="modal__button"
             onClick={confirm}
             loading={isLoading}
             disabled={isLoading}
-          >{confirmLabel}</BasicButton>
+          >
+            {confirmLabel}
+          </BasicButton>
         </div>
       </div>
     </div>

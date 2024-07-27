@@ -22,7 +22,6 @@ import {
   saveNewTask,
 } from "./tasks.controller";
 import {
-  allDefaultScheduledTasksSelector,
   todayDefaultScheduledTasksSelector,
   tomorrowDefaultScheduledTasksSelector,
   otherDaysDefaultScheduledTasksSelector,
@@ -103,7 +102,11 @@ export const Tasks = () => {
                   {allTodayDefaultScheduled.map((task) => {
                     return (
                       <div className="tasks__container">
-                        <TaskDate task={task} />
+                        <TaskDate
+                          type={task.type}
+                          assigned={task.assigned}
+                          schedule={task.schedule}
+                        />
                         <TaskComponent
                           key={String(task.taskId)}
                           id={task.taskId}
@@ -123,7 +126,11 @@ export const Tasks = () => {
                   {allTomorrowDefaultScheduled.map((task) => {
                     return (
                       <div className="tasks__container">
-                        <TaskDate task={task} />
+                        <TaskDate
+                          type={task.type}
+                          assigned={task.assigned}
+                          schedule={task.schedule}
+                        />
                         <TaskComponent
                           key={String(task.taskId)}
                           id={task.taskId}
@@ -143,7 +150,11 @@ export const Tasks = () => {
                   {allOtherDaysScheduled.map((task) => {
                     return (
                       <div className="tasks__container">
-                        <TaskDate task={task} />
+                        <TaskDate
+                          type={task.type}
+                          assigned={task.assigned}
+                          schedule={task.schedule}
+                        />
                         <TaskComponent
                           key={String(task.taskId)}
                           id={task.taskId}
@@ -184,7 +195,11 @@ export const Tasks = () => {
                     <h3 className="tasks__subtitle">Completed</h3>
                     {allCompletedTasks.map((task) => (
                       <div className="tasks__container">
-                        <TaskDate task={task} />
+                        <TaskDate
+                          type={task.type}
+                          assigned={task.assigned}
+                          schedule={task.schedule}
+                        />
                         <TaskComponent
                           key={String(task.taskId)}
                           id={task.taskId}

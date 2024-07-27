@@ -9,7 +9,12 @@ export enum TasksTypes {
   "DEFAULT" = "DEFAULT",
   "RECURRING" = "RECURRING",
   "SCHEDULED_RECURRING" = "SCHEDULED_RECURRING",
-  "SCHEDULE" = "SCHEDULE",
+  "SCHEDULED" = "SCHEDULED",
+}
+
+export enum GoalAssignmentTypes {
+  "DEFAULT",
+  "HABIT",
 }
 
 export enum DATA_FETCHING_STATUS {

@@ -1,4 +1,3 @@
-import { create } from "zustand";
 import dayjs from "dayjs";
 import uniqBy from "lodash/fp/uniqBy";
 import remove from "lodash/remove";
@@ -11,6 +10,7 @@ import {
   StatusTypes,
 } from "../../types/status";
 import { idType } from "../../types/idtype";
+import { createClearable } from "../../services/createClearable";
 
 export type TaskType = TasksAPITypes;
 export type FlowType = (tasks: TaskType[]) => TaskType[];
@@ -48,7 +48,7 @@ export const TasksStoreDefault: TasksStoreDefaultTypes = {
   schedule: undefined,
 };
 
-export const useTasksStore = create<TasksStoreTypes>((set, get) => ({
+export const useTasksStore = createClearable<TasksStoreTypes>((set, get) => ({
   loadingDefaultTasksStatus: TasksStoreDefault.loadingDefaultTasksStatus,
   updateLoadingDefaultTasksStatus: async (value) => {
     set({ loadingDefaultTasksStatus: value });

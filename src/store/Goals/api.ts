@@ -1,5 +1,6 @@
 import { idType } from "../../types/idtype";
-import { StatusTypes } from "../../types/status";
+import { StatusTypes, GoalAssignmentTypes } from "../../types/status";
+import { SchedulerTypeKey, SchedulerPeriodKey } from "../HabitScheduler";
 
 export enum ProgressType {
   "TASKS_FINISHED",
@@ -20,11 +21,23 @@ export interface GoalsAPITypes {
   goalType?: GoalType;
   status?: StatusTypes;
   objective?: string;
+  moved?: string[];
   created?: string | null;
   updated?: string | null;
   assigned?: string | null;
+  assignment?: GoalAssignmentTypes;
   completed?: string | null;
   why?: string;
+  // Type of habit - every | at least
+  habitRepeatType?: SchedulerTypeKey | null;
+  // How often - day | working days | selected days
+  habitRepeatPeriod?: SchedulerPeriodKey | null;
+  // How often for at least - at least x days
+  habitRepeatTimes?: number | null;
+  // Actual days when we want it for every - for days [0,1,2,3,4,5,6], for working days [0,1,2,3,4] etc
+  habitRepeatDays?: number[] | null;
+  // Dates of completed habit
+  habitCompletedDays?: string[] | null;
 
   startDate?: string | null;
   endDate?: string | null;
@@ -33,6 +46,41 @@ export interface GoalsAPITypes {
   progressOwnValue?: string | null;
   progressOwnUnits?: string | null;
 }
+
+export interface GoalTasksTypes {
+  id?: idType;
+  goalId?: idType;
+  userId?: string;
+  taskId?: idType;
+  status?: StatusTypes;
+  assignment?: GoalAssignmentTypes;
+  moved?: string[];
+  subtasks: GoalSubTasksTypes[];
+  title?: string;
+  schedule?: string | null;
+  created?: string | null;
+  updated?: string | null;
+  assigned?: string | null;
+  completed?: string | null;
+}
+
+export interface GoalSubTasksTypes {
+  id?: idType;
+  goalId?: idType;
+  userId?: string;
+  taskId?: idType;
+  subtaskId?: idType;
+  status?: StatusTypes;
+  title?: string;
+  created?: string | null;
+  updated?: string | null;
+  completed?: string | null;
+}
+
+export type TempTaskType = {
+  task: string;
+  schedule?: string | null;
+};
 
 /*
   CREATE TABLE goals (
@@ -87,8 +135,11 @@ export interface GoalsAPITypes {
     user_id TEXT,
     title TEXT,
     status TEXT,
-    UNIQUE(task_id),
-    FOREIGN KEY (goal_id) REFERENCES goals(goal_id) ON DELETE CASCADE
+    created timestamp,
+    updated timestamp,
+    assigned timestamp,
+    completed timestamp,
+    UNIQUE(task_id)
   );
 
   CREATE TABLE goal_subtasks (
@@ -100,6 +151,6 @@ export interface GoalsAPITypes {
     user_id TEXT,
     title TEXT,
     status TEXT,
-    FOREIGN KEY (task_id) REFERENCES goal_tasks(task_id) ON DELETE CASCADE
+    UNIQUE(task_id)
   );
 */

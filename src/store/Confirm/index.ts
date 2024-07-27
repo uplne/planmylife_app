@@ -55,6 +55,7 @@ export const useConfirmStore = create<ConfirmStoreTypes>((set) => ({
       confirmLabel: values.confirmLabel || ConfirmStoreDefault.confirmLabel,
       cancelLabel: values.cancelLabel || ConfirmStoreDefault.cancelLabel,
       onConfirm: values.onConfirm,
+      onCancel: values.onCancel || ConfirmStoreDefault.onCancel,
     });
   },
   resetConfirm: async () => {

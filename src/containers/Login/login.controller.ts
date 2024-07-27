@@ -3,7 +3,7 @@ import axios from "axios";
 import dayjs from "dayjs";
 import { sha256 } from "js-sha256";
 
-import { GoogleAuth, auth, signInWithRedirect } from "../../services/firebase";
+import { GoogleAuth, auth, signInWithPopup } from "../../services/firebase";
 import { parseUrlParameters, parseUrlPathname } from "../../services/parseurl";
 import { useSettingsStateStore } from "../../store/Settings";
 import {
@@ -51,12 +51,14 @@ export const LoginWithGoogle = async () => {
   auth.useDeviceLanguage();
   GoogleAuth.setCustomParameters({ prompt: "select_account" });
 
-  // TODO Signing with redirect:  FirebaseError: Firebase: Error (auth/popup-blocked).
-
   try {
-    await signInWithRedirect(auth, GoogleAuth);
-  } catch (error) {
-    console.error("Signing with redirect: ", error);
+    await signInWithPopup(auth, GoogleAuth);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Signing with redirect: ${error.message}`);
+    } else {
+      console.error("Signing with redirect: ", error);
+    }
   }
 };
 

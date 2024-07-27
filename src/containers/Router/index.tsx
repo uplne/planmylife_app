@@ -5,25 +5,10 @@ import { Login } from "../Login";
 import { LogOut } from "../LogOut";
 import { Layout } from "../Layout";
 import { Goals } from "../Goals";
+import { Settings } from "../Settings";
 import { parseUrlParameters, parseUrlPathname } from "../../services/parseurl";
 import { useAuthStore } from "../../store/Auth";
 import { useWeekStore } from "../../store/Week";
-
-// export default ({...props}) =>
-//   <Switch>
-//     <Route exact path="/login" component={Login} />
-//     <Route exact path="/logout" component={LogOut} />
-//     <Route exact path="/create" component={CreateAccount} />
-//     <Route exact path="/unsubscribe" component={Unsubscribe} />
-//     <PrivateRoute path="/setup" component={Setup} {...props} />
-//     <PrivateRoute path="/myweek" component={Overview} {...props} />
-//     <PrivateRoute exact path="/mygoals/:year" component={Goals} {...props} />
-//     <PrivateRoute exact path="/weekly-review" component={WeeklyReview} {...props} />
-//     <PrivateRoute exact path="/trends/:year" component={Statistics} {...props} />
-//     <PrivateRoute path="/archive" component={Archive} {...props} />
-//     <PrivateRoute path="/settings" component={Settings} {...props} />
-//     <Redirect path="/" to="/login" />
-//   </Switch>;
 
 export const Router = [
   {
@@ -63,6 +48,10 @@ export const Router = [
       {
         path: "mygoals",
         Component: Goals,
+      },
+      {
+        path: "settings",
+        Component: Settings,
       },
     ],
   },

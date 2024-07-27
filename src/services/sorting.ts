@@ -1,6 +1,8 @@
 import dayjs from "dayjs";
 
-import { TasksAPITypes } from "../store/Tasks/api";
-
-export const sortByAssigned = (a: TasksAPITypes, b: TasksAPITypes): number =>
-  dayjs(a.assigned).valueOf() - dayjs(b.assigned).valueOf();
+export const sortByAssigned = <
+  T extends { assigned?: string | undefined | null },
+>(
+  a: T,
+  b: T,
+): number => dayjs(a.assigned).valueOf() - dayjs(b.assigned).valueOf();

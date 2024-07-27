@@ -1,16 +1,14 @@
 import axios, { AxiosError } from "axios";
 
-import { StatusTypes, TasksTypes } from "../../types/status";
-import { CollectionType } from "../../services/firebase";
+import { StatusTypes } from "../../types/status";
 
 import { GoalsAPITypes } from "../../store/Goals/api";
-import { useTasksStore } from "../../store/Tasks";
 import { idType } from "../../types/idtype";
 
-export const getActiveGoalsAPI = async () => {
+export const getGoalsAPI = async (status: StatusTypes) => {
   try {
     const response = await axios.get(
-      `http://localhost:3001/api/v1/goals/${StatusTypes.ACTIVE}`,
+      `http://localhost:3001/api/v1/goals/${status}`,
     );
 
     if (response.data && response.data.length > 0) {
@@ -19,49 +17,9 @@ export const getActiveGoalsAPI = async () => {
 
     return [];
   } catch (e) {
-    throw new Error(`Get ${StatusTypes.ACTIVE} goals: ${e}`);
+    throw new Error(`Get ${status} goals: ${e}`);
   }
 };
-
-// export const updateTaskAPI = async (newTaskData: TaskType) => {
-//   let collection: CollectionType = "default";
-
-//   // It's recurring task
-//   if (
-//     "type" in newTaskData &&
-//     (newTaskData.type === TasksTypes.RECURRING ||
-//       newTaskData.type === TasksTypes.SCHEDULED_RECURRING)
-//   ) {
-//     collection = "recurring";
-//   }
-
-//   try {
-//     const response = await axios.put(
-//       `http://localhost:3001/api/v1/tasks/${newTaskData.taskId}`,
-//       {
-//         ...newTaskData,
-//       },
-//     );
-
-//     return response;
-//   } catch (error: any | AxiosError) {
-//     if (axios.isAxiosError(error)) {
-//       if (error.response) {
-//         throw new Error(
-//           `Failed to update task: ${newTaskData.taskId}, error - response: ${error.response.status} ${error.response.data}`,
-//         );
-//       } else if (error.request) {
-//         throw new Error(
-//           `Failed to update task: ${newTaskData.taskId}, error - request: ${error.request}`,
-//         );
-//       }
-//     } else {
-//       throw new Error(
-//         `Failed to update task: ${newTaskData.taskId}, error: ${error.message}`,
-//       );
-//     }
-//   }
-// };
 
 // export const removeTaskAPI = async (id: idType) => {
 //   const storedTasks = await useTasksStore.getState().tasks;

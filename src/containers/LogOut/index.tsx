@@ -1,19 +1,26 @@
-import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import sample from 'lodash/sample';
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import sample from "lodash/sample";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { CenteredBox } from '../../components/CenteredBox';
-import { Box } from '../../components/Box';
-import { logoutQuotes } from '../../services/logoutQuotes';
-import { resetAllStores } from '../../store/ResetStore';
+import { CenteredBox } from "../../components/CenteredBox";
+import { Box } from "../../components/Box";
+import { logoutQuotes } from "../../services/logoutQuotes";
+import { resetAllStores } from "../../services/createClearable";
 
-import './Logout.css';
+import "./Logout.css";
 
 export const LogOut = () => {
+  const queryClient = useQueryClient();
   const quote = sample(logoutQuotes) || logoutQuotes[0];
 
   useEffect(() => {
-    resetAllStores();
+    async function reset() {
+      await resetAllStores();
+      await queryClient.resetQueries();
+    }
+
+    reset();
   }, []);
 
   return (
